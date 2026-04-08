@@ -1,0 +1,43 @@
+<div class="library-container">
+  <div class="header-section">
+    <h1 class="page-title">ROM REPOSITORY</h1>
+    <p class="page-subtitle">Select a game to initialize the emulator.</p>
+  </div>
+
+  <!-- Estado de Carregamento -->
+  <div *ngIf="isLoading" class="loading-state blink">
+    <p>ACCESSING REPOSITORY...</p>
+  </div>
+
+  <!-- Estado de Erro / Sem Assinatura -->
+  <div *ngIf="errorMessage" class="error-state pixel-box">
+    <h2 class="error-title">[SYSTEM ALERT]</h2>
+    <p class="error-msg">{{ errorMessage }}</p>
+    
+    <div *ngIf="needsSubscription" class="action-area">
+      <p>You need an active plan to access the library.</p>
+      <a routerLink="/pricing" class="btn-pixel btn-upgrade">VIEW PLANS</a>
+    </div>
+  </div>
+
+  <!-- Grid de Jogos -->
+  <div *ngIf="!isLoading && !errorMessage" class="games-grid">
+    <div class="game-card pixel-box" *ngFor="let game of games">
+      <div class="game-image-container">
+        <!-- Fallback visual caso não haja imagem real no banco -->
+        <img [src]="game.image || 'assets/placeholder-game.png'" [alt]="game.title" class="game-image" onerror="this.src='https://via.placeholder.com/250x250/111/0ff?text=NO+SIGNAL'">
+        <div class="console-badge">{{ game.console }}</div>
+      </div>
+      
+      <div class="game-info">
+        <h3 class="game-title">{{ game.title }}</h3>
+        <button class="btn-pixel btn-play">PLAY NOW</button>
+      </div>
+    </div>
+    
+    <!-- Mensagem caso a biblioteca esteja vazia -->
+    <div *ngIf="games.length === 0" class="empty-state">
+      <p>NO GAMES FOUND FOR YOUR ACCESS LEVEL.</p>
+    </div>
+  </div>
+</div>

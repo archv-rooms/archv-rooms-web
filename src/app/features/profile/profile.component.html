@@ -1,0 +1,80 @@
+<div class="profile-container">
+  <div class="header-section">
+    <h1 class="page-title">PLAYER STATUS</h1>
+  </div>
+
+  <!-- Estado de Carregamento -->
+  <div *ngIf="isLoading" class="loading-state blink">
+    <p>LOADING PLAYER DATA...</p>
+  </div>
+
+  <!-- Estado de Erro -->
+  <div *ngIf="errorMessage" class="error-state pixel-box">
+    <p>[SYSTEM ERROR] {{ errorMessage }}</p>
+    <button class="btn-pixel" (click)="loadProfile()">RETRY</button>
+  </div>
+
+  <!-- Dados do Perfil -->
+  <div *ngIf="!isLoading && !errorMessage && userProfile" class="profile-content">
+    
+    <!-- Card do Usuário -->
+    <div class="pixel-box info-box">
+      <h2 class="box-title">ID CARD</h2>
+      
+      <div class="info-row">
+        <span class="label">NAME:</span>
+        <span class="value">{{ userProfile.name }}</span>
+      </div>
+      
+      <div class="info-row">
+        <span class="label">E-MAIL:</span>
+        <span class="value">{{ userProfile.email }}</span>
+      </div>
+      
+      <div class="info-row">
+        <span class="label">JOINED:</span>
+        <span class="value">{{ userProfile.createdAt | date:'dd/MM/yyyy' }}</span>
+      </div>
+    </div>
+
+    <!-- Card da Assinatura -->
+    <div class="pixel-box sub-box">
+      <h2 class="box-title">SUBSCRIPTION</h2>
+      
+      <ng-container *ngIf="activeSubscription; else noSub">
+        <div class="info-row">
+          <span class="label">PLAN:</span>
+          <span class="value highlight">{{ activeSubscription.plan.name }}</span>
+        </div>
+        
+        <div class="info-row">
+          <span class="label">STATUS:</span>
+          <span class="value status-active">[{{ activeSubscription.status }}]</span>
+        </div>
+        
+        <div class="info-row">
+          <span class="label">STARTED:</span>
+          <span class="value">{{ activeSubscription.createdAt | date:'dd/MM/yyyy' }}</span>
+        </div>
+
+        <div class="action-area">
+          <a routerLink="/library" class="btn-pixel btn-library">ACCESS LIBRARY</a>
+        </div>
+      </ng-container>
+
+      <ng-template #noSub>
+        <div class="no-sub-state">
+          <p class="status-inactive">[NO ACTIVE SUBSCRIPTION]</p>
+          <p class="sub-msg">You need a plan to access the ROM repository.</p>
+          <a routerLink="/pricing" class="btn-pixel btn-upgrade">VIEW PLANS</a>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Botão de Logout -->
+    <div class="logout-area">
+      <button class="btn-pixel btn-logout" (click)="logout()">LOGOUT / QUIT GAME</button>
+    </div>
+
+  </div>
+</div>

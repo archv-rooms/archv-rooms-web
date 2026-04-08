@@ -1,0 +1,152 @@
+.checkout-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+  padding: 20px;
+}
+
+.checkout-box {
+  width: 100%;
+  max-width: 550px;
+  background-color: rgba(0, 0, 0, 0.95);
+  padding: 30px;
+}
+
+.checkout-title {
+  text-align: center;
+  font-size: 1.5rem;
+  color: var(--color-secondary);
+  margin-bottom: 30px;
+  text-shadow: 2px 2px 0px #000;
+}
+
+.loading-state {
+  text-align: center;
+  font-family: var(--font-title);
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  margin: 40px 0;
+}
+
+.blink {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% { opacity: 0; }
+}
+
+.error-state {
+  text-align: center;
+  color: var(--color-error);
+  font-family: var(--font-text);
+  font-size: 1.2rem;
+  margin: 20px 0;
+
+  p {
+    margin-bottom: 10px;
+  }
+
+  .btn-back {
+    display: inline-block;
+    margin-top: 15px;
+  }
+}
+
+.checkout-content {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.plan-summary {
+  background-color: #111;
+  border: 2px solid var(--color-text);
+  padding: 20px;
+
+  .plan-name {
+    color: var(--color-primary);
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  .plan-desc {
+    color: #aaa;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+
+  .separator {
+    height: 2px;
+    background-color: #333;
+    margin: 15px 0;
+  }
+
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-title);
+    font-size: 1rem;
+    color: var(--color-text);
+
+    .price-value {
+      color: var(--color-secondary);
+      font-size: 1.2rem;
+    }
+  }
+}
+
+.warning-box {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background-color: rgba(255, 215, 0, 0.1);
+  border: 2px dashed var(--color-secondary);
+  padding: 15px;
+  
+  .alert-icon {
+    font-family: var(--font-title);
+    color: var(--color-secondary);
+    font-size: 2rem;
+  }
+
+  p {
+    color: var(--color-secondary);
+    font-size: 1.1rem;
+    line-height: 1.4;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+
+  button {
+    flex: 1;
+    font-size: 1rem;
+    padding: 15px;
+  }
+}
+
+.btn-cancel {
+  background-color: #333;
+  color: var(--color-text);
+  border-color: #555;
+
+  &:hover {
+    background-color: #444;
+  }
+}
+
+.btn-confirm {
+  background-color: var(--color-primary);
+  color: var(--color-black);
+  border-color: var(--color-black);
+
+  &:hover {
+    background-color: #00cccc;
+  }
+}

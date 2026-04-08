@@ -1,0 +1,35 @@
+<div class="pricing-container">
+  <div class="header-section">
+    <h1 class="page-title">CHOOSE YOUR CLASS</h1>
+    <p class="page-subtitle">Select a subscription plan to access the ROM repository.</p>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <p class="blink">LOADING PLANS...</p>
+  </div>
+
+  <div class="error-state pixel-box" *ngIf="errorMessage">
+    <p>[SYSTEM ERROR] {{ errorMessage }}</p>
+    <button class="btn-pixel" (click)="loadPlans()">RETRY</button>
+  </div>
+
+  <div class="pricing-grid" *ngIf="!isLoading && !errorMessage">
+    <div class="plan-card pixel-box" *ngFor="let plan of plans">
+      <div class="plan-icon">{{ plan.icon }}</div>
+      <h2 class="plan-name">{{ plan.name }}</h2>
+      <p class="plan-desc">{{ plan.description }}</p>
+      
+      <div class="plan-price">
+        R$ {{ plan.price | number:'1.2-2' }}<span>/mês</span>
+      </div>
+      
+      <ul class="plan-benefits">
+        <li *ngFor="let benefit of plan.benefits">
+          <span class="bullet">►</span> {{ benefit }}
+        </li>
+      </ul>
+      
+      <a [routerLink]="['/checkout', plan.id]" class="btn-pixel plan-btn">{{ plan.buttonText }}</a>
+    </div>
+  </div>
+</div>

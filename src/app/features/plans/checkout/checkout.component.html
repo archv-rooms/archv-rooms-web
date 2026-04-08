@@ -1,0 +1,50 @@
+<div class="checkout-container">
+  <div class="pixel-box checkout-box">
+    <h2 class="checkout-title">CONFIRM SUBSCRIPTION</h2>
+
+    <!-- Estado de Carregamento -->
+    <div *ngIf="isLoadingPlan" class="loading-state blink">
+      LOADING PLAN DATA...
+    </div>
+
+    <!-- Estado de Erro -->
+    <div *ngIf="errorMessage" class="error-state">
+      <p>[SYSTEM ERROR]</p>
+      <p>{{ errorMessage }}</p>
+      <br>
+      <a routerLink="/pricing" class="btn-pixel btn-back">BACK TO PLANS</a>
+    </div>
+
+    <!-- Detalhes do Plano e Confirmação -->
+    <div *ngIf="!isLoadingPlan && selectedPlan" class="checkout-content">
+      
+      <div class="plan-summary">
+        <h3 class="plan-name">{{ selectedPlan.name }} PLAN</h3>
+        <p class="plan-desc">{{ selectedPlan.description }}</p>
+        
+        <div class="separator"></div>
+        
+        <div class="price-row">
+          <span>TOTAL DUE:</span>
+          <span class="price-value">R$ {{ selectedPlan.price | number:'1.2-2' }} / mês</span>
+        </div>
+      </div>
+
+      <div class="warning-box">
+        <span class="alert-icon">!</span>
+        <p>Ao confirmar, sua assinatura atual (se houver) será substituída e o novo acesso será liberado imediatamente.</p>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn-pixel btn-cancel" routerLink="/pricing" [disabled]="isSubscribing">
+          CANCEL
+        </button>
+        
+        <button class="btn-pixel btn-confirm" (click)="confirmSubscription()" [disabled]="isSubscribing">
+          {{ isSubscribing ? 'PROCESSING...' : 'CONFIRM & PAY' }}
+        </button>
+      </div>
+      
+    </div>
+  </div>
+</div>

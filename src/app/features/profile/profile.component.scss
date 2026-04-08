@@ -1,0 +1,141 @@
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  min-height: calc(100vh - 80px);
+}
+
+.header-section {
+  text-align: center;
+  margin-bottom: 40px;
+
+  .page-title {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+    text-shadow: 4px 4px 0px var(--color-black);
+  }
+}
+
+.loading-state {
+  font-family: var(--font-title);
+  color: var(--color-secondary);
+  font-size: 1.5rem;
+  margin-top: 50px;
+}
+
+.blink {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% { opacity: 0; }
+}
+
+.error-state {
+  text-align: center;
+  border-color: var(--color-error);
+  
+  p {
+    color: var(--color-error);
+    font-family: var(--font-title);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.box-title {
+  font-size: 1.2rem;
+  color: var(--color-secondary);
+  margin-bottom: 20px;
+  text-align: center;
+  border-bottom: 2px dashed #333;
+  padding-bottom: 10px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  
+  .label {
+    font-family: var(--font-title);
+    font-size: 0.8rem;
+    color: var(--color-primary);
+  }
+  
+  .value {
+    color: var(--color-text);
+  }
+  
+  .highlight {
+    color: var(--color-secondary);
+    font-family: var(--font-title);
+    font-size: 1rem;
+  }
+  
+  .status-active {
+    color: #00ff00;
+    font-family: var(--font-title);
+    font-size: 0.9rem;
+  }
+}
+
+.action-area {
+  margin-top: 25px;
+  text-align: center;
+  
+  .btn-library {
+    width: 100%;
+    display: block;
+  }
+}
+
+.no-sub-state {
+  text-align: center;
+  padding: 10px 0;
+  
+  .status-inactive {
+    color: var(--color-error);
+    font-family: var(--font-title);
+    font-size: 1rem;
+    margin-bottom: 15px;
+  }
+  
+  .sub-msg {
+    color: #aaa;
+    margin-bottom: 20px;
+  }
+  
+  .btn-upgrade {
+    width: 100%;
+    display: block;
+  }
+}
+
+.logout-area {
+  margin-top: 10px;
+  
+  .btn-logout {
+    width: 100%;
+    background-color: #222;
+    color: var(--color-error);
+    border-color: #444;
+    
+    &:hover {
+      background-color: var(--color-error);
+      color: var(--color-black);
+      border-color: var(--color-black);
+    }
+  }
+}
