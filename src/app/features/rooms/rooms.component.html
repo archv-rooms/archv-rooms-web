@@ -1,0 +1,81 @@
+
+<!-- HEADER TOPO -->
+<div class="topbar">
+
+  <!-- LOGO ESQUERDA -->
+  <div class="logo-top">
+  <img src="/assets/container.png" alt="Projeto X Logo">
+  </div>
+
+  <!-- LINKS CENTRAIS -->
+  <div class="nav-center">
+    <a routerLink="/">Home</a>
+    <a routerLink="/library">Library</a>
+    <a routerLink="/pricing">Pricing</a>
+    <a routerLink="/login">Login</a>
+  </div>
+
+  <!-- MENU DIREITA -->
+  <div class="menu-top">
+    ☰
+  </div>
+
+</div>
+
+<!-- Fundo Parallax -->
+<div class="parallax-bg">
+  <div class="stars layer1"></div>
+  <div class="stars layer2"></div>
+  <div class="stars layer3"></div>
+</div>
+
+<div class="rooms-container">
+
+  <h2 class="section-title">► LOJA DE JOGOS</h2>
+
+  <!-- FILTROS -->
+  <div class="filters pixel-box">
+
+    <input
+      class="pixel-input"
+      [(ngModel)]="search"
+      placeholder="Buscar jogo..."
+    />
+
+    <select class="pixel-select" [(ngModel)]="platformFilter">
+      <option value="">TODOS OS CONSOLES</option>
+      <option value="PC">PC</option>
+      <option value="PS5">PS5</option>
+      <option value="Xbox">XBOX</option>
+    </select>
+
+  </div>
+
+  <!-- GRID -->
+  <div class="games-grid">
+
+    <div class="game-card pixel-box" *ngFor="let game of filteredGames">
+
+      <img [src]="game.image" />
+
+      <h3 class="game-name">{{ game.name }}</h3>
+
+      <p class="price" *ngIf="game.price > 0">
+        R$ {{ game.price }}
+      </p>
+
+      <p class="price free" *ngIf="game.price === 0">
+        GRÁTIS
+      </p>
+
+      <p class="platform">{{ game.platform }}</p>
+
+      <button class="btn-pixel">
+        {{ game.price > 0 ? 'COMPRAR' : 'INSTALAR' }}
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

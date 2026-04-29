@@ -1,0 +1,220 @@
+
+.rooms-container {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  min-height: calc(100vh - 80px);
+}
+
+/* =======================
+   🔝 TOPBAR (NOVO)
+======================= */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+  background: rgba(0,0,0,0.9);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+/* LOGO ESQUERDA */
+.logo-top {
+  background: red;
+}
+
+/* ANIMAÇÃO DO NEON */
+@keyframes neonGlow {
+  from {
+    text-shadow:
+      0 0 5px #ffd54a,
+      0 0 10px #ffd54a,
+      0 0 20px #ffb300,
+      0 0 30px #ff8f00;
+    transform: scale(1);
+  }
+
+  to {
+    text-shadow:
+      0 0 10px #fff176,
+      0 0 20px #ffd54a,
+      0 0 40px #ffb300,
+      0 0 60px #ff8f00;
+    transform: scale(1.02);
+  }
+}
+/* LINKS CENTRO */
+.nav-center {
+  display: flex;
+  gap: 25px;
+}
+
+.nav-center a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.nav-center a:hover {
+  color: var(--color-secondary);
+}
+
+/* MENU DIREITA */
+.menu-top {
+  font-size: 1.5rem;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+/* RESPONSIVO TOPBAR */
+@media (max-width: 700px) {
+  .nav-center {
+    display: none;
+  }
+}
+
+/* =======================
+   🌌 PARALLAX
+======================= */
+
+.parallax-bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 0;
+  background: radial-gradient(circle at center, #1a0b2e 0%, #0a0015 100%);
+  overflow: hidden;
+}
+
+.stars {
+  position: absolute;
+  width: 200%; height: 200%;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+    radial-gradient(2px 2px at 90px 40px, #fff, transparent),
+    radial-gradient(2px 2px at 130px 80px, #fff, transparent);
+  background-size: 200px 200px;
+}
+
+.layer1 { animation: moveStars 50s linear infinite; opacity: 0.5; }
+.layer2 { animation: moveStars 35s linear infinite; opacity: 0.7; }
+.layer3 { animation: moveStars 20s linear infinite; opacity: 1; }
+
+@keyframes moveStars {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+/* =======================
+   🏷️ TÍTULO
+======================= */
+
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: var(--color-primary);
+  text-shadow: 4px 4px 0 #000;
+}
+
+/* =======================
+   🔎 FILTROS
+======================= */
+
+.filters {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.pixel-input, .pixel-select {
+  background: #050505;
+  border: 3px solid var(--color-primary);
+  color: var(--color-primary);
+  padding: 10px;
+  flex: 1;
+  min-width: 200px;
+}
+
+/* =======================
+   🎮 GRID
+======================= */
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  width: 100%;
+  max-width: 900px;
+}
+
+/* CARD */
+.game-card {
+  background: rgba(0,0,0,0.85);
+  border: 2px solid var(--color-primary);
+  padding: 15px;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.game-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 15px var(--color-primary);
+}
+
+.game-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.game-name {
+  color: var(--color-primary);
+  margin: 10px 0;
+}
+
+.price {
+  margin-bottom: 5px;
+}
+
+.free {
+  color: #00ff88;
+}
+
+.platform {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+
+/* BOTÃO */
+.btn-pixel {
+  width: 100%;
+  padding: 10px;
+}
+
+/* =======================
+   📱 RESPONSIVO GRID
+======================= */
+
+@media (max-width: 900px) {
+  .games-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .games-grid {
+    grid-template-columns: 1fr;
+  }
+}
