@@ -36,18 +36,17 @@ export class HomeComponent implements OnInit, OnDestroy {
   ];
 
   platforms = [
-    { icon: '🎮', name: 'SNES',        count: '3.241', pct: 92 },
-    { icon: '📀', name: 'PS1',         count: '2.887', pct: 82 },
-    { icon: '🕹️', name: 'N64',         count: '1.654', pct: 47 },
-    { icon: '⚡', name: 'MEGA DRIVE',  count: '2.103', pct: 60 },
-    { icon: '🔵', name: 'GAME BOY',    count: '1.820', pct: 52 },
-    { icon: '🟡', name: 'GBA',         count: '1.440', pct: 41 },
-    { icon: '🔴', name: 'NES',         count: '987',   pct: 28 },
-    { icon: '⬛', name: 'SATURN',      count: '700',   pct: 20 },
+    { icon: '🎮', name: 'SNES',       count: '3.241', pct: 92 },
+    { icon: '📀', name: 'PS1',        count: '2.887', pct: 82 },
+    { icon: '🕹️', name: 'N64',        count: '1.654', pct: 47 },
+    { icon: '⚡', name: 'MEGA DRIVE', count: '2.103', pct: 60 },
+    { icon: '🔵', name: 'GAME BOY',   count: '1.820', pct: 52 },
+    { icon: '🟡', name: 'GBA',        count: '1.440', pct: 41 },
+    { icon: '🔴', name: 'NES',        count: '987',   pct: 28 },
+    { icon: '⬛', name: 'SATURN',     count: '700',   pct: 20 },
   ];
 
   terminalLines: { text: string; status: string; value?: string }[] = [];
-
   feedLogs: { type: string; text: string }[] = [];
 
   private allLogs = [
@@ -87,15 +86,28 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.bootTimeout)  clearTimeout(this.bootTimeout);
   }
 
+  // ── AUTH ────────────────────────────────────────────────
+
   private checkAuth(): void {
-    const token = localStorage.getItem('@ProjetoX:token');
+    const token   = localStorage.getItem('@ProjetoX:token');
     const userStr = localStorage.getItem('@ProjetoX:user');
     if (token) {
       this.isLoggedIn = true;
-      this.userName = userStr ? JSON.parse(userStr).name : 'USER';
+      this.userName   = userStr ? JSON.parse(userStr).name : 'USER';
       this.loadGames(token);
     }
   }
+
+  logout(): void {
+    localStorage.removeItem('@ProjetoX:token');
+    localStorage.removeItem('@ProjetoX:user');
+    this.isLoggedIn = false;
+    this.userName   = '';
+    this.games      = [];
+    this.router.navigate(['/login']);
+  }
+
+  // ── GAMES ───────────────────────────────────────────────
 
   private loadGames(token: string): void {
     this.loadingGames = true;
@@ -123,6 +135,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ── BOOT ────────────────────────────────────────────────
+
   private runBootSequence(): void {
     const lines = [
       { text: 'VERIFICANDO SINAL...', status: 'ok'  },
@@ -135,16 +149,33 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ── NAVIGATION ──────────────────────────────────────────
+
   navigate(path: string): void {
     this.router.navigate([path]);
   }
 
+  /**
+   * INITIALIZE_LINK:
+   * - Não logado → /register
+   * - Logado     → /library
+   */
   onInitializeLink(): void {
-    this.isLoggedIn ? this.router.navigate(['/library']) : this.router.navigate(['/register']);
+    this.isLoggedIn
+      ? this.router.navigate(['/library'])
+      : this.router.navigate(['/register']);
   }
 
+  /**
+   * Clique num jogo do grid:
+   * Vai para a biblioteca filtrada por ID, ou abra detalhes se tiver rota.
+   * Ajuste a rota abaixo conforme sua app-routing.
+   */
   onGameClick(game: Game): void {
-    this.router.navigate(['/rooms', game.id]);
+    // Se tiver página de detalhe do jogo:
+    // this.router.navigate(['/library', game.id]);
+    // Por enquanto vai para a biblioteca:
+    this.router.navigate(['/library']);
   }
 
   onImgError(event: Event): void {

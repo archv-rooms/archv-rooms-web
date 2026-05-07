@@ -25,7 +25,6 @@ export const routes: Routes = [
   },
   {
     path: 'library',
-    canActivate: [AuthGuard],
     loadComponent: () => import('./features/library/library.component').then(m => m.LibraryComponent)
   },
   {

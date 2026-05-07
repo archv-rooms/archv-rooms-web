@@ -1,50 +1,117 @@
-<div class="checkout-container">
-  <div class="pixel-box checkout-box">
-    <h2 class="checkout-title">CONFIRM SUBSCRIPTION</h2>
+<div class="checkout-wrapper">
 
-    <!-- Estado de Carregamento -->
-    <div *ngIf="isLoadingPlan" class="loading-state blink">
-      LOADING PLAN DATA...
+  <!-- Grid de fundo -->
+  <div class="bg-grid"></div>
+  <div class="scanlines"></div>
+
+  <div class="terminal-card">
+
+    <!-- Header terminal -->
+    <div class="terminal-header">
+      <span class="dot dot-red"></span>
+      <span class="dot dot-yellow"></span>
+      <span class="dot dot-green"></span>
+      <span class="terminal-label">PAYMENT_GATEWAY.exe</span>
     </div>
 
-    <!-- Estado de Erro -->
-    <div *ngIf="errorMessage" class="error-state">
-      <p>[SYSTEM ERROR]</p>
-      <p>{{ errorMessage }}</p>
-      <br>
-      <a routerLink="/pricing" class="btn-pixel btn-back">BACK TO PLANS</a>
-    </div>
+    <div class="terminal-body">
 
-    <!-- Detalhes do Plano e Confirmação -->
-    <div *ngIf="!isLoadingPlan && selectedPlan" class="checkout-content">
-      
-      <div class="plan-summary">
-        <h3 class="plan-name">{{ selectedPlan.name }} PLAN</h3>
-        <p class="plan-desc">{{ selectedPlan.description }}</p>
-        
-        <div class="separator"></div>
-        
-        <div class="price-row">
-          <span>TOTAL DUE:</span>
-          <span class="price-value">R$ {{ selectedPlan.price | number:'1.2-2' }} / mês</span>
+      <!-- Boot line -->
+      <div class="boot-line">
+        <span class="prompt">SYS &gt;</span>
+        <span class="boot-text typing">INITIALIZING SECURE CHECKOUT...</span>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="isLoadingPlan" class="state-block">
+        <p class="blink-text">▓▓▓▓▓▓░░░░ FETCHING PLAN DATA...</p>
+      </div>
+
+      <!-- Erro -->
+      <div *ngIf="errorMessage" class="state-block error-block">
+        <div class="error-header">
+          <span class="prompt err">ERR &gt;</span>
+          <span>SYSTEM_FAULT_DETECTED</span>
         </div>
+        <p class="error-msg">{{ errorMessage }}</p>
+        <a routerLink="/pricing" class="archv-btn btn-ghost">
+          <span class="btn-arrow">←</span> BACK_TO_PLANS
+        </a>
       </div>
 
-      <div class="warning-box">
-        <span class="alert-icon">!</span>
-        <p>Ao confirmar, sua assinatura atual (se houver) será substituída e o novo acesso será liberado imediatamente.</p>
-      </div>
+      <!-- Conteúdo principal -->
+      <div *ngIf="!isLoadingPlan && selectedPlan" class="checkout-content">
 
-      <div class="action-buttons">
-        <button class="btn-pixel btn-cancel" routerLink="/pricing" [disabled]="isSubscribing">
-          CANCEL
-        </button>
-        
-        <button class="btn-pixel btn-confirm" (click)="confirmSubscription()" [disabled]="isSubscribing">
-          {{ isSubscribing ? 'PROCESSING...' : 'CONFIRM & PAY' }}
-        </button>
+        <!-- Separador -->
+        <div class="divider">
+          <span>── PLAN_SUMMARY ──────────────────────────</span>
+        </div>
+
+        <!-- Resumo do plano -->
+        <div class="plan-block">
+          <div class="plan-row">
+            <span class="field-label">PLAN_ID</span>
+            <span class="field-value accent">{{ selectedPlan.name | uppercase }}_TIER</span>
+          </div>
+          <div class="plan-row">
+            <span class="field-label">DESCRIPTION</span>
+            <span class="field-value muted">{{ selectedPlan.description }}</span>
+          </div>
+          <div class="plan-row">
+            <span class="field-label">STATUS</span>
+            <span class="field-value green">[ AVAILABLE ]</span>
+          </div>
+        </div>
+
+        <!-- Separador preço -->
+        <div class="divider">
+          <span>── BILLING ────────────────────────────────</span>
+        </div>
+
+        <div class="price-block">
+          <div class="price-row">
+            <span class="field-label">TOTAL_DUE</span>
+            <span class="price-value">R$ {{ selectedPlan.price | number:'1.2-2' }}<span class="price-unit">/MÊS</span></span>
+          </div>
+          <div class="price-row">
+            <span class="field-label">BILLING_CYCLE</span>
+            <span class="field-value muted">MONTHLY_RECURRING</span>
+          </div>
+        </div>
+
+        <!-- Alerta -->
+        <div class="divider">
+          <span>── NOTICE ──────────────────────────────────</span>
+        </div>
+
+        <div class="notice-block">
+          <span class="notice-icon">⚠</span>
+          <p>Ao confirmar, sua assinatura atual (se houver) será substituída e o novo acesso será liberado imediatamente.</p>
+        </div>
+
+        <!-- Ações -->
+        <div class="divider">
+          <span>── EXECUTE ─────────────────────────────────</span>
+        </div>
+
+        <div class="action-row">
+          <button
+            class="archv-btn btn-ghost"
+            routerLink="/pricing"
+            [disabled]="isSubscribing">
+            <span class="btn-arrow">←</span> ABORT
+          </button>
+          <button
+            class="archv-btn btn-primary"
+            (click)="confirmSubscription()"
+            [disabled]="isSubscribing">
+            <span class="btn-arrow">▶</span>
+            {{ isSubscribing ? 'PROCESSING...' : 'CONFIRM_&_PAY' }}
+          </button>
+        </div>
+
       </div>
-      
     </div>
+
   </div>
 </div>

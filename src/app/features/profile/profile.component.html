@@ -1,80 +1,109 @@
-<div class="profile-container">
-  <div class="header-section">
-    <h1 class="page-title">PLAYER STATUS</h1>
+<div class="profile-wrapper">
+
+  <div class="bg-grid"></div>
+  <div class="scanlines"></div>
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="boot-line">
+      <span class="prompt">SYS &gt;</span>
+      <span class="boot-text">USER_PROFILE.db — AUTHENTICATED SESSION</span>
+    </div>
+    <h1 class="page-title">PLAYER_STATUS</h1>
   </div>
 
-  <!-- Estado de Carregamento -->
-  <div *ngIf="isLoading" class="loading-state blink">
-    <p>LOADING PLAYER DATA...</p>
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-state">
+    <span class="blink-text">▓▓▓▓▓░░░░░ LOADING PLAYER DATA...</span>
   </div>
 
-  <!-- Estado de Erro -->
-  <div *ngIf="errorMessage" class="error-state pixel-box">
-    <p>[SYSTEM ERROR] {{ errorMessage }}</p>
-    <button class="btn-pixel" (click)="loadProfile()">RETRY</button>
+  <!-- Erro -->
+  <div *ngIf="errorMessage" class="error-card">
+    <div class="card-header">
+      <span class="cdot"></span><span class="cdot"></span><span class="cdot"></span>
+      <span class="card-label">ERROR_LOG</span>
+    </div>
+    <div class="card-body">
+      <p class="error-msg"><span class="prompt err">ERR &gt;</span> {{ errorMessage }}</p>
+      <button class="archv-btn btn-ghost" (click)="loadProfile()">↺ RETRY</button>
+    </div>
   </div>
 
-  <!-- Dados do Perfil -->
-  <div *ngIf="!isLoading && !errorMessage && userProfile" class="profile-content">
-    
-    <!-- Card do Usuário -->
-    <div class="pixel-box info-box">
-      <h2 class="box-title">ID CARD</h2>
-      
-      <div class="info-row">
-        <span class="label">NAME:</span>
-        <span class="value">{{ userProfile.name }}</span>
+  <!-- Perfil -->
+  <div *ngIf="!isLoading && !errorMessage && userProfile" class="profile-grid">
+
+    <!-- ID Card -->
+    <div class="terminal-card">
+      <div class="card-header">
+        <span class="cdot"></span><span class="cdot"></span><span class="cdot"></span>
+        <span class="card-label">ID_CARD.dat</span>
       </div>
-      
-      <div class="info-row">
-        <span class="label">E-MAIL:</span>
-        <span class="value">{{ userProfile.email }}</span>
-      </div>
-      
-      <div class="info-row">
-        <span class="label">JOINED:</span>
-        <span class="value">{{ userProfile.createdAt | date:'dd/MM/yyyy' }}</span>
+      <div class="card-body">
+        <div class="divider-line">── PLAYER_INFO ─────────────────</div>
+        <div class="info-row">
+          <span class="field-label">NAME</span>
+          <span class="field-value accent">{{ userProfile.name }}</span>
+        </div>
+        <div class="info-row">
+          <span class="field-label">E-MAIL</span>
+          <span class="field-value">{{ userProfile.email }}</span>
+        </div>
+        <div class="info-row">
+          <span class="field-label">JOINED</span>
+          <span class="field-value muted">{{ userProfile.createdAt | date:'dd/MM/yyyy' }}</span>
+        </div>
       </div>
     </div>
 
-    <!-- Card da Assinatura -->
-    <div class="pixel-box sub-box">
-      <h2 class="box-title">SUBSCRIPTION</h2>
-      
-      <ng-container *ngIf="activeSubscription; else noSub">
-        <div class="info-row">
-          <span class="label">PLAN:</span>
-          <span class="value highlight">{{ activeSubscription.plan.name }}</span>
-        </div>
-        
-        <div class="info-row">
-          <span class="label">STATUS:</span>
-          <span class="value status-active">[{{ activeSubscription.status }}]</span>
-        </div>
-        
-        <div class="info-row">
-          <span class="label">STARTED:</span>
-          <span class="value">{{ activeSubscription.createdAt | date:'dd/MM/yyyy' }}</span>
-        </div>
+    <!-- Subscription Card -->
+    <div class="terminal-card">
+      <div class="card-header">
+        <span class="cdot"></span><span class="cdot"></span><span class="cdot"></span>
+        <span class="card-label">SUBSCRIPTION.dat</span>
+      </div>
+      <div class="card-body">
+        <div class="divider-line">── ACCESS_LEVEL ─────────────────</div>
 
-        <div class="action-area">
-          <a routerLink="/library" class="btn-pixel btn-library">ACCESS LIBRARY</a>
-        </div>
-      </ng-container>
+        <ng-container *ngIf="activeSubscription; else noSub">
+          <div class="info-row">
+            <span class="field-label">PLAN</span>
+            <span class="field-value gold">{{ activeSubscription.plan.name | uppercase }}</span>
+          </div>
+          <div class="info-row">
+            <span class="field-label">STATUS</span>
+            <span class="field-value green">[ {{ activeSubscription.status | uppercase }} ]</span>
+          </div>
+          <div class="info-row">
+            <span class="field-label">SINCE</span>
+            <span class="field-value muted">{{ activeSubscription.createdAt | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="card-action">
+            <a routerLink="/library" class="archv-btn btn-primary">
+              <span>▶</span> ACCESS_LIBRARY
+            </a>
+          </div>
+        </ng-container>
 
-      <ng-template #noSub>
-        <div class="no-sub-state">
-          <p class="status-inactive">[NO ACTIVE SUBSCRIPTION]</p>
-          <p class="sub-msg">You need a plan to access the ROM repository.</p>
-          <a routerLink="/pricing" class="btn-pixel btn-upgrade">VIEW PLANS</a>
-        </div>
-      </ng-template>
+        <ng-template #noSub>
+          <div class="no-sub">
+            <p class="no-sub-status">[ NO_ACTIVE_SUBSCRIPTION ]</p>
+            <p class="no-sub-msg">You need a plan to access the ROM repository.</p>
+            <a routerLink="/pricing" class="archv-btn btn-ghost full-width">
+              <span>▶</span> VIEW_PLANS
+            </a>
+          </div>
+        </ng-template>
+
+      </div>
     </div>
 
-    <!-- Botão de Logout -->
-    <div class="logout-area">
-      <button class="btn-pixel btn-logout" (click)="logout()">LOGOUT / QUIT GAME</button>
+    <!-- Logout -->
+    <div class="logout-row">
+      <button class="archv-btn btn-logout" (click)="logout()">
+        <span>⏻</span> LOGOUT / QUIT_GAME
+      </button>
     </div>
 
   </div>
+
 </div>

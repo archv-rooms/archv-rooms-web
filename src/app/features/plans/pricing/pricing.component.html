@@ -1,35 +1,74 @@
-<div class="pricing-container">
-  <div class="header-section">
-    <h1 class="page-title">CHOOSE YOUR CLASS</h1>
-    <p class="page-subtitle">Select a subscription plan to access the ROM repository.</p>
+<div class="pricing-wrapper">
+
+  <div class="bg-grid"></div>
+  <div class="scanlines"></div>
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="boot-line">
+      <span class="prompt">SYS &gt;</span>
+      <span class="boot-text">SUBSCRIPTION_TIERS.db — SELECT YOUR ACCESS CLASS</span>
+    </div>
+    <h1 class="page-title">CHOOSE_YOUR_CLASS</h1>
+    <p class="page-sub">Select a subscription plan to access the ROM repository.</p>
   </div>
 
+  <!-- Loading -->
   <div class="loading-state" *ngIf="isLoading">
-    <p class="blink">LOADING PLANS...</p>
+    <span class="blink-text">▓▓▓▓▓░░░░░ LOADING PLANS...</span>
   </div>
 
+  <!-- Erro -->
   <div class="error-state pixel-box" *ngIf="errorMessage">
-    <p>[SYSTEM ERROR] {{ errorMessage }}</p>
-    <button class="btn-pixel" (click)="loadPlans()">RETRY</button>
+    <p class="error-msg"><span class="prompt err">ERR &gt;</span> {{ errorMessage }}</p>
+    <button class="archv-btn btn-ghost" (click)="loadPlans()">↺ RETRY</button>
   </div>
 
-  <div class="pricing-grid" *ngIf="!isLoading && !errorMessage">
-    <div class="plan-card pixel-box" *ngFor="let plan of plans">
-      <div class="plan-icon">{{ plan.icon }}</div>
-      <h2 class="plan-name">{{ plan.name }}</h2>
-      <p class="plan-desc">{{ plan.description }}</p>
-      
-      <div class="plan-price">
-        R$ {{ plan.price | number:'1.2-2' }}<span>/mês</span>
+  <!-- Grid de planos -->
+  <div class="plans-grid" *ngIf="!isLoading && !errorMessage">
+    <div class="plan-card" *ngFor="let plan of plans; let i = index" [attr.data-tier]="i">
+
+      <!-- Header do card -->
+      <div class="card-header">
+        <div class="card-dots">
+          <span class="cdot"></span><span class="cdot"></span><span class="cdot"></span>
+        </div>
+        <span class="card-label">TIER_{{ i + 1 }}</span>
       </div>
-      
-      <ul class="plan-benefits">
-        <li *ngFor="let benefit of plan.benefits">
-          <span class="bullet">►</span> {{ benefit }}
-        </li>
-      </ul>
-      
-      <a [routerLink]="['/checkout', plan.id]" class="btn-pixel plan-btn">{{ plan.buttonText }}</a>
+
+      <!-- Ícone + nome -->
+      <div class="card-hero">
+        <div class="plan-icon">{{ plan.icon }}</div>
+        <h2 class="plan-name">{{ plan.name | uppercase }}</h2>
+        <p class="plan-desc">{{ plan.description }}</p>
+      </div>
+
+      <!-- Preço -->
+      <div class="price-block">
+        <div class="divider-line">── PRICE ─────────────────</div>
+        <div class="price-display">
+          <span class="currency">R$</span>
+          <span class="amount">{{ plan.price | number:'1.2-2' }}</span>
+          <span class="period">/mês</span>
+        </div>
+      </div>
+
+      <!-- Benefícios -->
+      <div class="benefits-block">
+        <div class="divider-line">── FEATURES ───────────────</div>
+        <ul class="benefits-list">
+          <li *ngFor="let benefit of plan.benefits">
+            <span class="bullet">▶</span> {{ benefit }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- CTA -->
+      <a [routerLink]="['/checkout', plan.id]" class="archv-btn btn-plan">
+        <span>▶</span> {{ plan.buttonText }}
+      </a>
+
     </div>
   </div>
+
 </div>

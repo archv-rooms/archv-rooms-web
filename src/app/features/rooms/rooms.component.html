@@ -1,81 +1,84 @@
+<div class="rooms-wrapper">
 
-<!-- HEADER TOPO -->
-<div class="topbar">
+  <div class="bg-grid"></div>
+  <div class="scanlines"></div>
 
-  <!-- LOGO ESQUERDA -->
-  <div class="logo-top">
-  <img src="/assets/container.png" alt="Projeto X Logo">
+  <!-- Parallax stars -->
+  <div class="parallax-bg">
+    <div class="stars layer1"></div>
+    <div class="stars layer2"></div>
+    <div class="stars layer3"></div>
   </div>
 
-  <!-- LINKS CENTRAIS -->
-  <div class="nav-center">
-    <a routerLink="/">Home</a>
-    <a routerLink="/library">Library</a>
-    <a routerLink="/pricing">Pricing</a>
-    <a routerLink="/login">Login</a>
-  </div>
+  <div class="rooms-content">
 
-  <!-- MENU DIREITA -->
-  <div class="menu-top">
-    ☰
-  </div>
+    <!-- Header -->
+    <div class="page-header">
+      <div class="boot-line">
+        <span class="prompt">SYS &gt;</span>
+        <span class="boot-text">GAME_STORE.db — BROWSING ROM REPOSITORY</span>
+      </div>
+      <h1 class="page-title">LOJA_DE_JOGOS</h1>
+    </div>
 
-</div>
+    <!-- Filtros -->
+    <div class="filters-bar">
+      <div class="filter-card">
+        <span class="filter-label">SEARCH</span>
+        <input
+          class="pixel-input"
+          [(ngModel)]="search"
+          placeholder="BUSCAR_JOGO..."
+        />
+      </div>
+      <div class="filter-card">
+        <span class="filter-label">PLATFORM</span>
+        <select class="pixel-select" [(ngModel)]="platformFilter">
+          <option value="">ALL_CONSOLES</option>
+          <option value="PC">PC</option>
+          <option value="PS5">PS5</option>
+          <option value="Xbox">XBOX</option>
+        </select>
+      </div>
+      <div class="filter-meta">
+        <span class="meta-text">{{ filteredGames.length }} RECORDS FOUND</span>
+      </div>
+    </div>
 
-<!-- Fundo Parallax -->
-<div class="parallax-bg">
-  <div class="stars layer1"></div>
-  <div class="stars layer2"></div>
-  <div class="stars layer3"></div>
-</div>
+    <!-- Grid -->
+    <div class="games-grid">
+      <div class="game-card" *ngFor="let game of filteredGames">
 
-<div class="rooms-container">
+        <!-- Image -->
+        <div class="card-img-wrap">
+          <img [src]="game.image" [alt]="game.name" />
+          <div class="img-overlay"></div>
+          <div class="platform-badge">{{ game.platform }}</div>
+        </div>
 
-  <h2 class="section-title">► LOJA DE JOGOS</h2>
+        <!-- Info -->
+        <div class="card-info">
+          <div class="card-header-bar">
+            <span class="cdot"></span><span class="cdot"></span><span class="cdot"></span>
+          </div>
+          <h3 class="game-name">{{ game.name }}</h3>
+          <div class="price-row">
+            <span class="price free" *ngIf="game.price === 0">FREE_TO_PLAY</span>
+            <span class="price paid" *ngIf="game.price > 0">R$ {{ game.price | number:'1.2-2' }}</span>
+          </div>
+          <button class="archv-btn" [class.btn-install]="game.price === 0" [class.btn-buy]="game.price > 0">
+            <span>{{ game.price > 0 ? '▶ COMPRAR' : '⬇ INSTALAR' }}</span>
+          </button>
+        </div>
 
-  <!-- FILTROS -->
-  <div class="filters pixel-box">
+      </div>
+    </div>
 
-    <input
-      class="pixel-input"
-      [(ngModel)]="search"
-      placeholder="Buscar jogo..."
-    />
-
-    <select class="pixel-select" [(ngModel)]="platformFilter">
-      <option value="">TODOS OS CONSOLES</option>
-      <option value="PC">PC</option>
-      <option value="PS5">PS5</option>
-      <option value="Xbox">XBOX</option>
-    </select>
-
-  </div>
-
-  <!-- GRID -->
-  <div class="games-grid">
-
-    <div class="game-card pixel-box" *ngFor="let game of filteredGames">
-
-      <img [src]="game.image" />
-
-      <h3 class="game-name">{{ game.name }}</h3>
-
-      <p class="price" *ngIf="game.price > 0">
-        R$ {{ game.price }}
-      </p>
-
-      <p class="price free" *ngIf="game.price === 0">
-        GRÁTIS
-      </p>
-
-      <p class="platform">{{ game.platform }}</p>
-
-      <button class="btn-pixel">
-        {{ game.price > 0 ? 'COMPRAR' : 'INSTALAR' }}
-      </button>
-
+    <!-- Empty state -->
+    <div class="empty-state" *ngIf="filteredGames.length === 0">
+      <p class="blink-text">[ NO_RECORDS_FOUND ]</p>
+      <p class="empty-sub">Tente outro filtro ou termo de busca.</p>
     </div>
 
   </div>
-
 </div>
