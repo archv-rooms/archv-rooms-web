@@ -1,49 +1,195 @@
-<!-- Fundo Parallax -->
-<div class="parallax-bg">
-  <div class="stars layer1"></div>
-  <div class="stars layer2"></div>
-  <div class="stars layer3"></div>
-</div>
+<!-- home.component.html -->
+<div class="home-wrapper">
 
-<div class="home-container">
-  <!-- Hero Section com Terminal -->
-  <section class="hero">
-    <div class="terminal pixel-box">
-      <div class="terminal-header">
-        <div class="terminal-buttons">
-          <span class="dot red"></span> 
-          <span class="dot yellow"></span>
-          <span class="dot green"></span>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <span class="sidebar-label">ARCHV</span>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-btn active" title="Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
+      </button>
+      <button class="nav-btn" title="Biblioteca">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
+        </svg>
+      </button>
+      <button class="nav-btn" title="Sinal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M1 6C5.5 1.5 18.5 1.5 23 6"/>
+          <path d="M3.5 10C7 6.5 17 6.5 20.5 10"/>
+          <path d="M6.5 14C9 11.5 15 11.5 17.5 14"/>
+          <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
+        </svg>
+      </button>
+      <button class="nav-btn" title="Configurações">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-brand">▣ ARCHV.ROOMS</span>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-status">LOGIN</span>
+      </div>
+    </header>
+
+    <!-- SCROLLABLE BODY -->
+    <div class="scroll-body">
+
+      <!-- ① TERMINAL BOOT PANEL -->
+      <div class="terminal-panel">
+        <div class="terminal-line">
+          <span class="term-icon">▣</span>
+          <span class="term-text">ARCHV.ROOMS OS v2.4.1</span>
         </div>
-        <span class="terminal-title">PROJETO X</span>
+        <div class="terminal-line">
+          <span class="term-prompt">&gt;</span>
+          <span class="term-text">VERIFICANDO SINAL... <span class="term-ok">[OK]</span></span>
+        </div>
+        <div class="terminal-line">
+          <span class="term-prompt">&gt;</span>
+          <span class="term-text">CARREGANDO ACERVO... <span class="term-pct">[90.4%]</span></span>
+        </div>
       </div>
-      <div class="terminal-body">
-        <p *ngFor="let line of terminalLines"><span class="prompt">></span> {{ line }}</p>
-        <p *ngIf="messageIndex < 3">
-          <span class="prompt">></span> {{ currentTyping }}<span class="cursor">_</span>
-        </p>
-      </div>
-    </div>
-  </section>
 
-  <!-- Grid de Planos -->
-  <section class="pricing-section">
-    <h2 class="section-title">CHOOSE YOUR CLASS</h2>
-    
-    <div class="pricing-grid">
-      <div class="plan-card pixel-box" *ngFor="let plan of plans">
-        <div class="plan-icon">{{ plan.icon }}</div>
-        <h3 class="plan-name">{{ plan.name }}</h3>
-        <div class="plan-price">{{ plan.price }}<span>/mês</span></div>
-        
-        <ul class="plan-benefits">
-          <li *ngFor="let benefit of plan.benefits">
-            <span class="bullet">►</span> {{ benefit }}
-          </li>
-        </ul>
-        
-        <a [routerLink]="['/checkout', plan.id]" class="btn-pixel plan-btn">{{ plan.buttonText }}</a>
-      </div>
-    </div>
-  </section>
+      <!-- ② HERO -->
+      <section class="hero">
+        <p class="hero-coord">COORD: 35.6895° N, 139.6917° E</p>
+        <h1 class="hero-title">archv.rooms</h1>
+        <p class="hero-sub">O maior arquivo de sinais retrô da rede.<br>Preservado. Verificado. Online.</p>
+        <div class="hero-actions">
+          <button class="btn btn-outline" (click)="onInitializeLink()">INITIALIZE_LINK</button>
+          <button class="btn btn-ghost" (click)="onViewNodes()">VIEW_NODES</button>
+        </div>
+        <div class="hero-scroll-hint">▼ SCROLL TO EXPLORE</div>
+      </section>
+
+      <!-- ③ STATS BAR -->
+      <section class="stats-bar">
+        <div class="stat-item" *ngFor="let stat of stats">
+          <span class="stat-value">{{ stat.value }}</span>
+          <span class="stat-label">{{ stat.label }}</span>
+        </div>
+      </section>
+
+      <!-- ④ FEATURED BROADCAST -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-label">FEATURED_BROADCAST</span>
+          <span class="section-meta">GLOBAL_STRENGTH: NOMINAL // PKT_LOSS: 0%</span>
+          <span class="section-vol">ARCHIVE_VOL_01_3</span>
+        </div>
+        <div class="broadcast-grid">
+          <div class="broadcast-card"
+            *ngFor="let card of broadcastCards"
+            [class.featured]="card.type === 'featured'"
+            [class.small]="card.type === 'small'">
+            <div class="card-badge" *ngIf="card.label" [class.secondary]="card.type === 'secondary'">{{ card.label }}</div>
+            <div class="card-thumb">
+              <div class="card-scanline"></div>
+              <div class="card-img-placeholder" [ngClass]="card.imgClass"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ⑤ PLATAFORMAS -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-label">PLATFORM_INDEX</span>
+          <span class="section-meta">{{ platforms.length }} PLATAFORMAS INDEXADAS // SINAL ATIVO</span>
+        </div>
+        <div class="platforms-grid">
+          <div class="platform-card" *ngFor="let p of platforms">
+            <div class="platform-icon">{{ p.icon }}</div>
+            <div class="platform-info">
+              <span class="platform-name">{{ p.name }}</span>
+              <span class="platform-count">{{ p.count }} arquivos</span>
+            </div>
+            <div class="platform-bar">
+              <div class="platform-bar-fill" [style.width.%]="p.pct"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ⑥ ÚLTIMOS ADICIONADOS -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-label">RECENT_UPLOADS</span>
+          <span class="section-meta">ÚLTIMAS 24H // AUTO_SYNC: ON</span>
+          <a class="section-link">VER TUDO &rsaquo;</a>
+        </div>
+        <div class="recent-scroll">
+          <div class="recent-card" *ngFor="let item of recentItems">
+            <div class="recent-thumb">
+              <div class="card-scanline"></div>
+              <div class="recent-img" [ngClass]="item.imgClass"></div>
+              <span class="recent-platform-badge">{{ item.platform }}</span>
+            </div>
+            <p class="recent-title">{{ item.title }}</p>
+            <p class="recent-id">{{ item.id }}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ⑦ LIVE SIGNAL FEED -->
+      <section class="section feed-section">
+        <div class="section-header">
+          <span class="section-label">LIVE_SIGNAL_FEED</span>
+          <span class="feed-live"><span class="live-dot"></span> LIVE</span>
+        </div>
+        <div class="feed-body">
+          <div class="feed-log" *ngFor="let log of feedLogs" [ngClass]="'log-' + log.type">
+            <span class="log-type">[{{ log.type.toUpperCase() }}]</span>
+            <span class="log-text">{{ log.text }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ⑧ CTA FINAL -->
+      <section class="cta-section">
+        <div class="cta-inner">
+          <p class="cta-pre">// ACESSO COMPLETO AO ARQUIVO</p>
+          <h2 class="cta-title">Preservando sinais.<br>Um artefato por vez.</h2>
+          <p class="cta-body">
+            O archv.rooms é um arquivo vivo de jogos retrô. Cada ROM é verificada,
+            catalogada e transmitida em sinal puro. Faça parte da rede de custódios.
+          </p>
+          <div class="cta-actions">
+            <button class="btn btn-outline" (click)="onInitializeLink()">INITIALIZE_LINK</button>
+            <button class="btn btn-ghost" (click)="onViewPricing()">VER PLANOS</button>
+          </div>
+          <p class="cta-note">SINAL GRATUITO DISPONÍVEL // SEM CARTÃO NECESSÁRIO</p>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="site-footer">
+        <span>ARCHV.ROOMS OS v2.4.1</span>
+        <span>COORD: 35.6895° N, 139.6917° E</span>
+        <span>© 2025 ARCHV_SYSTEMS</span>
+      </footer>
+
+    </div><!-- /scroll-body -->
+  </main>
+
+  <!-- CRT OVERLAY -->
+  <div class="crt-overlay"></div>
+  <div class="scanlines"></div>
 </div>
