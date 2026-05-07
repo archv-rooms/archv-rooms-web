@@ -1,16 +1,44 @@
-.rooms-wrapper {
-  position: relative;
-  overflow: hidden;
-  min-height: calc(100vh - 80px);
+// rooms.component.scss
+
+// ── TOKENS ───────────────────────────────────────────────
+$bg:            #0a0a0f;
+$bg-panel:      #0f0f18;
+$bg-card:       #13131e;
+$border:        #1e1e2e;
+$border-glow:   #3d2e6e;
+$purple:        #7c3aed;
+$purple-dim:    #4c2a8a;
+$purple-bright: #a855f7;
+$text-dim:      #3a3a55;
+$text-muted:    #6b6b8a;
+$text-base:     #9999bb;
+$text-bright:   #ccccee;
+$green-ok:      #4ade80;
+$amber:         #f59e0b;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-/* Fundo */
+// ── WRAPPER ──────────────────────────────────────────────
+.rooms-wrapper {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: $bg;
+  font-family: 'Share Tech Mono', monospace;
+  color: $text-base;
+}
+
+// ── BACKGROUND ───────────────────────────────────────────
 .bg-grid {
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(0,255,255,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,255,0.025) 1px, transparent 1px);
+    linear-gradient(rgba(124, 58, 237, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.04) 1px, transparent 1px);
   background-size: 40px 40px;
   pointer-events: none;
   z-index: 0;
@@ -19,313 +47,357 @@
 .scanlines {
   position: fixed;
   inset: 0;
-  background: repeating-linear-gradient(
-    to bottom, transparent 0, transparent 3px,
-    rgba(0,0,0,0.1) 3px, rgba(0,0,0,0.1) 4px
-  );
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 3px,
+      rgba(0, 0, 0, 0.08) 3px,
+      rgba(0, 0, 0, 0.08) 4px
+    );
   pointer-events: none;
   z-index: 1;
 }
 
-/* Parallax */
 .parallax-bg {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
+  inset: 0;
   z-index: 0;
-  background: radial-gradient(circle at 30% 50%, #0d1a2e 0%, #050a0f 100%);
+  background:
+    radial-gradient(circle at top, rgba(124, 58, 237, 0.12), transparent 55%),
+    $bg;
   overflow: hidden;
 }
 
 .stars {
   position: absolute;
-  width: 200%; height: 200%;
+  width: 200%;
+  height: 200%;
   background-image:
-    radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.5), transparent),
-    radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.4), transparent),
-    radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.3), transparent),
-    radial-gradient(1px 1px at 60px 120px, rgba(255,255,255,0.5), transparent),
-    radial-gradient(1px 1px at 170px 50px, rgba(255,255,255,0.4), transparent);
+    radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.35), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.25), transparent),
+    radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.15), transparent),
+    radial-gradient(1px 1px at 60px 120px, rgba(255,255,255,0.3), transparent);
   background-size: 200px 200px;
 }
 
-.layer1 { animation: moveStars 60s linear infinite; opacity: 0.4; }
-.layer2 { animation: moveStars 40s linear infinite; opacity: 0.6; }
-.layer3 { animation: moveStars 25s linear infinite; opacity: 0.9; }
+.layer1 { animation: moveStars 70s linear infinite; opacity: 0.2; }
+.layer2 { animation: moveStars 50s linear infinite; opacity: 0.3; }
+.layer3 { animation: moveStars 35s linear infinite; opacity: 0.4; }
 
 @keyframes moveStars {
   from { transform: translateY(0); }
   to   { transform: translateY(-50%); }
 }
 
-/* Conteúdo */
+// ── CONTENT ──────────────────────────────────────────────
 .rooms-content {
   position: relative;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 50px 20px 60px;
+  z-index: 5;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
 }
 
-/* Header */
+// ── HEADER ───────────────────────────────────────────────
 .page-header {
-  text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 28px;
 }
 
 .boot-line {
   display: flex;
-  justify-content: center;
   gap: 8px;
-  font-family: var(--font-title);
-  font-size: 0.7rem;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  font-size: 10px;
+  letter-spacing: 2px;
 }
 
-.prompt { color: var(--color-primary); }
-.boot-text { color: rgba(255,255,255,0.3); }
+.prompt {
+  color: $purple-bright;
+}
+
+.boot-text {
+  color: $text-dim;
+}
 
 .page-title {
-  font-family: var(--font-title);
-  font-size: clamp(1.6rem, 4vw, 2.5rem);
-  color: var(--color-primary);
-  text-shadow: 0 0 30px rgba(0,255,255,0.4), 4px 4px 0 #000;
-  letter-spacing: 3px;
+  font-family: 'VT323', monospace;
+  font-size: clamp(40px, 7vw, 72px);
+  font-weight: 400;
+  letter-spacing: 8px;
+  color: $text-bright;
+  text-shadow:
+    0 0 12px rgba($purple-bright, 0.25),
+    0 0 30px rgba($purple, 0.1);
 }
 
-/* Filtros */
+// ── FILTERS ──────────────────────────────────────────────
 .filters-bar {
   display: flex;
-  gap: 16px;
-  width: 100%;
-  max-width: 960px;
-  margin-bottom: 30px;
   flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 28px;
   align-items: flex-end;
 }
 
 .filter-card {
+  flex: 1;
+  min-width: 220px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  flex: 1;
-  min-width: 200px;
+  gap: 8px;
 }
 
 .filter-label {
-  font-family: var(--font-title);
-  font-size: 0.6rem;
-  color: rgba(0,255,255,0.4);
+  font-size: 9px;
   letter-spacing: 2px;
+  color: $text-dim;
 }
 
-.pixel-input, .pixel-select {
-  background: rgba(0,0,0,0.8);
-  border: 1px solid rgba(0,255,255,0.25);
-  color: var(--color-primary);
-  padding: 10px 14px;
-  font-family: var(--font-title);
-  font-size: 0.8rem;
+.pixel-input,
+.pixel-select {
+  width: 100%;
+  background: rgba($bg-panel, 0.95);
+  border: 1px solid $border;
+  color: $text-bright;
+  padding: 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
   letter-spacing: 1px;
   outline: none;
-  transition: border-color 0.15s;
+  transition: all 0.2s ease;
 
-  &:focus, &:hover {
-    border-color: var(--color-primary);
+  &:focus,
+  &:hover {
+    border-color: $purple-dim;
+    box-shadow: 0 0 10px rgba($purple, 0.12);
   }
 
-  &::placeholder { color: rgba(0,255,255,0.25); }
+  &::placeholder {
+    color: $text-dim;
+  }
 
-  option { background: #0a0f14; }
+  option {
+    background: $bg-panel;
+  }
 }
 
 .filter-meta {
-  display: flex;
-  align-items: flex-end;
   padding-bottom: 10px;
 }
 
 .meta-text {
-  font-family: var(--font-title);
-  font-size: 0.65rem;
-  color: rgba(255,255,255,0.25);
-  letter-spacing: 1px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: $text-dim;
 }
 
-/* Grid */
+// ── GRID ─────────────────────────────────────────────────
 .games-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  width: 100%;
-  max-width: 960px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
 }
 
-/* Card */
+// ── CARD ─────────────────────────────────────────────────
 .game-card {
-  background: rgba(0,0,0,0.85);
-  border: 1px solid rgba(0,255,255,0.15);
-  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-  display: flex;
-  flex-direction: column;
+  background: $bg-card;
+  border: 1px solid $border;
+  overflow: hidden;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
-    transform: translateY(-6px);
-    border-color: var(--color-primary);
-    box-shadow: 0 0 20px rgba(0,255,255,0.1);
+    transform: translateY(-4px);
+    border-color: $purple-dim;
+    box-shadow: 0 0 20px rgba($purple, 0.12);
 
-    .img-overlay {
-      opacity: 0;
+    img {
+      transform: scale(1.05);
     }
   }
 }
 
-/* Imagem */
+// ── IMAGE ────────────────────────────────────────────────
 .card-img-wrap {
   position: relative;
+  width: 100%;
+  height: 160px;
   overflow: hidden;
-  height: 140px;
+  background: $bg;
 }
 
 .card-img-wrap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
-  transition: transform 0.3s;
-}
-
-.game-card:hover .card-img-wrap img {
-  transform: scale(1.05);
+  transition: transform 0.3s ease;
 }
 
 .img-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.7) 100%);
-  transition: opacity 0.2s;
+  background:
+    linear-gradient(to bottom,
+      transparent 20%,
+      rgba(0,0,0,0.7) 100%);
 }
 
 .platform-badge {
   position: absolute;
-  top: 8px;
+  bottom: 8px;
   right: 8px;
-  font-family: var(--font-title);
-  font-size: 0.6rem;
-  color: #000;
-  background: var(--color-primary);
-  padding: 3px 7px;
+  z-index: 2;
+  font-size: 8px;
   letter-spacing: 1px;
-  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+  padding: 4px 8px;
+  background: rgba($purple, 0.9);
+  color: white;
+  text-transform: uppercase;
 }
 
-/* Info */
+// ── INFO ─────────────────────────────────────────────────
 .card-info {
   padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  flex-grow: 1;
+  gap: 10px;
+  height: 100%;
 }
 
 .card-header-bar {
   display: flex;
   gap: 5px;
-  margin-bottom: 4px;
 }
 
 .cdot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.15);
+  background: $border-glow;
 }
 
 .game-name {
-  font-family: var(--font-title);
-  font-size: 0.9rem;
-  color: var(--color-text);
+  font-size: 11px;
   letter-spacing: 1px;
-  line-height: 1.3;
+  color: $text-bright;
+  text-transform: uppercase;
+  line-height: 1.5;
 }
 
-.price-row { margin-bottom: 4px; }
-
-.price {
-  font-family: var(--font-title);
-  font-size: 0.75rem;
-  letter-spacing: 1px;
-
-  &.free { color: #00ff88; }
-  &.paid { color: var(--color-secondary); }
-}
-
-/* Botão */
-.archv-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px;
-  font-family: var(--font-title);
-  font-size: 0.72rem;
-  letter-spacing: 1px;
-  cursor: pointer;
-  border: none;
-  transition: all 0.15s;
+.price-row {
   margin-top: auto;
 }
 
+.price {
+  font-size: 10px;
+  letter-spacing: 1px;
+
+  &.free {
+    color: $green-ok;
+  }
+
+  &.paid {
+    color: $amber;
+  }
+}
+
+// ── BUTTON ───────────────────────────────────────────────
+.archv-btn {
+  margin-top: 6px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid $border;
+  background: transparent;
+  color: $text-bright;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
 .btn-install {
-  background: rgba(0,255,136,0.08);
-  color: #00ff88;
-  border: 1px solid rgba(0,255,136,0.25);
+  border-color: rgba($green-ok, 0.3);
+  color: $green-ok;
 
   &:hover {
-    background: #00ff88;
-    color: #000;
-    border-color: #00ff88;
+    background: rgba($green-ok, 0.12);
+    border-color: $green-ok;
   }
 }
 
 .btn-buy {
-  background: rgba(0,255,255,0.08);
-  color: var(--color-primary);
-  border: 1px solid rgba(0,255,255,0.2);
+  border-color: rgba($purple-bright, 0.3);
+  color: $purple-bright;
 
   &:hover {
-    background: var(--color-primary);
-    color: #000;
+    background: rgba($purple, 0.14);
+    border-color: $purple-bright;
   }
 }
 
-/* Empty state */
+// ── EMPTY ────────────────────────────────────────────────
 .empty-state {
-  margin-top: 60px;
   text-align: center;
+  padding: 60px 20px;
 }
 
 .blink-text {
-  font-family: var(--font-title);
-  color: var(--color-secondary);
-  font-size: 1rem;
-  animation: blink 1s step-end infinite;
+  font-size: 16px;
+  letter-spacing: 3px;
+  color: $purple-bright;
+  animation: blink 1s infinite;
 }
-
-@keyframes blink { 50% { opacity: 0; } }
 
 .empty-sub {
   margin-top: 10px;
-  color: rgba(255,255,255,0.3);
-  font-size: 0.85rem;
+  color: $text-muted;
+  font-size: 11px;
 }
 
-/* Responsivo */
-@media (max-width: 900px) {
-  .games-grid { grid-template-columns: repeat(2, 1fr); }
+@keyframes blink {
+  50% {
+    opacity: 0.3;
+  }
 }
 
-@media (max-width: 500px) {
-  .games-grid { grid-template-columns: 1fr; }
+// ── SCROLLBAR ────────────────────────────────────────────
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: $bg;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $border-glow;
+}
+
+// ── RESPONSIVE ───────────────────────────────────────────
+@media (max-width: 768px) {
+
+  .rooms-content {
+    padding: 24px 14px 40px;
+  }
+
+  .page-title {
+    letter-spacing: 4px;
+  }
+
+  .games-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-card {
+    width: 100%;
+  }
 }
