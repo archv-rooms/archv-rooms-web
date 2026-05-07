@@ -1,43 +1,191 @@
-<div class="library-container">
-  <div class="header-section">
-    <h1 class="page-title">ROM REPOSITORY</h1>
-    <p class="page-subtitle">Select a game to initialize the emulator.</p>
-  </div>
+<!-- library.component.html -->
+<div class="library-wrapper">
 
-  <!-- Estado de Carregamento -->
-  <div *ngIf="isLoading" class="loading-state blink">
-    <p>ACCESSING REPOSITORY...</p>
-  </div>
-
-  <!-- Estado de Erro / Sem Assinatura -->
-  <div *ngIf="errorMessage" class="error-state pixel-box">
-    <h2 class="error-title">[SYSTEM ALERT]</h2>
-    <p class="error-msg">{{ errorMessage }}</p>
-    
-    <div *ngIf="needsSubscription" class="action-area">
-      <p>You need an active plan to access the library.</p>
-      <a routerLink="/pricing" class="btn-pixel btn-upgrade">VIEW PLANS</a>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <span class="sidebar-label">ARCHV</span>
     </div>
-  </div>
+    <nav class="sidebar-nav">
+      <button class="nav-btn" title="Home" (click)="navigate('/home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
+      </button>
+      <button class="nav-btn active" title="Biblioteca">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
+        </svg>
+      </button>
+      <button class="nav-btn" title="Sinal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M1 6C5.5 1.5 18.5 1.5 23 6"/>
+          <path d="M3.5 10C7 6.5 17 6.5 20.5 10"/>
+          <path d="M6.5 14C9 11.5 15 11.5 17.5 14"/>
+          <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
+        </svg>
+      </button>
+      <button class="nav-btn" title="Pricing" (click)="navigate('/pricing')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+    </nav>
+  </aside>
 
-  <!-- Grid de Jogos -->
-  <div *ngIf="!isLoading && !errorMessage" class="games-grid">
-    <div class="game-card pixel-box" *ngFor="let game of games">
-      <div class="game-image-container">
-        <!-- Fallback visual caso não haja imagem real no banco -->
-        <img [src]="game.image || 'assets/placeholder-game.png'" [alt]="game.title" class="game-image" onerror="this.src='https://via.placeholder.com/250x250/111/0ff?text=NO+SIGNAL'">
-        <div class="console-badge">{{ game.console }}</div>
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-brand">▣ ARCHV.ROOMS</span>
+        <span class="topbar-sep">//</span>
+        <span class="topbar-page">LIBRARY</span>
       </div>
-      
-      <div class="game-info">
-        <h3 class="game-title">{{ game.title }}</h3>
-        <button class="btn-pixel btn-play">PLAY NOW</button>
+      <div class="topbar-right">
+        <span class="system-status">
+          SYSTEM_STATUS: <span class="status-val" [class.stable]="!loadingGames">{{ loadingGames ? 'LOADING' : 'STABLE' }}</span>
+        </span>
+        <span class="topbar-user" *ngIf="userName">{{ userName }}</span>
+        <button class="btn btn-ghost btn-sm" (click)="navigate('/login')" *ngIf="!userName">LOGIN</button>
+      </div>
+    </header>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <div class="filter-left">
+        <span class="filter-icon">▼</span>
+        <span class="filter-label">SIGNAL_FILTER:</span>
+        <button
+          class="filter-btn"
+          *ngFor="let f of filters"
+          [class.active]="activeFilter === f.value"
+          (click)="setFilter(f.value)">
+          {{ f.label }}
+        </button>
+      </div>
+      <div class="filter-right">
+        <span class="result-count">{{ filteredGames.length }} NODES_FOUND</span>
       </div>
     </div>
-    
-    <!-- Mensagem caso a biblioteca esteja vazia -->
-    <div *ngIf="games.length === 0" class="empty-state">
-      <p>NO GAMES FOUND FOR YOUR ACCESS LEVEL.</p>
+
+    <!-- SEARCH BAR -->
+    <div class="search-bar">
+      <span class="search-icon">⌕</span>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="SEARCH_ARCHIVE..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearch()" />
+      <span class="search-clear" *ngIf="searchQuery" (click)="clearSearch()">✕</span>
     </div>
-  </div>
+
+    <!-- CONTENT -->
+    <div class="library-body">
+
+      <!-- LOADING -->
+      <div class="loading-state" *ngIf="loadingGames">
+        <div class="loading-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <p class="loading-text">SINCRONIZANDO ACERVO...</p>
+      </div>
+
+      <!-- ERRO -->
+      <div class="error-state" *ngIf="gamesError && !loadingGames">
+        <span class="error-icon">⚠</span>
+        <p>{{ gamesError }}</p>
+        <button class="btn btn-outline btn-sm" (click)="loadGames()">RETRY</button>
+      </div>
+
+      <!-- NÃO LOGADO -->
+      <div class="locked-state" *ngIf="!isLoggedIn && !loadingGames">
+        <span class="lock-icon">🔒</span>
+        <p class="lock-title">SIGNAL RESTRICTED // ACESSO NEGADO</p>
+        <p class="lock-sub">Esta área requer autenticação ativa.</p>
+        <button class="btn btn-outline" (click)="navigate('/login')">INITIALIZE_LINK</button>
+      </div>
+
+      <!-- GRID DE JOGOS -->
+      <div class="games-grid" *ngIf="isLoggedIn && !loadingGames && !gamesError">
+
+        <!-- Sem resultados -->
+        <div class="no-results" *ngIf="filteredGames.length === 0">
+          <p class="no-results-text">// NENHUM SINAL ENCONTRADO PARA "{{ searchQuery }}"</p>
+        </div>
+
+        <div
+          class="game-card"
+          *ngFor="let game of filteredGames"
+          (click)="onGameClick(game)">
+
+          <!-- THUMB -->
+          <div class="game-thumb">
+            <img [src]="game.image" [alt]="game.title" (error)="onImgError($event)" />
+            <div class="card-scanline"></div>
+            <div class="card-overlay">
+              <span class="overlay-text">ACESSAR ARQUIVO</span>
+            </div>
+            <span class="console-badge">{{ game.console }}</span>
+            <span class="game-id-badge">ID: {{ game.id.toString().padStart(6, '0') }}</span>
+          </div>
+
+          <!-- INFO -->
+          <div class="game-info">
+            <p class="game-title">{{ game.title }}</p>
+            <div class="game-meta">
+              <span class="meta-item">CN: {{ game.console }}</span>
+              <span class="meta-item">LOC: {{ getRegion(game.console) }}</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- COORDS RODAPÉ -->
+      <div class="lib-footer" *ngIf="isLoggedIn && !loadingGames">
+        <span>LAT: 35.6895° N</span>
+        <span>LNG: 139.6917° E</span>
+        <span>NOD_TOTAL: {{ games.length }}</span>
+      </div>
+
+    </div><!-- /library-body -->
+
+    <!-- BOTTOM NAV (mobile style) -->
+    <nav class="bottom-nav">
+      <button class="bottom-btn active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
+        <span>NODE</span>
+      </button>
+      <button class="bottom-btn" (click)="toggleSearch()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <span>SCAN</span>
+      </button>
+      <button class="bottom-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+        </svg>
+        <span>SYNC</span>
+      </button>
+      <button class="bottom-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
+          <path d="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/>
+        </svg>
+        <span>RELAY</span>
+      </button>
+    </nav>
+
+  </main>
+
+  <div class="crt-overlay"></div>
+  <div class="scanlines"></div>
 </div>

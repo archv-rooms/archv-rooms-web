@@ -13,7 +13,7 @@
           <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
         </svg>
       </button>
-      <button class="nav-btn" title="Biblioteca">
+      <button class="nav-btn" title="Biblioteca" (click)="navigate('/library')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
         </svg>
@@ -26,7 +26,7 @@
           <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
         </svg>
       </button>
-      <button class="nav-btn" title="Configurações">
+      <button class="nav-btn" title="Pricing" (click)="navigate('/pricing')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="12" r="3"/>
           <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
@@ -40,30 +40,31 @@
 
     <!-- TOP BAR -->
     <header class="topbar">
-      <div class="topbar-left">
-        <span class="topbar-brand">▣ ARCHV.ROOMS</span>
-      </div>
+      <span class="topbar-brand">▣ ARCHV.ROOMS</span>
       <div class="topbar-right">
-        <span class="topbar-status">LOGIN</span>
+        <span class="topbar-user" *ngIf="isLoggedIn">{{ userName }}</span>
+        <button class="btn btn-ghost btn-sm" *ngIf="!isLoggedIn" (click)="navigate('/login')">LOGIN</button>
+        <button class="btn btn-outline btn-sm" *ngIf="!isLoggedIn" (click)="navigate('/register')">REGISTER</button>
       </div>
     </header>
 
     <!-- SCROLLABLE BODY -->
     <div class="scroll-body">
 
-      <!-- ① TERMINAL BOOT PANEL -->
+      <!-- ① TERMINAL BOOT -->
       <div class="terminal-panel">
         <div class="terminal-line">
           <span class="term-icon">▣</span>
           <span class="term-text">ARCHV.ROOMS OS v2.4.1</span>
         </div>
-        <div class="terminal-line">
+        <div class="terminal-line" *ngFor="let line of terminalLines">
           <span class="term-prompt">&gt;</span>
-          <span class="term-text">VERIFICANDO SINAL... <span class="term-ok">[OK]</span></span>
-        </div>
-        <div class="terminal-line">
-          <span class="term-prompt">&gt;</span>
-          <span class="term-text">CARREGANDO ACERVO... <span class="term-pct">[90.4%]</span></span>
+          <span class="term-text">
+            {{ line.text }}
+            <span class="term-ok" *ngIf="line.status === 'ok'">[OK]</span>
+            <span class="term-pct" *ngIf="line.status === 'pct'">[{{ line.value }}]</span>
+            <span class="term-err" *ngIf="line.status === 'err'">[ERRO]</span>
+          </span>
         </div>
       </div>
 
@@ -74,7 +75,7 @@
         <p class="hero-sub">O maior arquivo de sinais retrô da rede.<br>Preservado. Verificado. Online.</p>
         <div class="hero-actions">
           <button class="btn btn-outline" (click)="onInitializeLink()">INITIALIZE_LINK</button>
-          <button class="btn btn-ghost" (click)="onViewNodes()">VIEW_NODES</button>
+          <button class="btn btn-ghost" (click)="navigate('/library')">VIEW_NODES</button>
         </div>
         <div class="hero-scroll-hint">▼ SCROLL TO EXPLORE</div>
       </section>
@@ -87,22 +88,50 @@
         </div>
       </section>
 
-      <!-- ④ FEATURED BROADCAST -->
+      <!-- ④ BIBLIOTECA — jogos reais da API -->
       <section class="section">
         <div class="section-header">
-          <span class="section-label">FEATURED_BROADCAST</span>
-          <span class="section-meta">GLOBAL_STRENGTH: NOMINAL // PKT_LOSS: 0%</span>
-          <span class="section-vol">ARCHIVE_VOL_01_3</span>
+          <span class="section-label">ARCHIVE_NODES</span>
+          <span class="section-meta" *ngIf="!isLoggedIn">FAÇA LOGIN PARA ACESSAR O ACERVO COMPLETO</span>
+          <span class="section-meta" *ngIf="isLoggedIn && !loadingGames">{{ games.length }} ARTEFATOS CARREGADOS</span>
+          <a class="section-link" (click)="navigate('/library')">VER TUDO ›</a>
         </div>
-        <div class="broadcast-grid">
-          <div class="broadcast-card"
-            *ngFor="let card of broadcastCards"
-            [class.featured]="card.type === 'featured'"
-            [class.small]="card.type === 'small'">
-            <div class="card-badge" *ngIf="card.label" [class.secondary]="card.type === 'secondary'">{{ card.label }}</div>
-            <div class="card-thumb">
+
+        <!-- Loading -->
+        <div class="loading-row" *ngIf="loadingGames">
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
+          <span class="loading-text">SINCRONIZANDO ACERVO...</span>
+        </div>
+
+        <!-- Erro -->
+        <div class="error-row" *ngIf="gamesError">
+          <span class="err-icon">⚠</span>
+          <span>{{ gamesError }}</span>
+        </div>
+
+        <!-- Não logado -->
+        <div class="locked-row" *ngIf="!isLoggedIn && !loadingGames">
+          <div class="locked-inner">
+            <span class="lock-icon">🔒</span>
+            <p class="lock-title">SIGNAL RESTRICTED</p>
+            <p class="lock-sub">Faça login para acessar o acervo.</p>
+            <button class="btn btn-outline" (click)="navigate('/login')">INITIALIZE_LINK</button>
+          </div>
+        </div>
+
+        <!-- Grid de jogos -->
+        <div class="games-grid" *ngIf="isLoggedIn && !loadingGames && !gamesError">
+          <div class="game-card" *ngFor="let game of games.slice(0, 12)" (click)="onGameClick(game)">
+            <div class="game-thumb">
+              <img [src]="game.image" [alt]="game.title" (error)="onImgError($event)" />
               <div class="card-scanline"></div>
-              <div class="card-img-placeholder" [ngClass]="card.imgClass"></div>
+              <span class="game-console-badge">{{ game.console }}</span>
+            </div>
+            <div class="game-info">
+              <p class="game-title">{{ game.title }}</p>
+              <p class="game-id">ID: {{ game.id.toString().padStart(6, '0') }}-{{ game.console | uppercase }}</p>
             </div>
           </div>
         </div>
@@ -112,10 +141,10 @@
       <section class="section">
         <div class="section-header">
           <span class="section-label">PLATFORM_INDEX</span>
-          <span class="section-meta">{{ platforms.length }} PLATAFORMAS INDEXADAS // SINAL ATIVO</span>
+          <span class="section-meta">{{ platforms.length }} PLATAFORMAS INDEXADAS</span>
         </div>
         <div class="platforms-grid">
-          <div class="platform-card" *ngFor="let p of platforms">
+          <div class="platform-card" *ngFor="let p of platforms" (click)="navigate('/library')">
             <div class="platform-icon">{{ p.icon }}</div>
             <div class="platform-info">
               <span class="platform-name">{{ p.name }}</span>
@@ -128,27 +157,7 @@
         </div>
       </section>
 
-      <!-- ⑥ ÚLTIMOS ADICIONADOS -->
-      <section class="section">
-        <div class="section-header">
-          <span class="section-label">RECENT_UPLOADS</span>
-          <span class="section-meta">ÚLTIMAS 24H // AUTO_SYNC: ON</span>
-          <a class="section-link">VER TUDO &rsaquo;</a>
-        </div>
-        <div class="recent-scroll">
-          <div class="recent-card" *ngFor="let item of recentItems">
-            <div class="recent-thumb">
-              <div class="card-scanline"></div>
-              <div class="recent-img" [ngClass]="item.imgClass"></div>
-              <span class="recent-platform-badge">{{ item.platform }}</span>
-            </div>
-            <p class="recent-title">{{ item.title }}</p>
-            <p class="recent-id">{{ item.id }}</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- ⑦ LIVE SIGNAL FEED -->
+      <!-- ⑥ LIVE SIGNAL FEED -->
       <section class="section feed-section">
         <div class="section-header">
           <span class="section-label">LIVE_SIGNAL_FEED</span>
@@ -162,7 +171,7 @@
         </div>
       </section>
 
-      <!-- ⑧ CTA FINAL -->
+      <!-- ⑦ CTA FINAL -->
       <section class="cta-section">
         <div class="cta-inner">
           <p class="cta-pre">// ACESSO COMPLETO AO ARQUIVO</p>
@@ -173,7 +182,7 @@
           </p>
           <div class="cta-actions">
             <button class="btn btn-outline" (click)="onInitializeLink()">INITIALIZE_LINK</button>
-            <button class="btn btn-ghost" (click)="onViewPricing()">VER PLANOS</button>
+            <button class="btn btn-ghost" (click)="navigate('/pricing')">VER PLANOS</button>
           </div>
           <p class="cta-note">SINAL GRATUITO DISPONÍVEL // SEM CARTÃO NECESSÁRIO</p>
         </div>
@@ -186,10 +195,9 @@
         <span>© 2025 ARCHV_SYSTEMS</span>
       </footer>
 
-    </div><!-- /scroll-body -->
+    </div>
   </main>
 
-  <!-- CRT OVERLAY -->
   <div class="crt-overlay"></div>
   <div class="scanlines"></div>
 </div>
