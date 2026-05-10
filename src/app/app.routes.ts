@@ -25,10 +25,12 @@ export const routes: Routes = [
   },
   {
     path: 'library',
+    canActivate: [AuthGuard],
     loadComponent: () => import('./features/library/library.component').then(m => m.LibraryComponent)
   },
   {
-    path: 'rooms',
+    path: 'rooms/:id',
+    canActivate: [AuthGuard],
     loadComponent: () => import('./features/rooms/rooms.component').then(m => m.RoomsComponent)
   },
   {

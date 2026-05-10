@@ -1,5 +1,6 @@
+// plan.service.ts
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Plan {
@@ -10,18 +11,19 @@ export interface Plan {
   accessLevel: number;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class PlanService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/plans';
-
+  private apiUrl = 'https://archv-rooms.onrender.com/plans';
+  // Planos são públicos — sem token
   getPlans(): Observable<{ success: boolean; data: { plans: Plan[] }; message: string }> {
     return this.http.get<{ success: boolean; data: { plans: Plan[] }; message: string }>(this.apiUrl);
   }
 
+  // Subscribe requer auth
   subscribe(planId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/subscribe`, { planId });
+    const token = localStorage.getItem('@ProjetoX:token');
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return this.http.post(`${this.apiUrl}/subscribe`, { planId }, { headers });
   }
 }

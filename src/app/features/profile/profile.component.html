@@ -1,109 +1,183 @@
+<!-- profile.component.html -->
 <div class="profile-wrapper">
 
-  <div class="bg-grid"></div>
-  <div class="scanlines"></div>
-
-  <!-- Header -->
-  <div class="page-header">
-    <div class="boot-line">
-      <span class="prompt">SYS &gt;</span>
-      <span class="boot-text">USER_PROFILE.db — AUTHENTICATED SESSION</span>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <span class="sidebar-label">ARCHV</span>
     </div>
-    <h1 class="page-title">PLAYER_STATUS</h1>
-  </div>
-
-  <!-- Loading -->
-  <div *ngIf="isLoading" class="loading-state">
-    <span class="blink-text">▓▓▓▓▓░░░░░ LOADING PLAYER DATA...</span>
-  </div>
-
-  <!-- Erro -->
-  <div *ngIf="errorMessage" class="error-card">
-    <div class="card-header">
-      <span class="cdot"></span><span class="cdot"></span><span class="cdot"></span>
-      <span class="card-label">ERROR_LOG</span>
-    </div>
-    <div class="card-body">
-      <p class="error-msg"><span class="prompt err">ERR &gt;</span> {{ errorMessage }}</p>
-      <button class="archv-btn btn-ghost" (click)="loadProfile()">↺ RETRY</button>
-    </div>
-  </div>
-
-  <!-- Perfil -->
-  <div *ngIf="!isLoading && !errorMessage && userProfile" class="profile-grid">
-
-    <!-- ID Card -->
-    <div class="terminal-card">
-      <div class="card-header">
-        <span class="cdot"></span><span class="cdot"></span><span class="cdot"></span>
-        <span class="card-label">ID_CARD.dat</span>
-      </div>
-      <div class="card-body">
-        <div class="divider-line">── PLAYER_INFO ─────────────────</div>
-        <div class="info-row">
-          <span class="field-label">NAME</span>
-          <span class="field-value accent">{{ userProfile.name }}</span>
-        </div>
-        <div class="info-row">
-          <span class="field-label">E-MAIL</span>
-          <span class="field-value">{{ userProfile.email }}</span>
-        </div>
-        <div class="info-row">
-          <span class="field-label">JOINED</span>
-          <span class="field-value muted">{{ userProfile.createdAt | date:'dd/MM/yyyy' }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Subscription Card -->
-    <div class="terminal-card">
-      <div class="card-header">
-        <span class="cdot"></span><span class="cdot"></span><span class="cdot"></span>
-        <span class="card-label">SUBSCRIPTION.dat</span>
-      </div>
-      <div class="card-body">
-        <div class="divider-line">── ACCESS_LEVEL ─────────────────</div>
-
-        <ng-container *ngIf="activeSubscription; else noSub">
-          <div class="info-row">
-            <span class="field-label">PLAN</span>
-            <span class="field-value gold">{{ activeSubscription.plan.name | uppercase }}</span>
-          </div>
-          <div class="info-row">
-            <span class="field-label">STATUS</span>
-            <span class="field-value green">[ {{ activeSubscription.status | uppercase }} ]</span>
-          </div>
-          <div class="info-row">
-            <span class="field-label">SINCE</span>
-            <span class="field-value muted">{{ activeSubscription.createdAt | date:'dd/MM/yyyy' }}</span>
-          </div>
-          <div class="card-action">
-            <a routerLink="/library" class="archv-btn btn-primary">
-              <span>▶</span> ACCESS_LIBRARY
-            </a>
-          </div>
-        </ng-container>
-
-        <ng-template #noSub>
-          <div class="no-sub">
-            <p class="no-sub-status">[ NO_ACTIVE_SUBSCRIPTION ]</p>
-            <p class="no-sub-msg">You need a plan to access the ROM repository.</p>
-            <a routerLink="/pricing" class="archv-btn btn-ghost full-width">
-              <span>▶</span> VIEW_PLANS
-            </a>
-          </div>
-        </ng-template>
-
-      </div>
-    </div>
-
-    <!-- Logout -->
-    <div class="logout-row">
-      <button class="archv-btn btn-logout" (click)="logout()">
-        <span>⏻</span> LOGOUT / QUIT_GAME
+    <nav class="sidebar-nav">
+      <button class="nav-btn" title="Home" (click)="navigate('/')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
       </button>
+      <button class="nav-btn" title="Biblioteca" (click)="navigate('/library')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
+        </svg>
+      </button>
+      <button class="nav-btn" title="Sinal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M1 6C5.5 1.5 18.5 1.5 23 6"/>
+          <path d="M3.5 10C7 6.5 17 6.5 20.5 10"/>
+          <path d="M6.5 14C9 11.5 15 11.5 17.5 14"/>
+          <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
+        </svg>
+      </button>
+      <button class="nav-btn active" title="Profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-brand">▣ ARCHV.ROOMS</span>
+        <span class="topbar-sep">//</span>
+        <span class="topbar-page">USER_PROFILE</span>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-user" *ngIf="userProfile">{{ userProfile.name | uppercase }}</span>
+      </div>
+    </header>
+
+    <!-- BODY -->
+    <div class="profile-body">
+
+      <!-- LOADING -->
+      <div class="loading-state" *ngIf="isLoading">
+        <div class="loading-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <p class="loading-text">CARREGANDO DADOS DO USUÁRIO...</p>
+      </div>
+
+      <!-- ERRO -->
+      <div class="error-state" *ngIf="errorMessage && !isLoading">
+        <span class="error-icon">⚠</span>
+        <p>[ERROR] {{ errorMessage }}</p>
+        <button class="btn btn-outline btn-sm" (click)="loadProfile()">↺ RETRY</button>
+      </div>
+
+      <!-- CONTEÚDO -->
+      <div class="profile-layout" *ngIf="!isLoading && !errorMessage && userProfile">
+
+        <!-- COLUNA ESQUERDA -->
+        <div class="profile-left">
+
+          <!-- AVATAR / IDENTIDADE -->
+          <div class="identity-card">
+            <div class="identity-header">
+              <span class="identity-label">NODE_IDENTITY</span>
+              <span class="identity-status">
+                <span class="status-dot"></span> AUTHENTICATED
+              </span>
+            </div>
+            <div class="avatar-wrap">
+              <div class="avatar-hex">
+                {{ userProfile.name.charAt(0).toUpperCase() }}
+              </div>
+              <div class="avatar-glow"></div>
+            </div>
+            <p class="identity-name">{{ userProfile.name | uppercase }}</p>
+            <p class="identity-since">MEMBRO DESDE {{ userProfile.createdAt | date:'MM/yyyy' }}</p>
+          </div>
+
+          <!-- LOGOUT -->
+          <button class="btn-logout" (click)="logout()">
+            <span>⏻</span> DISCONNECT_SESSION
+          </button>
+
+        </div>
+
+        <!-- COLUNA DIREITA -->
+        <div class="profile-right">
+
+          <!-- ID CARD -->
+          <div class="data-cluster">
+            <div class="cluster-header">
+              <span class="cluster-title">ID_CARD</span>
+              <span class="cluster-badge">{{ userProfile.id }}</span>
+            </div>
+            <div class="cluster-row">
+              <span class="row-key">PLAYER_NAME</span>
+              <span class="row-val accent">{{ userProfile.name }}</span>
+            </div>
+            <div class="cluster-row">
+              <span class="row-key">E-MAIL</span>
+              <span class="row-val">{{ userProfile.email }}</span>
+            </div>
+            <div class="cluster-row">
+              <span class="row-key">JOINED</span>
+              <span class="row-val muted">{{ userProfile.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="cluster-row">
+              <span class="row-key">NODE_ID</span>
+              <span class="row-val muted">#{{ userProfile.id.toString().padStart(6, '0') }}</span>
+            </div>
+          </div>
+
+          <!-- SUBSCRIPTION -->
+          <div class="data-cluster" *ngIf="activeSubscription">
+            <div class="cluster-header">
+              <span class="cluster-title">ACCESS_PROTOCOL</span>
+              <span class="cluster-badge active">ACTIVE</span>
+            </div>
+            <div class="cluster-row">
+              <span class="row-key">PLAN</span>
+              <span class="row-val gold">{{ activeSubscription.plan.name | uppercase }}</span>
+            </div>
+            <div class="cluster-row">
+              <span class="row-key">STATUS</span>
+              <span class="row-val green">[ {{ activeSubscription.status | uppercase }} ]</span>
+            </div>
+            <div class="cluster-row">
+              <span class="row-key">ACCESS_LVL</span>
+              <span class="row-val accent">LEVEL {{ activeSubscription.plan.accessLevel }}</span>
+            </div>
+            <div class="cluster-row">
+              <span class="row-key">SINCE</span>
+              <span class="row-val muted">{{ activeSubscription.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="cluster-row">
+              <span class="row-key">PRICE</span>
+              <span class="row-val">R$ {{ activeSubscription.plan.price | number:'1.2-2' }}/MO</span>
+            </div>
+            <div class="cluster-action">
+              <button class="btn btn-outline" (click)="navigate('/library')">▶ ACCESS_LIBRARY</button>
+            </div>
+          </div>
+
+          <!-- SEM ASSINATURA -->
+          <div class="data-cluster locked" *ngIf="!activeSubscription">
+            <div class="cluster-header">
+              <span class="cluster-title">ACCESS_PROTOCOL</span>
+              <span class="cluster-badge locked-badge">INACTIVE</span>
+            </div>
+            <div class="no-sub">
+              <span class="lock-icon">🔒</span>
+              <p class="no-sub-title">NO_ACTIVE_SUBSCRIPTION</p>
+              <p class="no-sub-sub">Você precisa de um plano para acessar o arquivo.</p>
+              <button class="btn btn-outline" (click)="navigate('/pricing')">▶ VER_PLANOS</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
+  </main>
 
-  </div>
-
+  <div class="crt-overlay"></div>
+  <div class="scanlines"></div>
 </div>

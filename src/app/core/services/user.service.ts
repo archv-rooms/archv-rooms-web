@@ -1,5 +1,6 @@
+// user.service.ts
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Plan {
@@ -33,14 +34,20 @@ interface ProfileResponse {
   message: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class UserService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/user';
+  private apiUrl = 'https://archv-rooms.onrender.com/user';
+
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('@ProjetoX:token');
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
+  }
 
   getProfile(): Observable<ProfileResponse> {
-    return this.http.get<ProfileResponse>(`${this.apiUrl}/profile`);
+    return this.http.get<ProfileResponse>(
+      `${this.apiUrl}/profile`,
+      { headers: this.getHeaders() }
+    );
   }
 }

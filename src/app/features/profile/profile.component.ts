@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { UserService, UserProfile, Subscription } from '../../core/services/user.service';
 import { AuthService } from '../../core/services/auth.service';
 
@@ -14,12 +14,13 @@ import { AuthService } from '../../core/services/auth.service';
 export class ProfileComponent implements OnInit {
   private userService = inject(UserService);
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   userProfile: UserProfile | null = null;
   activeSubscription: Subscription | null = null;
   
-  isLoading: boolean = true;
-  errorMessage: string = '';
+  isLoading = true;
+  errorMessage = '';
 
   ngOnInit(): void {
     this.loadProfile();
@@ -29,12 +30,9 @@ export class ProfileComponent implements OnInit {
     this.userService.getProfile().subscribe({
       next: (response) => {
         this.userProfile = response.data.user;
-        
-        // Pega a primeira assinatura ativa, se houver
-        if (this.userProfile.subscriptions && this.userProfile.subscriptions.length > 0) {
+        if (this.userProfile.subscriptions?.length > 0) {
           this.activeSubscription = this.userProfile.subscriptions[0];
         }
-        
         this.isLoading = false;
       },
       error: (err) => {
@@ -42,6 +40,10 @@ export class ProfileComponent implements OnInit {
         this.errorMessage = err.error?.message || 'Erro ao carregar os dados do perfil.';
       }
     });
+  }
+
+  navigate(path: string): void {
+    this.router.navigate([path]);
   }
 
   logout(): void {

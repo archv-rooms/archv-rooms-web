@@ -1,84 +1,151 @@
+<!-- rooms.component.html -->
 <div class="rooms-wrapper">
 
-  <div class="bg-grid"></div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <span class="sidebar-label">ARCHV</span>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-btn" title="Home" (click)="navigate('/')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
+      </button>
+      <button class="nav-btn active" title="Biblioteca" (click)="navigate('/library')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
+        </svg>
+      </button>
+      <button class="nav-btn" title="Sinal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M1 6C5.5 1.5 18.5 1.5 23 6"/>
+          <path d="M3.5 10C7 6.5 17 6.5 20.5 10"/>
+          <path d="M6.5 14C9 11.5 15 11.5 17.5 14"/>
+          <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
+        </svg>
+      </button>
+      <button class="nav-btn" title="Pricing" (click)="navigate('/pricing')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-brand">▣ ARCHV.ROOMS</span>
+        <span class="topbar-sep">//</span>
+        <span class="topbar-page">ARTIFACT_VIEW</span>
+      </div>
+      <div class="topbar-right">
+        <button class="btn-back" (click)="navigate('/library')">← BACK_TO_LIBRARY</button>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <div class="rooms-body">
+
+      <!-- LOADING -->
+      <div class="loading-state" *ngIf="isLoading">
+        <div class="loading-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <p class="loading-text">CARREGANDO ARTEFATO...</p>
+      </div>
+
+      <!-- ERRO -->
+      <div class="error-state" *ngIf="errorMessage && !isLoading">
+        <span>⚠</span>
+        <p>{{ errorMessage }}</p>
+        <button class="btn-outline" (click)="navigate('/library')">← VOLTAR</button>
+      </div>
+
+      <!-- DETALHE DO JOGO -->
+      <div class="artifact-layout" *ngIf="game && !isLoading">
+
+        <!-- COLUNA ESQUERDA: imagem + descrição -->
+        <div class="artifact-left">
+
+          <!-- Imagem principal -->
+          <div class="artifact-img-wrap">
+            <img [src]="game.image" [alt]="game.title" (error)="onImgError($event)" />
+            <div class="img-scanline"></div>
+          </div>
+
+          <!-- Nome + ID -->
+          <div class="artifact-title-bar">
+            <span class="artifact-name">{{ game.title | uppercase }}</span>
+            <span class="artifact-id">ID: {{ formatId(game.id) }}-{{ game.console }}</span>
+          </div>
+
+          <!-- Descrição -->
+          <div class="artifact-description">
+            <p class="desc-label">DESCRIPTION</p>
+            <p class="desc-text">
+              Um artefato preservado do acervo archv.rooms.
+              Plataforma: {{ game.console }}. Nível de acesso: {{ game.accessLevel }}.
+              Status: <span class="status-archived">ARCHIVED</span>.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- COLUNA DIREITA: metadata + acesso -->
+        <div class="artifact-right">
+
+          <!-- METADATA CLUSTER -->
+          <div class="metadata-cluster">
+            <div class="metadata-header">
+              <span class="metadata-title">METADATA CLUSTER</span>
+              <span class="metadata-badge">{{ game.id }}</span>
+            </div>
+
+            <div class="metadata-row">
+              <span class="meta-key">CONSOLE</span>
+              <span class="meta-val">{{ game.console | uppercase }}</span>
+            </div>
+            <div class="metadata-row">
+              <span class="meta-key">REGION</span>
+              <span class="meta-val">{{ getRegion(game.console) }}</span>
+            </div>
+            <div class="metadata-row">
+              <span class="meta-key">FORMAT</span>
+              <span class="meta-val">{{ getFormat(game.console) }}</span>
+            </div>
+            <div class="metadata-row">
+              <span class="meta-key">ACCESS_LVL</span>
+              <span class="meta-val">LEVEL {{ game.accessLevel }}</span>
+            </div>
+            <div class="metadata-row">
+              <span class="meta-key">INTEGRITY</span>
+              <span class="meta-val verified">VERIFIED</span>
+            </div>
+          </div>
+
+          <!-- ACESSO LIBERADO -->
+          <div class="access-panel access-ok">
+            <div class="access-icon">▶</div>
+            <p class="access-title">SIGNAL_CLEAR // ACESSO LIBERADO</p>
+            <p class="access-sub">Arquivo disponível para transmissão.</p>
+            <button class="btn-access">INICIAR_STREAM</button>
+            <button class="btn-download">⬇ DOWNLOAD_ROM</button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <div class="crt-overlay"></div>
   <div class="scanlines"></div>
-
-  <!-- Parallax stars -->
-  <div class="parallax-bg">
-    <div class="stars layer1"></div>
-    <div class="stars layer2"></div>
-    <div class="stars layer3"></div>
-  </div>
-
-  <div class="rooms-content">
-
-    <!-- Header -->
-    <div class="page-header">
-      <div class="boot-line">
-        <span class="prompt">SYS &gt;</span>
-        <span class="boot-text">GAME_STORE.db — BROWSING ROM REPOSITORY</span>
-      </div>
-      <h1 class="page-title">LOJA_DE_JOGOS</h1>
-    </div>
-
-    <!-- Filtros -->
-    <div class="filters-bar">
-      <div class="filter-card">
-        <span class="filter-label">SEARCH</span>
-        <input
-          class="pixel-input"
-          [(ngModel)]="search"
-          placeholder="BUSCAR_JOGO..."
-        />
-      </div>
-      <div class="filter-card">
-        <span class="filter-label">PLATFORM</span>
-        <select class="pixel-select" [(ngModel)]="platformFilter">
-          <option value="">ALL_CONSOLES</option>
-          <option value="PC">PC</option>
-          <option value="PS5">PS5</option>
-          <option value="Xbox">XBOX</option>
-        </select>
-      </div>
-      <div class="filter-meta">
-        <span class="meta-text">{{ filteredGames.length }} RECORDS FOUND</span>
-      </div>
-    </div>
-
-    <!-- Grid -->
-    <div class="games-grid">
-      <div class="game-card" *ngFor="let game of filteredGames">
-
-        <!-- Image -->
-        <div class="card-img-wrap">
-          <img [src]="game.image" [alt]="game.name" />
-          <div class="img-overlay"></div>
-          <div class="platform-badge">{{ game.platform }}</div>
-        </div>
-
-        <!-- Info -->
-        <div class="card-info">
-          <div class="card-header-bar">
-            <span class="cdot"></span><span class="cdot"></span><span class="cdot"></span>
-          </div>
-          <h3 class="game-name">{{ game.name }}</h3>
-          <div class="price-row">
-            <span class="price free" *ngIf="game.price === 0">FREE_TO_PLAY</span>
-            <span class="price paid" *ngIf="game.price > 0">R$ {{ game.price | number:'1.2-2' }}</span>
-          </div>
-          <button class="archv-btn" [class.btn-install]="game.price === 0" [class.btn-buy]="game.price > 0">
-            <span>{{ game.price > 0 ? '▶ COMPRAR' : '⬇ INSTALAR' }}</span>
-          </button>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Empty state -->
-    <div class="empty-state" *ngIf="filteredGames.length === 0">
-      <p class="blink-text">[ NO_RECORDS_FOUND ]</p>
-      <p class="empty-sub">Tente outro filtro ou termo de busca.</p>
-    </div>
-
-  </div>
 </div>
