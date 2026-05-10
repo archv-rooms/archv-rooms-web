@@ -1,7 +1,7 @@
 <!-- profile.component.html -->
 <div class="profile-wrapper">
 
-  <!-- SIDEBAR -->
+  <!-- SIDEBAR (igual à home) -->
   <aside class="sidebar">
     <div class="sidebar-top">
       <span class="sidebar-label">ARCHV</span>
@@ -18,7 +18,7 @@
           <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
         </svg>
       </button>
-      <button class="nav-btn" title="Sinal">
+      <button class="nav-btn" title="Loja" (click)="navigate('/rooms')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M1 6C5.5 1.5 18.5 1.5 23 6"/>
           <path d="M3.5 10C7 6.5 17 6.5 20.5 10"/>
@@ -26,7 +26,13 @@
           <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
         </svg>
       </button>
-      <button class="nav-btn active" title="Profile">
+      <button class="nav-btn" title="Planos" (click)="navigate('/pricing')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+      <button class="nav-btn active" title="Perfil">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="8" r="4"/>
           <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -40,141 +46,427 @@
 
     <!-- TOPBAR -->
     <header class="topbar">
-      <div class="topbar-left">
-        <span class="topbar-brand">▣ ARCHV.ROOMS</span>
-        <span class="topbar-sep">//</span>
-        <span class="topbar-page">USER_PROFILE</span>
-      </div>
+      <span class="topbar-brand">▣ ARCHV.ROOMS // USER_PROFILE</span>
       <div class="topbar-right">
-        <span class="topbar-user" *ngIf="userProfile">{{ userProfile.name | uppercase }}</span>
+        <span class="topbar-user">{{ user?.name || 'ANON' }}</span>
+        <button class="btn btn-ghost btn-sm" (click)="logout()">LOGOUT</button>
       </div>
     </header>
 
-    <!-- BODY -->
-    <div class="profile-body">
+    <!-- SCROLL BODY -->
+    <div class="scroll-body">
 
       <!-- LOADING -->
-      <div class="loading-state" *ngIf="isLoading">
-        <div class="loading-dots">
-          <span></span><span></span><span></span>
+      <div class="loading-fullscreen" *ngIf="isLoading">
+        <div class="loading-row">
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
+          <span class="loading-text">CARREGANDO DADOS DO USUÁRIO...</span>
         </div>
-        <p class="loading-text">CARREGANDO DADOS DO USUÁRIO...</p>
       </div>
 
       <!-- ERRO -->
-      <div class="error-state" *ngIf="errorMessage && !isLoading">
-        <span class="error-icon">⚠</span>
-        <p>[ERROR] {{ errorMessage }}</p>
+      <div class="error-fullscreen" *ngIf="errorMessage && !isLoading">
+        <span style="font-size:24px;color:#f87171">⚠</span>
+        <p style="font-size:10px;letter-spacing:2px;color:#f87171">[ERROR] {{ errorMessage }}</p>
         <button class="btn btn-outline btn-sm" (click)="loadProfile()">↺ RETRY</button>
       </div>
 
-      <!-- CONTEÚDO -->
-      <div class="profile-layout" *ngIf="!isLoading && !errorMessage && userProfile">
+      <!-- CONTEÚDO PRINCIPAL -->
+      <ng-container *ngIf="!isLoading && !errorMessage && user">
 
-        <!-- COLUNA ESQUERDA -->
-        <div class="profile-left">
+        <!-- ① BREADCRUMB -->
+        <div class="breadcrumb-bar">
+          <span class="bc-item" (click)="navigate('/')">HOME</span>
+          <span class="bc-sep">//</span>
+          <span class="bc-item active">USER_PROFILE</span>
+          <span class="bc-sep">//</span>
+          <span class="bc-item dim">{{ user?.name | uppercase }}</span>
+        </div>
 
-          <!-- AVATAR / IDENTIDADE -->
-          <div class="identity-card">
-            <div class="identity-header">
-              <span class="identity-label">NODE_IDENTITY</span>
-              <span class="identity-status">
-                <span class="status-dot"></span> AUTHENTICATED
-              </span>
-            </div>
+        <!-- ② HERO DO PERFIL -->
+        <section class="profile-hero">
+          <div class="profile-hero-bg"></div>
+
+          <div class="profile-hero-content">
+            <!-- Avatar -->
             <div class="avatar-wrap">
-              <div class="avatar-hex">
-                {{ userProfile.name.charAt(0).toUpperCase() }}
+              <div class="avatar-ring"></div>
+              <div class="avatar-core">
+                <span class="avatar-initials">{{ getInitials() }}</span>
               </div>
-              <div class="avatar-glow"></div>
+              <div class="avatar-status online"></div>
             </div>
-            <p class="identity-name">{{ userProfile.name | uppercase }}</p>
-            <p class="identity-since">MEMBRO DESDE {{ userProfile.createdAt | date:'MM/yyyy' }}</p>
+
+            <!-- Info -->
+            <div class="profile-info">
+              <div class="profile-meta-top">
+                <span class="profile-tag">// USR_{{ user?.id?.toString()?.padStart(5,'0') }}</span>
+                <span class="profile-plan-badge" [ngClass]="'plan-' + (activeSubscription ? 'basic' : 'free')">
+                  {{ getPlanName() | uppercase }}_TIER
+                </span>
+              </div>
+              <h1 class="profile-username">{{ user?.name || 'ANON_USER' }}</h1>
+              <p class="profile-email">{{ user?.email }}</p>
+              <p class="profile-bio">// MEMBRO DO ARCHV.ROOMS</p>
+
+              <div class="profile-stats-row">
+                <div class="pstat">
+                  <span class="pstat-val">{{ userStats?.gamesInLibrary || 0 }}</span>
+                  <span class="pstat-lbl">ARTEFATOS</span>
+                </div>
+                <div class="pstat-div"></div>
+                <div class="pstat">
+                  <span class="pstat-val">{{ userStats?.roomsAccessed || 0 }}</span>
+                  <span class="pstat-lbl">ROOMS</span>
+                </div>
+                <div class="pstat-div"></div>
+                <div class="pstat">
+                  <span class="pstat-val">{{ userStats?.daysActive || 0 }}</span>
+                  <span class="pstat-lbl">DIAS ATIVO</span>
+                </div>
+                <div class="pstat-div"></div>
+                <div class="pstat">
+                  <span class="pstat-val">{{ userStats?.signalLevel || 'LVL_00' }}</span>
+                  <span class="pstat-lbl">SIGNAL</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ações -->
+            <div class="profile-actions">
+              <button class="btn btn-outline btn-sm" (click)="openEditModal()">EDIT_PROFILE</button>
+              <button class="btn btn-ghost btn-sm" (click)="copyProfileLink()">SHARE_LINK</button>
+            </div>
           </div>
 
-          <!-- LOGOUT -->
-          <button class="btn-logout" (click)="logout()">
-            <span>⏻</span> DISCONNECT_SESSION
-          </button>
+          <!-- Signal bar -->
+          <div class="signal-bar">
+            <span class="signal-label">SIGNAL_STRENGTH</span>
+            <div class="signal-track">
+              <div class="signal-fill" [style.width.%]="userStats?.signalPct || 0"></div>
+            </div>
+            <span class="signal-pct">{{ userStats?.signalPct || 0 }}%</span>
+          </div>
+        </section>
 
+        <!-- ③ TABS DE NAVEGAÇÃO -->
+        <div class="profile-tabs">
+          <button class="tab-btn" [class.active]="activeTab === 'overview'"  (click)="setTab('overview')">OVERVIEW</button>
+          <button class="tab-btn" [class.active]="activeTab === 'library'"   (click)="setTab('library')">BIBLIOTECA</button>
+          <button class="tab-btn" [class.active]="activeTab === 'activity'"  (click)="setTab('activity')">ATIVIDADE</button>
+          <button class="tab-btn" [class.active]="activeTab === 'settings'"  (click)="setTab('settings')">CONFIGURAÇÕES</button>
         </div>
 
-        <!-- COLUNA DIREITA -->
-        <div class="profile-right">
+        <!-- ④ TAB: OVERVIEW -->
+        <div class="tab-panel" *ngIf="activeTab === 'overview'">
+          <div class="overview-grid">
 
-          <!-- ID CARD -->
-          <div class="data-cluster">
-            <div class="cluster-header">
-              <span class="cluster-title">ID_CARD</span>
-              <span class="cluster-badge">{{ userProfile.id }}</span>
+            <!-- Coluna esquerda -->
+            <div class="overview-col">
+
+              <!-- Terminal de status -->
+              <div class="panel">
+                <div class="panel-header">
+                  <span class="panel-label">SYSTEM_STATUS</span>
+                  <span class="panel-dot green"></span>
+                </div>
+                <div class="terminal-lines">
+                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">AUTH_STATUS</span><span class="t-val green">VERIFIED</span></div>
+                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">PLAN_TIER</span><span class="t-val purple">{{ getPlanName() | uppercase }}</span></div>
+                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">MEMBER_SINCE</span><span class="t-val">{{ user?.createdAt | date:'dd/MM/yyyy' }}</span></div>
+                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">NODE_ID</span><span class="t-val">#{{ user?.id?.toString()?.padStart(6,'0') }}</span></div>
+                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">SIGNAL_NODE</span><span class="t-val amber">{{ userStats?.signalLevel || 'LVL_00' }}</span></div>
+                </div>
+              </div>
+
+              <!-- Plano atual -->
+              <div class="panel plan-panel" [ngClass]="activeSubscription ? 'plan-bg-basic' : 'plan-bg-free'">
+                <div class="panel-header">
+                  <span class="panel-label">CURRENT_PLAN</span>
+                </div>
+                <div class="plan-display">
+                  <span class="plan-name">{{ getPlanName() | uppercase }}_TIER</span>
+                  <p class="plan-desc">{{ getPlanDesc() }}</p>
+                  <div class="plan-features">
+                    <div class="plan-feat" *ngFor="let feat of getPlanFeatures()">
+                      <span class="feat-icon">▸</span>
+                      <span>{{ feat }}</span>
+                    </div>
+                  </div>
+                  <button class="btn btn-outline btn-sm" (click)="navigate('/pricing')">
+                    {{ activeSubscription ? 'GERENCIAR_PLANO' : 'UPGRADE_PLAN' }}
+                  </button>
+                </div>
+              </div>
+
             </div>
-            <div class="cluster-row">
-              <span class="row-key">PLAYER_NAME</span>
-              <span class="row-val accent">{{ userProfile.name }}</span>
-            </div>
-            <div class="cluster-row">
-              <span class="row-key">E-MAIL</span>
-              <span class="row-val">{{ userProfile.email }}</span>
-            </div>
-            <div class="cluster-row">
-              <span class="row-key">JOINED</span>
-              <span class="row-val muted">{{ userProfile.createdAt | date:'dd/MM/yyyy' }}</span>
-            </div>
-            <div class="cluster-row">
-              <span class="row-key">NODE_ID</span>
-              <span class="row-val muted">#{{ userProfile.id.toString().padStart(6, '0') }}</span>
+
+            <!-- Coluna direita -->
+            <div class="overview-col">
+
+              <!-- Dados da conta -->
+              <div class="panel">
+                <div class="panel-header">
+                  <span class="panel-label">ACCOUNT_DATA</span>
+                  <span class="panel-dot green"></span>
+                </div>
+                <div class="terminal-lines">
+                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">NAME</span><span class="t-val purple">{{ user?.name }}</span></div>
+                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">EMAIL</span><span class="t-val">{{ user?.email }}</span></div>
+                  <div class="t-line" *ngIf="activeSubscription">
+                    <span class="t-prompt">&gt;</span>
+                    <span class="t-key">SUB_STATUS</span>
+                    <span class="t-val green">[ {{ activeSubscription?.status | uppercase }} ]</span>
+                  </div>
+                  <div class="t-line" *ngIf="activeSubscription">
+                    <span class="t-prompt">&gt;</span>
+                    <span class="t-key">ACCESS_LVL</span>
+                    <span class="t-val amber">LEVEL {{ activeSubscription?.plan?.accessLevel }}</span>
+                  </div>
+                  <div class="t-line" *ngIf="activeSubscription">
+                    <span class="t-prompt">&gt;</span>
+                    <span class="t-key">PRICE</span>
+                    <span class="t-val">R$ {{ activeSubscription?.plan?.price | number:'1.2-2' }}/MO</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Atividade recente (feed) -->
+              <div class="panel">
+                <div class="panel-header">
+                  <span class="panel-label">ACTIVITY_LOG</span>
+                  <span class="feed-live-badge"><span class="live-dot"></span> LIVE</span>
+                </div>
+                <div class="activity-feed">
+                  <div class="act-item" *ngFor="let act of activityLog" [ngClass]="'act-' + act.type">
+                    <span class="act-icon">{{ act.icon }}</span>
+                    <div class="act-body">
+                      <span class="act-text">{{ act.text }}</span>
+                      <span class="act-time">{{ act.time }}</span>
+                    </div>
+                    <span class="act-tag">[{{ act.type | uppercase }}]</span>
+                  </div>
+                </div>
+                <div class="empty-state" *ngIf="!activityLog?.length">
+                  <span class="empty-icon">◈</span>
+                  <p>SEM ATIVIDADE REGISTRADA</p>
+                </div>
+              </div>
+
             </div>
           </div>
-
-          <!-- SUBSCRIPTION -->
-          <div class="data-cluster" *ngIf="activeSubscription">
-            <div class="cluster-header">
-              <span class="cluster-title">ACCESS_PROTOCOL</span>
-              <span class="cluster-badge active">ACTIVE</span>
-            </div>
-            <div class="cluster-row">
-              <span class="row-key">PLAN</span>
-              <span class="row-val gold">{{ activeSubscription.plan.name | uppercase }}</span>
-            </div>
-            <div class="cluster-row">
-              <span class="row-key">STATUS</span>
-              <span class="row-val green">[ {{ activeSubscription.status | uppercase }} ]</span>
-            </div>
-            <div class="cluster-row">
-              <span class="row-key">ACCESS_LVL</span>
-              <span class="row-val accent">LEVEL {{ activeSubscription.plan.accessLevel }}</span>
-            </div>
-            <div class="cluster-row">
-              <span class="row-key">SINCE</span>
-              <span class="row-val muted">{{ activeSubscription.createdAt | date:'dd/MM/yyyy' }}</span>
-            </div>
-            <div class="cluster-row">
-              <span class="row-key">PRICE</span>
-              <span class="row-val">R$ {{ activeSubscription.plan.price | number:'1.2-2' }}/MO</span>
-            </div>
-            <div class="cluster-action">
-              <button class="btn btn-outline" (click)="navigate('/library')">▶ ACCESS_LIBRARY</button>
-            </div>
-          </div>
-
-          <!-- SEM ASSINATURA -->
-          <div class="data-cluster locked" *ngIf="!activeSubscription">
-            <div class="cluster-header">
-              <span class="cluster-title">ACCESS_PROTOCOL</span>
-              <span class="cluster-badge locked-badge">INACTIVE</span>
-            </div>
-            <div class="no-sub">
-              <span class="lock-icon">🔒</span>
-              <p class="no-sub-title">NO_ACTIVE_SUBSCRIPTION</p>
-              <p class="no-sub-sub">Você precisa de um plano para acessar o arquivo.</p>
-              <button class="btn btn-outline" (click)="navigate('/pricing')">▶ VER_PLANOS</button>
-            </div>
-          </div>
-
         </div>
 
-      </div>
+        <!-- ⑤ TAB: BIBLIOTECA -->
+        <div class="tab-panel" *ngIf="activeTab === 'library'">
+          <div class="section-header">
+            <span class="section-label">MY_ARCHIVE_NODES</span>
+            <span class="section-meta">{{ userLibrary?.length || 0 }} ARTEFATOS NO ACERVO</span>
+            <div class="lib-filters">
+              <button class="filter-btn" [class.active]="libFilter === 'all'"  (click)="libFilter = 'all'">TODOS</button>
+              <button class="filter-btn" [class.active]="libFilter === 'nes'"  (click)="libFilter = 'nes'">NES</button>
+              <button class="filter-btn" [class.active]="libFilter === 'snes'" (click)="libFilter = 'snes'">SNES</button>
+              <button class="filter-btn" [class.active]="libFilter === 'gba'"  (click)="libFilter = 'gba'">GBA</button>
+            </div>
+          </div>
 
+          <div class="loading-row" *ngIf="loadingLibrary">
+            <span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span>
+            <span class="loading-text">CARREGANDO ACERVO...</span>
+          </div>
+
+          <div class="games-grid" *ngIf="!loadingLibrary && getFilteredLibrary()?.length">
+            <div class="game-card" *ngFor="let game of getFilteredLibrary()" (click)="onGameClick(game)">
+              <div class="game-thumb">
+                <img [src]="game.image" [alt]="game.title" (error)="onImgError($event)" />
+                <div class="card-scanline"></div>
+                <span class="game-console-badge">{{ game.console }}</span>
+              </div>
+              <div class="game-info">
+                <p class="game-title">{{ game.title }}</p>
+                <p class="game-id">ID: {{ game.id?.toString()?.padStart(6,'0') }}-{{ game.console | uppercase }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-state centered" *ngIf="!loadingLibrary && !getFilteredLibrary()?.length">
+            <span class="empty-icon">◈</span>
+            <p>NENHUM ARTEFATO ENCONTRADO</p>
+            <button class="btn btn-outline btn-sm" (click)="navigate('/library')">EXPLORAR ACERVO COMPLETO</button>
+          </div>
+        </div>
+
+        <!-- ⑥ TAB: ATIVIDADE -->
+        <div class="tab-panel" *ngIf="activeTab === 'activity'">
+          <div class="section-header">
+            <span class="section-label">SIGNAL_HISTORY</span>
+            <span class="section-meta">ÚLTIMOS 30 DIAS</span>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header"><span class="panel-label">ACTIVITY_HEATMAP</span></div>
+            <div class="heatmap-grid">
+              <div class="heatmap-cell"
+                *ngFor="let cell of activityHeatmap"
+                [ngClass]="'heat-' + cell.level"
+                [title]="cell.date + ': ' + cell.count + ' ações'">
+              </div>
+            </div>
+            <div class="heatmap-legend">
+              <span class="hm-lbl">MENOS</span>
+              <div class="hm-cell heat-0"></div>
+              <div class="hm-cell heat-1"></div>
+              <div class="hm-cell heat-2"></div>
+              <div class="hm-cell heat-3"></div>
+              <div class="hm-cell heat-4"></div>
+              <span class="hm-lbl">MAIS</span>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top:12px">
+            <div class="panel-header"><span class="panel-label">FULL_LOG</span></div>
+            <div class="full-log">
+              <div class="log-entry" *ngFor="let entry of fullActivityLog" [ngClass]="'log-' + entry.type">
+                <span class="log-ts">{{ entry.timestamp }}</span>
+                <span class="log-type-badge">[{{ entry.type | uppercase }}]</span>
+                <span class="log-msg">{{ entry.message }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ⑦ TAB: CONFIGURAÇÕES -->
+        <div class="tab-panel" *ngIf="activeTab === 'settings'">
+          <div class="settings-grid">
+
+            <!-- Dados pessoais -->
+            <div class="panel">
+              <div class="panel-header"><span class="panel-label">PERSONAL_DATA</span></div>
+              <div class="settings-form">
+                <div class="form-group">
+                  <label class="form-label">NOME</label>
+                  <input class="form-input" type="text" [(ngModel)]="editForm.username" placeholder="seu nome" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">EMAIL</label>
+                  <input class="form-input" type="email" [(ngModel)]="editForm.email" placeholder="email@dominio.com" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">BIO</label>
+                  <textarea class="form-input form-textarea" [(ngModel)]="editForm.bio" placeholder="// Descreva-se..." maxlength="160" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">LOCALIZAÇÃO</label>
+                  <input class="form-input" type="text" [(ngModel)]="editForm.location" placeholder="ex: São Paulo, BR" />
+                </div>
+                <button class="btn btn-outline btn-sm" (click)="saveProfile()" [disabled]="savingProfile">
+                  {{ savingProfile ? 'SALVANDO...' : 'SAVE_CHANGES' }}
+                </button>
+                <span class="save-ok" *ngIf="saveSuccess">▸ DADOS ATUALIZADOS COM SUCESSO</span>
+              </div>
+            </div>
+
+            <!-- Segurança -->
+            <div class="panel">
+              <div class="panel-header"><span class="panel-label">SECURITY_MODULE</span></div>
+              <div class="settings-form">
+                <div class="form-group">
+                  <label class="form-label">SENHA ATUAL</label>
+                  <input class="form-input" type="password" [(ngModel)]="pwForm.current" placeholder="••••••••" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">NOVA SENHA</label>
+                  <input class="form-input" type="password" [(ngModel)]="pwForm.new" placeholder="••••••••" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">CONFIRMAR NOVA SENHA</label>
+                  <input class="form-input" type="password" [(ngModel)]="pwForm.confirm" placeholder="••••••••" />
+                </div>
+                <div class="pw-strength" *ngIf="pwForm.new">
+                  <span class="pw-label">STRENGTH:</span>
+                  <div class="pw-bars">
+                    <div class="pw-bar" [class.filled]="pwStrength >= 1"></div>
+                    <div class="pw-bar" [class.filled]="pwStrength >= 2"></div>
+                    <div class="pw-bar" [class.filled]="pwStrength >= 3"></div>
+                    <div class="pw-bar" [class.filled]="pwStrength >= 4"></div>
+                  </div>
+                  <span class="pw-score">{{ getPwLabel() }}</span>
+                </div>
+                <button class="btn btn-ghost btn-sm" (click)="changePassword()">UPDATE_PASSWORD</button>
+              </div>
+
+              <div class="sessions-section">
+                <p class="sessions-title">ACTIVE_SESSIONS</p>
+                <div class="session-item" *ngFor="let s of activeSessions">
+                  <div class="session-info">
+                    <span class="session-device">{{ s.device }}</span>
+                    <span class="session-meta">{{ s.location }} // {{ s.lastSeen }}</span>
+                  </div>
+                  <span class="session-current" *ngIf="s.isCurrent">CURRENT</span>
+                  <button class="btn btn-ghost btn-xs" *ngIf="!s.isCurrent" (click)="revokeSession(s.id)">REVOKE</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Preferências -->
+            <div class="panel full-width-panel">
+              <div class="panel-header"><span class="panel-label">PREFERENCES</span></div>
+              <div class="prefs-grid">
+                <div class="pref-item">
+                  <div class="pref-info">
+                    <span class="pref-name">NOTIFICAÇÕES_EMAIL</span>
+                    <span class="pref-desc">Receber alertas de novos artefatos</span>
+                  </div>
+                  <div class="toggle" [class.on]="prefs.emailNotif" (click)="prefs.emailNotif = !prefs.emailNotif">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </div>
+                <div class="pref-item">
+                  <div class="pref-info">
+                    <span class="pref-name">PERFIL_PÚBLICO</span>
+                    <span class="pref-desc">Permitir que outros vejam seu perfil</span>
+                  </div>
+                  <div class="toggle" [class.on]="prefs.publicProfile" (click)="prefs.publicProfile = !prefs.publicProfile">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </div>
+                <div class="pref-item">
+                  <div class="pref-info">
+                    <span class="pref-name">NEWSLETTER</span>
+                    <span class="pref-desc">Atualizações mensais do arquivo</span>
+                  </div>
+                  <div class="toggle" [class.on]="prefs.newsletter" (click)="prefs.newsletter = !prefs.newsletter">
+                    <div class="toggle-thumb"></div>
+                  </div>
+                </div>
+                <div class="pref-item danger-zone">
+                  <div class="pref-info">
+                    <span class="pref-name">DANGER_ZONE</span>
+                    <span class="pref-desc">Excluir conta permanentemente</span>
+                  </div>
+                  <button class="btn btn-danger btn-sm" (click)="confirmDeleteAccount()">DELETE_ACCOUNT</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="site-footer">
+          <span>ARCHV.ROOMS OS v2.4.1</span>
+          <span class="footer-links">
+            <span (click)="navigate('/')"        class="footer-link">HOME</span>
+            <span (click)="navigate('/library')" class="footer-link">BIBLIOTECA</span>
+            <span (click)="navigate('/pricing')" class="footer-link">PLANOS</span>
+            <span (click)="navigate('/rooms')"   class="footer-link">LOJA</span>
+          </span>
+          <span>© 2025 ARCHV_SYSTEMS</span>
+        </footer>
+
+      </ng-container>
     </div>
   </main>
 
