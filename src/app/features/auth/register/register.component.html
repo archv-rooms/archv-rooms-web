@@ -54,15 +54,26 @@
         </div>
 
         <button type="submit" class="btn-submit" [disabled]="isLoading">
-          <span *ngIf="!isLoading">CRIAR CONTA ✦</span>
+          <span *ngIf="!isLoading">CRIAR CONTA </span>
           <span *ngIf="isLoading" class="loading-text">CRIANDO<span class="dots">...</span></span>
         </button>
 
       </form>
 
       <div class="auth-footer">
-        <p class="footer-text">já tem conta?</p>
-        <a routerLink="/login" class="footer-link">→ ENTRAR</a>
+
+        <p class="footer-text">
+          já tem conta?
+        </p>
+      
+        <a
+          routerLink="/login"
+          class="footer-link"
+        >
+          <span class="link-arrow">←</span>
+          <span class="link-text">ENTRAR</span>
+        </a>
+      
       </div>
     </div>
 
