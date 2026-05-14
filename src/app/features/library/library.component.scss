@@ -1,282 +1,718 @@
 // library.component.scss
 
-$bg:            #0a0a0f;
-$bg-panel:      #0f0f18;
-$bg-card:       #13131e;
-$border:        #1e1e2e;
-$border-glow:   #3d2e6e;
-$purple:        #7c3aed;
-$purple-dim:    #4c2a8a;
-$purple-bright: #a855f7;
-$text-dim:      #3a3a55;
-$text-muted:    #6b6b8a;
-$text-base:     #9999bb;
-$text-bright:   #ccccee;
-$green-ok:      #4ade80;
-$amber:         #f59e0b;
-$red-alert:     #f87171;
+// ── TOKENS ───────────────────────────────────────────────
+$bg: #11131a;
+$bg-panel: #181b24;
+$bg-card: #202433;
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+$border: #34384a;
+$border-glow: #6d4ed8;
 
+$purple: #8b5cf6;
+$purple-dim: #6d4ed8;
+$purple-bright: #fcfcfc;
+
+$text-dim: #727896;
+$text-muted: #9aa3c7;
+$text-base: #bcc3e0;
+$text-bright: #f2f4ff;
+
+$green-ok: #4ade80;
+$red-alert: #fb7185;
+
+// ── RESET ────────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+// ── HOST ─────────────────────────────────────────────────
 :host {
-  display: block; width: 100%; height: 100vh;
-  background: $bg; font-family: 'Share Tech Mono', monospace; color: $text-base;
+  display: block;
+  width: 100%;
+  height: 100vh;
+
+  background: $bg;
+
+  font-family: 'Share Tech Mono', monospace;
+  color: $text-base;
 }
 
-// ── WRAPPER ───────────────────────────────────────────────
+// ── WRAPPER ──────────────────────────────────────────────
 .library-wrapper {
-  display: flex; width: 100%; height: 100vh;
-  position: relative; overflow: hidden; background: $bg;
+  display: flex;
+
+  width: 100%;
+  height: 100vh;
+
+  position: relative;
+  overflow: hidden;
+
+  background: $bg;
 }
 
-// ── SIDEBAR ───────────────────────────────────────────────
+// ── SIDEBAR ──────────────────────────────────────────────
 .sidebar {
-  width: 52px; min-height: 100vh; background: $bg-panel;
-  border-right: 1px solid $border; display: flex; flex-direction: column;
-  align-items: center; padding: 12px 0; gap: 4px; z-index: 10; flex-shrink: 0;
+  width: 84px;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 18px 0;
+  gap: 10px;
+
+  flex-shrink: 0;
+  z-index: 10;
+
+  background: linear-gradient(
+    180deg,
+    rgba($bg-panel, 1) 0%,
+    rgba(#1d2130, 1) 100%
+  );
+
+  border-right: 1px solid rgba($border-glow, 0.25);
+
+  box-shadow:
+    inset -1px 0 0 rgba(255, 255, 255, 0.03),
+    0 0 25px rgba($purple, 0.08);
 }
 
-.sidebar-top { width: 100%; display: flex; justify-content: center; margin-bottom: 12px; }
+.sidebar-top {
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+
+  margin-bottom: 12px;
+}
 
 .sidebar-label {
-  font-size: 8px; letter-spacing: 2px; color: $text-dim;
-  text-transform: uppercase; writing-mode: vertical-rl; transform: rotate(180deg);
+  font-size: 10px;
+  letter-spacing: 3px;
+
+  color: $text-dim;
+  text-transform: uppercase;
+
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
 }
 
-.sidebar-nav { display: flex; flex-direction: column; gap: 6px; width: 100%; align-items: center; }
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 8px;
+  width: 100%;
+}
 
 .nav-btn {
-  width: 34px; height: 34px; background: transparent;
-  border: 1px solid transparent; border-radius: 4px;
-  color: $text-muted; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-  svg { width: 16px; height: 16px; }
-  &:hover { border-color: $border-glow; color: $purple-bright; background: rgba($purple, 0.1); }
-  &.active { background: rgba($purple, 0.2); border-color: $purple-dim; color: $purple-bright; box-shadow: 0 0 8px rgba($purple, 0.3); }
-}
+  width: 52px;
+  height: 52px;
 
-// ── MAIN ──────────────────────────────────────────────────
-.main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-// ── TOPBAR ────────────────────────────────────────────────
-.topbar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 16px; border-bottom: 1px solid $border;
-  background: rgba($bg-panel, 0.9); height: 36px; flex-shrink: 0;
-}
+  background: transparent;
 
-.topbar-left  { display: flex; align-items: center; gap: 8px; }
-.topbar-brand { font-size: 10px; letter-spacing: 3px; color: $text-muted; }
-.topbar-sep   { color: $text-dim; font-size: 10px; }
-.topbar-page  { font-size: 10px; letter-spacing: 2px; color: $purple-bright; }
-.topbar-right { display: flex; align-items: center; gap: 12px; }
+  border: 1px solid transparent;
+  border-radius: 6px;
 
-.system-status {
-  font-size: 9px; letter-spacing: 1px; color: $text-dim;
-  .status-val { color: $red-alert; &.stable { color: $green-ok; } }
-}
+  color: $text-muted;
+  cursor: pointer;
 
-.topbar-user {
-  font-size: 9px; letter-spacing: 2px; color: $purple-bright;
-  border: 1px solid $purple-dim; padding: 2px 8px; border-radius: 2px;
-}
+  transition: all 0.2s ease;
 
-// ── FILTER BAR ────────────────────────────────────────────
-.filter-bar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 8px 16px; border-bottom: 1px solid $border;
-  background: rgba($bg-panel, 0.5); flex-shrink: 0; flex-wrap: wrap; gap: 8px;
-}
+  svg {
+    width: 22px;
+    height: 22px;
+  }
 
-.filter-left  { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.filter-icon  { color: $purple-dim; font-size: 10px; }
-.filter-label { font-size: 9px; letter-spacing: 2px; color: $text-dim; }
+  &:hover {
+    border-color: $border-glow;
+    color: $purple-bright;
 
-.filter-btn {
-  font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 1px;
-  padding: 3px 10px; background: transparent; border: 1px solid $border;
-  color: $text-muted; cursor: pointer; border-radius: 2px; transition: all 0.2s;
-  &:hover { border-color: $border-glow; color: $text-bright; }
-  &.active { border-color: $purple-bright; color: $purple-bright; background: rgba($purple, 0.1); }
-}
+    background: rgba($purple, 0.1);
+  }
 
-.result-count { font-size: 9px; letter-spacing: 1px; color: $text-dim; }
+  &.active {
+    background: rgba($purple, 0.2);
 
-// ── SEARCH BAR ────────────────────────────────────────────
-.search-bar {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 16px; border-bottom: 1px solid $border;
-  background: rgba($bg, 0.8); flex-shrink: 0;
-}
+    border-color: $purple-dim;
+    color: $purple-bright;
 
-.search-icon { color: $text-dim; font-size: 16px; }
-
-.search-input {
-  flex: 1; background: transparent; border: none; outline: none;
-  font-family: 'Share Tech Mono', monospace; font-size: 11px;
-  letter-spacing: 2px; color: $text-bright;
-  &::placeholder { color: $text-dim; }
-}
-
-.search-clear {
-  color: $text-dim; cursor: pointer; font-size: 11px;
-  &:hover { color: $red-alert; }
-}
-
-// ── LIBRARY BODY ──────────────────────────────────────────
-.library-body {
-  flex: 1; overflow-y: auto; overflow-x: hidden; padding: 16px;
-  &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-track { background: $bg; }
-  &::-webkit-scrollbar-thumb { background: $border-glow; border-radius: 2px; }
-}
-
-// ── STATES ────────────────────────────────────────────────
-.loading-state, .error-state, .locked-state {
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: center; gap: 12px; padding: 60px 0; text-align: center;
-}
-
-.loading-dots {
-  display: flex; gap: 6px;
-  span {
-    width: 8px; height: 8px; border-radius: 50%; background: $purple-dim;
-    animation: blink 1.2s ease-in-out infinite;
-    &:nth-child(2) { animation-delay: 0.2s; }
-    &:nth-child(3) { animation-delay: 0.4s; }
+    box-shadow: 0 0 8px rgba($purple, 0.3);
   }
 }
 
-.loading-text { font-size: 10px; letter-spacing: 3px; color: $text-dim; }
+// ── MAIN ─────────────────────────────────────────────────
+.main-content {
+  flex: 1;
 
-.error-state {
-  .error-icon { font-size: 28px; color: $red-alert; }
-  p { font-size: 10px; letter-spacing: 1px; color: $red-alert; }
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
 }
 
-.locked-state {
-  border: 1px solid rgba($red-alert, 0.2); padding: 48px; border-radius: 2px;
-  background: rgba($red-alert, 0.03); max-width: 360px; margin: 40px auto;
-  .lock-icon  { font-size: 36px; }
-  .lock-title { font-family: 'VT323', monospace; font-size: 18px; color: $red-alert; letter-spacing: 2px; }
-  .lock-sub   { font-size: 10px; letter-spacing: 1px; color: $text-muted; }
+// ── TOPBAR ───────────────────────────────────────────────
+.topbar {
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 20px;
+
+  background: rgba($bg-panel, 0.92);
+
+  border-bottom: 1px solid $border;
+
+  flex-shrink: 0;
 }
 
-// ── GAMES GRID ────────────────────────────────────────────
-.games-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+.topbar-left,
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-brand {
+  font-size: 14px;
+  letter-spacing: 3px;
+
+  color: $text-muted;
+  text-transform: uppercase;
+}
+
+.topbar-sep {
+  color: $text-dim;
+}
+
+.topbar-page {
+  font-size: 12px;
+  letter-spacing: 2px;
+
+  color: $purple-bright;
+}
+
+.system-status {
+  font-size: 10px;
+  letter-spacing: 1px;
+
+  color: $text-dim;
+
+  .status-val {
+    color: $red-alert;
+
+    &.stable {
+      color: $green-ok;
+    }
+  }
+}
+
+.topbar-user {
+  font-size: 13px;
+  letter-spacing: 1px;
+
+  color: $purple-bright;
+
+  padding: 4px 12px;
+
+  border: 1px solid $purple-dim;
+  border-radius: 4px;
+
+  transition: 0.2s;
+
+  &:hover {
+    background: rgba($purple, 0.15);
+  }
+}
+
+// ── FILTER BAR ───────────────────────────────────────────
+.filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 10px 20px;
+
+  background: rgba($bg-panel, 0.5);
+
+  border-bottom: 1px solid $border;
+
+  flex-wrap: wrap;
   gap: 12px;
 }
 
-.no-results {
-  grid-column: 1 / -1; padding: 40px 0; text-align: center;
-  .no-results-text { font-size: 10px; letter-spacing: 2px; color: $text-dim; }
+.filter-left,
+.filter-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.game-card {
-  background: $bg-card; border: 1px solid $border; border-radius: 2px;
-  cursor: pointer; transition: border-color 0.2s ease, transform 0.2s ease;
-  overflow: hidden;
+.filter-icon {
+  color: $purple-dim;
+  font-size: 12px;
+}
+
+.filter-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+
+  color: $text-dim;
+}
+
+.filter-btn {
+  font-family: 'Share Tech Mono', monospace;
+
+  font-size: 10px;
+  letter-spacing: 1px;
+
+  padding: 5px 12px;
+
+  background: transparent;
+
+  border: 1px solid $border;
+  border-radius: 4px;
+
+  color: $text-muted;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
 
   &:hover {
-    border-color: $purple-dim; transform: translateY(-3px);
-    .card-overlay { opacity: 1; }
-    .game-thumb img { filter: brightness(0.7); }
+    border-color: $border-glow;
+    color: $text-bright;
+  }
+
+  &.active {
+    border-color: $purple-bright;
+
+    color: $purple-bright;
+
+    background: rgba($purple, 0.1);
+  }
+}
+
+.result-count {
+  font-size: 10px;
+  letter-spacing: 1px;
+
+  color: $text-dim;
+}
+
+// ── SEARCH ───────────────────────────────────────────────
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 12px 20px;
+
+  background: rgba($bg, 0.85);
+
+  border-bottom: 1px solid $border;
+}
+
+.search-icon {
+  font-size: 16px;
+  color: $text-dim;
+}
+
+.search-input {
+  flex: 1;
+
+  background: transparent;
+  border: none;
+  outline: none;
+
+  font-family: 'Share Tech Mono', monospace;
+
+  font-size: 12px;
+  letter-spacing: 2px;
+
+  color: $text-bright;
+
+  &::placeholder {
+    color: $text-dim;
+  }
+}
+
+.search-clear {
+  color: $text-dim;
+  cursor: pointer;
+
+  transition: 0.2s;
+
+  &:hover {
+    color: $red-alert;
+  }
+}
+
+// ── BODY ─────────────────────────────────────────────────
+.library-body {
+  flex: 1;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 20px;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $bg;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $border-glow;
+    border-radius: 4px;
+  }
+}
+
+// ── STATES ───────────────────────────────────────────────
+.loading-state,
+.error-state,
+.locked-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 14px;
+
+  padding: 80px 0;
+
+  text-align: center;
+}
+
+.loading-dots {
+  display: flex;
+  gap: 8px;
+
+  span {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: $purple-dim;
+
+    animation: blink 1.2s ease-in-out infinite;
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+.loading-text {
+  font-size: 10px;
+  letter-spacing: 3px;
+
+  color: $text-dim;
+}
+
+.error-icon {
+  font-size: 30px;
+  color: $red-alert;
+}
+
+.lock-title {
+  font-family: 'VT323', monospace;
+
+  font-size: 24px;
+  letter-spacing: 2px;
+
+  color: $red-alert;
+}
+
+.lock-sub {
+  font-size: 11px;
+  letter-spacing: 1px;
+
+  color: $text-muted;
+}
+
+// ── BUTTONS ──────────────────────────────────────────────
+.btn {
+  font-family: 'Share Tech Mono', monospace;
+
+  font-size: 11px;
+  letter-spacing: 2px;
+
+  padding: 8px 20px;
+
+  border-radius: 4px;
+
+  cursor: pointer;
+
+  text-transform: uppercase;
+
+  transition: all 0.2s ease;
+
+  &-outline {
+    background: transparent;
+
+    border: 1px solid $purple-bright;
+
+    color: $purple-bright;
+
+    &:hover {
+      background: rgba($purple, 0.15);
+    }
+  }
+
+  &-ghost {
+    background: transparent;
+
+    border: 1px solid $border-glow;
+
+    color: $text-muted;
+
+    &:hover {
+      border-color: $text-muted;
+      color: $text-bright;
+    }
+  }
+
+  &-sm {
+    font-size: 9px;
+
+    padding: 4px 12px;
+  }
+}
+
+// ── GRID ─────────────────────────────────────────────────
+.games-grid {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+
+  gap: 14px;
+}
+
+.no-results {
+  grid-column: 1 / -1;
+
+  text-align: center;
+
+  padding: 60px 0;
+}
+
+.no-results-text {
+  font-size: 11px;
+  letter-spacing: 2px;
+
+  color: $text-dim;
+}
+
+// ── CARD ─────────────────────────────────────────────────
+.game-card {
+  overflow: hidden;
+
+  background: $bg-card;
+
+  border: 1px solid rgba($border-glow, 0.25);
+  border-radius: 4px;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+
+    border-color: $purple-bright;
+
+    box-shadow: 0 0 18px rgba($purple, 0.2);
+
+    .card-overlay {
+      opacity: 1;
+    }
+
+    .game-thumb img {
+      filter: brightness(0.7);
+    }
   }
 }
 
 .game-thumb {
-  position: relative; width: 100%; aspect-ratio: 4/3;
-  overflow: hidden; background: $bg;
+  position: relative;
+
+  width: 100%;
+  aspect-ratio: 4 / 3;
+
+  overflow: hidden;
+
+  background: $bg;
 
   img {
-    width: 100%; height: 100%; object-fit: cover;
-    display: block; transition: filter 0.2s ease;
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition: filter 0.2s ease;
   }
 }
 
 .card-scanline {
-  position: absolute; inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
-  pointer-events: none; z-index: 1;
+  position: absolute;
+  inset: 0;
+
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.1) 2px,
+    rgba(0, 0, 0, 0.1) 4px
+  );
+
+  pointer-events: none;
 }
 
 .card-overlay {
-  position: absolute; inset: 0; z-index: 2;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba($purple, 0.3); opacity: 0; transition: opacity 0.2s ease;
-  .overlay-text {
-    font-size: 9px; letter-spacing: 2px; color: #fff;
-    border: 1px solid rgba(255,255,255,0.4); padding: 4px 10px;
-  }
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba($purple, 0.3);
+
+  opacity: 0;
+
+  transition: opacity 0.2s ease;
+}
+
+.overlay-text {
+  font-size: 10px;
+  letter-spacing: 2px;
+
+  color: #fff;
+
+  border: 1px solid rgba(255, 255, 255, 0.4);
+
+  padding: 5px 12px;
 }
 
 .console-badge {
-  position: absolute; top: 6px; left: 6px; z-index: 3;
-  font-size: 7px; letter-spacing: 1px; padding: 2px 5px;
-  background: rgba($purple, 0.85); color: #fff; border-radius: 1px; text-transform: uppercase;
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+
+  z-index: 2;
+
+  padding: 2px 6px;
+
+  font-size: 8px;
+  letter-spacing: 1px;
+
+  text-transform: uppercase;
+
+  background: rgba($purple, 0.9);
+
+  color: #fff;
+
+  border-radius: 2px;
 }
 
-.game-id-badge {
-  position: absolute; top: 6px; right: 6px; z-index: 3;
-  font-size: 7px; letter-spacing: 1px; padding: 2px 5px;
-  background: rgba($bg, 0.8); color: $text-dim; border-radius: 1px;
+.game-info {
+  padding: 10px;
 }
-
-.game-info { padding: 8px 10px; }
 
 .game-title {
-  font-size: 9px; letter-spacing: 1px; color: $text-bright; text-transform: uppercase;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px;
+  font-size: 11px;
+  letter-spacing: 1px;
+
+  color: $text-bright;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  margin-bottom: 4px;
 }
 
-.game-meta { display: flex; gap: 8px; flex-wrap: wrap; }
-
-.meta-item { font-size: 8px; letter-spacing: 1px; color: $text-dim; }
-
-// ── LIB FOOTER ────────────────────────────────────────────
-.lib-footer {
-  display: flex; justify-content: flex-end; gap: 16px;
-  padding: 12px 0; font-size: 8px; letter-spacing: 2px; color: $text-dim;
+.game-meta {
+  display: flex;
+  gap: 8px;
 }
 
-// ── BOTTOM NAV ────────────────────────────────────────────
-.bottom-nav {
-  display: flex; border-top: 1px solid $border;
-  background: rgba($bg-panel, 0.95); flex-shrink: 0;
+.meta-item {
+  font-size: 9px;
+  letter-spacing: 1px;
+
+  color: $text-dim;
 }
 
-.bottom-btn {
-  flex: 1; display: flex; flex-direction: column; align-items: center;
-  gap: 4px; padding: 10px 0; background: transparent;
-  border: none; color: $text-dim; cursor: pointer;
-  font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: 1px;
-  transition: all 0.2s;
-  &:hover { color: $text-bright; background: rgba($purple, 0.05); }
-  &.active { color: $purple-bright; border-top: 1px solid $purple-bright; margin-top: -1px; }
+// ── CRT ──────────────────────────────────────────────────
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: radial-gradient(
+    ellipse at center,
+    transparent 65%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+
+  pointer-events: none;
+
+  z-index: 100;
 }
 
-// ── BUTTONS ───────────────────────────────────────────────
-.btn {
-  font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 2px;
-  padding: 8px 20px; cursor: pointer; text-transform: uppercase;
-  transition: all 0.2s; border-radius: 2px;
-  &-outline {
-    background: transparent; border: 1px solid $purple-bright; color: $purple-bright;
-    box-shadow: 0 0 8px rgba($purple, 0.3);
-    &:hover { background: rgba($purple, 0.15); }
+.scanlines {
+  position: fixed;
+  inset: 0;
+
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.03) 3px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+
+  pointer-events: none;
+
+  z-index: 99;
+}
+
+// ── ANIMATIONS ───────────────────────────────────────────
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
   }
-  &-ghost {
-    background: transparent; border: 1px solid $border-glow; color: $text-muted;
-    &:hover { border-color: $text-muted; color: $text-bright; }
+
+  50% {
+    opacity: 0.2;
   }
-  &-sm { font-size: 9px; padding: 4px 12px; letter-spacing: 1px; }
 }
 
-// ── CRT ───────────────────────────────────────────────────
-.crt-overlay { position: fixed; inset: 0; background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.5) 100%); pointer-events: none; z-index: 100; }
-.scanlines   { position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px); pointer-events: none; z-index: 99; }
-
-// ── ANIMATIONS ────────────────────────────────────────────
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }

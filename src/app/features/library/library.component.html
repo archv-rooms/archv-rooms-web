@@ -1,35 +1,37 @@
-<!-- library.component.html -->
 <div class="library-wrapper">
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-top">
-      <span class="sidebar-label">ARCHV</span>
-    </div>
+   <!-- SIDEBAR -->
+   <aside class="sidebar">
     <nav class="sidebar-nav">
-      <button class="nav-btn" title="Home" (click)="navigate('/home')">
+
+      <!-- Home -->
+      <button class="nav-btn active" title="Home" (click)="navigate('/')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
           <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
         </svg>
       </button>
-      <button class="nav-btn active" title="Biblioteca">
+
+      <!-- Biblioteca -->
+      <button class="nav-btn" title="Biblioteca" (click)="navigate('/library')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
         </svg>
       </button>
-      <button class="nav-btn" title="Loja" (click)="navigate('/rooms')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M1 6C5.5 1.5 18.5 1.5 23 6"/>
-          <path d="M3.5 10C7 6.5 17 6.5 20.5 10"/>
-          <path d="M6.5 14C9 11.5 15 11.5 17.5 14"/>
-          <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
-        </svg>
-      </button>
-      <button class="nav-btn" title="Pricing" (click)="navigate('/pricing')">
+
+      <!-- Planos -->
+      <button class="nav-btn" title="Planos" (click)="navigate('/pricing')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="12" r="3"/>
           <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+
+      <!-- Perfil (só quando logado) -->
+      <button class="nav-btn" title="Perfil" *ngIf="isLoggedIn" (click)="navigate('/profile')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
         </svg>
       </button>
     </nav>
@@ -40,48 +42,95 @@
 
     <!-- TOPBAR -->
     <header class="topbar">
+
       <div class="topbar-left">
         <span class="topbar-brand">▣ ARCHV.ROOMS</span>
         <span class="topbar-sep">//</span>
         <span class="topbar-page">LIBRARY</span>
       </div>
+
       <div class="topbar-right">
+
         <span class="system-status">
-          SYSTEM_STATUS: <span class="status-val" [class.stable]="!loadingGames">{{ loadingGames ? 'LOADING' : 'STABLE' }}</span>
+          SYSTEM_STATUS:
+          <span
+            class="status-val"
+            [class.stable]="!loadingGames">
+
+            {{ loadingGames ? 'LOADING' : 'STABLE' }}
+
+          </span>
         </span>
-        <span class="topbar-user" *ngIf="userName">{{ userName }}</span>
-        <button class="btn btn-ghost btn-sm" (click)="navigate('/login')" *ngIf="!userName">LOGIN</button>
+
+        <span class="topbar-user" *ngIf="userName">
+          {{ userName }}
+        </span>
+
+        <button
+          class="btn btn-ghost btn-sm"
+          *ngIf="!userName"
+          (click)="navigate('/login')">
+
+          LOGIN
+
+        </button>
+
       </div>
     </header>
 
     <!-- FILTER BAR -->
     <div class="filter-bar">
+
       <div class="filter-left">
+
         <span class="filter-icon">▼</span>
-        <span class="filter-label">SIGNAL_FILTER:</span>
+
+        <span class="filter-label">
+          PLATFORM_FILTER:
+        </span>
+
         <button
           class="filter-btn"
           *ngFor="let f of filters"
           [class.active]="activeFilter === f.value"
           (click)="setFilter(f.value)">
+
           {{ f.label }}
+
         </button>
+
       </div>
+
       <div class="filter-right">
-        <span class="result-count">{{ filteredGames.length }} NODES_FOUND</span>
+
+        <span class="result-count">
+          {{ filteredGames.length }} GAMES_FOUND
+        </span>
+
       </div>
+
     </div>
 
-    <!-- SEARCH BAR -->
+    <!-- SEARCH -->
     <div class="search-bar">
+
       <span class="search-icon">⌕</span>
+
       <input
         class="search-input"
         type="text"
-        placeholder="SEARCH_ARCHIVE..."
+        placeholder="SEARCH_GAME..."
         [(ngModel)]="searchQuery"
         (input)="onSearch()" />
-      <span class="search-clear" *ngIf="searchQuery" (click)="clearSearch()">✕</span>
+
+      <span
+        class="search-clear"
+        *ngIf="searchQuery"
+        (click)="clearSearch()">
+
+        ✕
+      </span>
+
     </div>
 
     <!-- CONTENT -->
@@ -89,103 +138,131 @@
 
       <!-- LOADING -->
       <div class="loading-state" *ngIf="loadingGames">
+
         <div class="loading-dots">
-          <span></span><span></span><span></span>
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
-        <p class="loading-text">SINCRONIZANDO ACERVO...</p>
+
+        <p class="loading-text">
+          CARREGANDO ACERVO...
+        </p>
+
       </div>
 
-      <!-- ERRO -->
-      <div class="error-state" *ngIf="gamesError && !loadingGames">
+      <!-- ERROR -->
+      <div
+        class="error-state"
+        *ngIf="gamesError && !loadingGames">
+
         <span class="error-icon">⚠</span>
+
         <p>{{ gamesError }}</p>
-        <button class="btn btn-outline btn-sm" (click)="loadGames()">RETRY</button>
+
+        <button
+          class="btn btn-outline btn-sm"
+          (click)="loadGames()">
+
+          RETRY
+
+        </button>
+
       </div>
 
-      <!-- NÃO LOGADO -->
-      <div class="locked-state" *ngIf="!isLoggedIn && !loadingGames">
-        <span class="lock-icon">🔒</span>
-        <p class="lock-title">SIGNAL RESTRICTED // ACESSO NEGADO</p>
-        <p class="lock-sub">Esta área requer autenticação ativa.</p>
-        <button class="btn btn-outline" (click)="navigate('/login')">INITIALIZE_LINK</button>
+      <!-- LOCKED -->
+      <div
+        class="locked-state"
+        *ngIf="!isLoggedIn && !loadingGames">
+
+        <p class="lock-title">
+          ACESSO NEGADO
+        </p>
+
+        <p class="lock-sub">
+          Faça login para acessar sua biblioteca.
+        </p>
+
+        <button
+          class="btn btn-outline"
+          (click)="navigate('/login')">
+
+          LOGIN
+
+        </button>
+
       </div>
 
-      <!-- GRID DE JOGOS -->
-      <div class="games-grid" *ngIf="isLoggedIn && !loadingGames && !gamesError">
+      <!-- GAMES -->
+      <div
+        class="games-grid"
+        *ngIf="isLoggedIn && !loadingGames && !gamesError">
 
-        <!-- Sem resultados -->
-        <div class="no-results" *ngIf="filteredGames.length === 0">
-          <p class="no-results-text">// NENHUM SINAL ENCONTRADO PARA "{{ searchQuery }}"</p>
+        <!-- EMPTY -->
+        <div
+          class="no-results"
+          *ngIf="filteredGames.length === 0">
+
+          <p class="no-results-text">
+            Nenhum jogo encontrado para "{{ searchQuery }}"
+          </p>
+
         </div>
 
+        <!-- CARD -->
         <div
           class="game-card"
           *ngFor="let game of filteredGames"
           (click)="onGameClick(game)">
 
-          <!-- THUMB -->
           <div class="game-thumb">
-            <img [src]="game.image" [alt]="game.title" (error)="onImgError($event)" />
+
+            <img
+              [src]="game.image"
+              [alt]="game.title"
+              (error)="onImgError($event)" />
+
             <div class="card-scanline"></div>
+
             <div class="card-overlay">
-              <span class="overlay-text">ACESSAR ARQUIVO</span>
+              <span class="overlay-text">
+                ABRIR
+              </span>
             </div>
-            <span class="console-badge">{{ game.console }}</span>
-            <span class="game-id-badge">ID: {{ game.id.toString().padStart(6, '0') }}</span>
+
+            <span class="console-badge">
+              {{ game.console }}
+            </span>
+
           </div>
 
-          <!-- INFO -->
           <div class="game-info">
-            <p class="game-title">{{ game.title }}</p>
+
+            <p class="game-title">
+              {{ game.title }}
+            </p>
+
             <div class="game-meta">
-              <span class="meta-item">CN: {{ game.console }}</span>
-              <span class="meta-item">LOC: {{ getRegion(game.console) }}</span>
+
+              <span class="meta-item">
+                {{ game.console }}
+              </span>
+
             </div>
+
           </div>
 
         </div>
+
       </div>
 
-      <!-- COORDS RODAPÉ -->
-      <div class="lib-footer" *ngIf="isLoggedIn && !loadingGames">
-        <span>LAT: 35.6895° N</span>
-        <span>LNG: 139.6917° E</span>
-        <span>NOD_TOTAL: {{ games.length }}</span>
-      </div>
-
-    </div><!-- /library-body -->
-
-    <!-- BOTTOM NAV (mobile style) -->
-    <nav class="bottom-nav">
-      <button class="bottom-btn active">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
-          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
-        </svg>
-        <span>NODE</span>
-      </button>
-      <button class="bottom-btn" (click)="toggleSearch()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
-          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-        </svg>
-        <span>SCAN</span>
-      </button>
-      <button class="bottom-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-        </svg>
-        <span>SYNC</span>
-      </button>
-      <button class="bottom-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
-          <path d="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/>
-        </svg>
-        <span>RELAY</span>
-      </button>
-    </nav>
+    </div>
 
   </main>
 
   <div class="crt-overlay"></div>
   <div class="scanlines"></div>
+
 </div>
+
+
