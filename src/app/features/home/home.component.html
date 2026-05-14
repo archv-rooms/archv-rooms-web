@@ -3,10 +3,8 @@
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="sidebar-top">
-      <span class="sidebar-label">ARCHV</span>
-    </div>
     <nav class="sidebar-nav">
+
       <!-- Home -->
       <button class="nav-btn active" title="Home" (click)="navigate('/')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -14,12 +12,14 @@
           <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
         </svg>
       </button>
+
       <!-- Biblioteca -->
       <button class="nav-btn" title="Biblioteca" (click)="navigate('/library')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
         </svg>
       </button>
+
       <!-- Loja / Rooms -->
       <button class="nav-btn" title="Loja" (click)="navigate('/rooms')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -29,6 +29,7 @@
           <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
         </svg>
       </button>
+
       <!-- Pricing -->
       <button class="nav-btn" title="Planos" (click)="navigate('/pricing')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -36,6 +37,7 @@
           <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
         </svg>
       </button>
+
       <!-- Perfil (só quando logado) -->
       <button class="nav-btn" title="Perfil" *ngIf="isLoggedIn" (click)="navigate('/profile')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -53,11 +55,13 @@
     <header class="topbar">
       <span class="topbar-brand">▣ ARCHV.ROOMS</span>
       <div class="topbar-right">
+
         <!-- Logado: mostra nome e acesso ao perfil -->
         <ng-container *ngIf="isLoggedIn">
           <span class="topbar-user" (click)="navigate('/profile')" style="cursor:pointer" title="Ver perfil">{{ userName }}</span>
           <button class="btn btn-ghost btn-sm" (click)="logout()">LOGOUT</button>
         </ng-container>
+        
         <!-- Não logado: login e register -->
         <ng-container *ngIf="!isLoggedIn">
           <button class="btn btn-ghost btn-sm" (click)="navigate('/login')">LOGIN</button>
@@ -69,26 +73,8 @@
     <!-- SCROLLABLE BODY -->
     <div class="scroll-body">
 
-      <!-- ① TERMINAL BOOT -->
-      <div class="terminal-panel">
-        <div class="terminal-line">
-          <span class="term-icon">▣</span>
-          <span class="term-text">ARCHV.ROOMS OS v2.4.1</span>
-        </div>
-        <div class="terminal-line" *ngFor="let line of terminalLines">
-          <span class="term-prompt">&gt;</span>
-          <span class="term-text">
-            {{ line.text }}
-            <span class="term-ok"  *ngIf="line.status === 'ok'">[OK]</span>
-            <span class="term-pct" *ngIf="line.status === 'pct'">[{{ line.value }}]</span>
-            <span class="term-err" *ngIf="line.status === 'err'">[ERRO]</span>
-          </span>
-        </div>
-      </div>
-
-      <!-- ② HERO -->
+      <!-- ② HERO ----------------------------------------------------- -->
       <section class="hero">
-        <p class="hero-coord">COORD: 35.6895° N, 139.6917° E</p>
         <h1 class="hero-title">archv.rooms</h1>
         <p class="hero-sub">O maior arquivo de sinais retrô da rede.<br>Preservado. Verificado. Online.</p>
         <div class="hero-actions">
@@ -98,48 +84,17 @@
         <div class="hero-scroll-hint">▼ SCROLL TO EXPLORE</div>
       </section>
 
-      <!-- ③ STATS BAR -->
-      <section class="stats-bar">
-        <div class="stat-item" *ngFor="let stat of stats">
-          <span class="stat-value">{{ stat.value }}</span>
-          <span class="stat-label">{{ stat.label }}</span>
-        </div>
-      </section>
 
-      <!-- ④ BIBLIOTECA — jogos reais da API -->
+      <!-- ④ BIBLIOTECA — jogos reais da API ---------------------------------------- -->
       <section class="section">
         <div class="section-header">
-          <span class="section-label">ARCHIVE_NODES</span>
           <span class="section-meta" *ngIf="!isLoggedIn">FAÇA LOGIN PARA ACESSAR O ACERVO COMPLETO</span>
           <span class="section-meta" *ngIf="isLoggedIn && !loadingGames">{{ games.length }} ARTEFATOS CARREGADOS</span>
           <span class="section-link" (click)="navigate('/library')">VER TUDO ›</span>
         </div>
 
-        <!-- Loading -->
-        <div class="loading-row" *ngIf="loadingGames">
-          <span class="loading-dot"></span>
-          <span class="loading-dot"></span>
-          <span class="loading-dot"></span>
-          <span class="loading-text">SINCRONIZANDO ACERVO...</span>
-        </div>
-
-        <!-- Erro -->
-        <div class="error-row" *ngIf="gamesError">
-          <span class="err-icon">⚠</span>
-          <span>{{ gamesError }}</span>
-        </div>
-
-        <!-- Não logado -->
-        <div class="locked-row" *ngIf="!isLoggedIn && !loadingGames">
-          <div class="locked-inner">
-            <span class="lock-icon">🔒</span>
-            <p class="lock-title">SIGNAL RESTRICTED</p>
-            <p class="lock-sub">Faça login para acessar o acervo.</p>
-            <button class="btn btn-outline" (click)="navigate('/login')">INITIALIZE_LINK</button>
-          </div>
-        </div>
-
-        <!-- Grid de jogos -->
+      
+        <!-- Grid de jogos ---------------------------------------- -->
         <div class="games-grid" *ngIf="isLoggedIn && !loadingGames && !gamesError">
           <div class="game-card" *ngFor="let game of games.slice(0, 12)" (click)="onGameClick(game)">
             <div class="game-thumb">
@@ -155,7 +110,7 @@
         </div>
       </section>
 
-      <!-- ⑤ PLATAFORMAS -->
+      <!-- ⑤ PLATAFORMAS ---------------------------------------- -->
       <section class="section">
         <div class="section-header">
           <span class="section-label">PLATFORM_INDEX</span>
@@ -164,7 +119,7 @@
         </div>
         <div class="platforms-grid">
           <div class="platform-card" *ngFor="let p of platforms" (click)="navigate('/library')">
-            <div class="platform-icon">{{ p.icon }}</div>
+            
             <div class="platform-info">
               <span class="platform-name">{{ p.name }}</span>
               <span class="platform-count">{{ p.count }} arquivos</span>
@@ -176,21 +131,8 @@
         </div>
       </section>
 
-      <!-- ⑥ LIVE SIGNAL FEED -->
-      <section class="section feed-section">
-        <div class="section-header">
-          <span class="section-label">LIVE_SIGNAL_FEED</span>
-          <span class="feed-live"><span class="live-dot"></span> LIVE</span>
-        </div>
-        <div class="feed-body">
-          <div class="feed-log" *ngFor="let log of feedLogs" [ngClass]="'log-' + log.type">
-            <span class="log-type">[{{ log.type.toUpperCase() }}]</span>
-            <span class="log-text">{{ log.text }}</span>
-          </div>
-        </div>
-      </section>
 
-      <!-- ⑦ CTA FINAL -->
+      <!-- ⑦ CTA FINAL ---------------------------------------- -->
       <section class="cta-section">
         <div class="cta-inner">
           <p class="cta-pre">// ACESSO COMPLETO AO ARQUIVO</p>
@@ -207,7 +149,7 @@
         </div>
       </section>
 
-      <!-- FOOTER -->
+      <!-- FOOTER ---------------------------------------- -->
       <footer class="site-footer">
         <span>ARCHV.ROOMS OS v2.4.1</span>
         <span class="footer-links">
