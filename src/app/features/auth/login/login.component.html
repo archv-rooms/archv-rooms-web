@@ -1,105 +1,139 @@
 <div class="auth-wrapper">
-  <!-- Background grid -->
   <div class="bg-grid"></div>
   <div class="scanlines"></div>
 
   <div class="auth-terminal">
-    <!-- Terminal header -->
-    <div class="terminal-header">
-      <div class="terminal-dots">
-        <span class="dot dot--red"></span>
-        <span class="dot dot--yellow"></span>
-        <span class="dot dot--green"></span>
-      </div>
-      <span class="terminal-title">ARCHV.ROOMS // AUTH_PROTOCOL v2.1</span>
-      <span class="terminal-status">● SECURE</span>
-    </div>
 
-    <!-- Boot lines -->
-    <div class="boot-sequence">
-      <p class="boot-line">[ OK ] Initializing secure channel...</p>
-      <p class="boot-line">[ OK ] Encryption layer active...</p>
-      <p class="boot-line">[ __ ] Awaiting credentials...</p>
+    <!-- Header -->
+    <div class="terminal-header">
+      <button class="back-btn" routerLink="/">
+        <span class="back-arrow">←</span>
+        <span class="back-text">HOME</span>
+      </button>
+
+      <span class="terminal-status">● SECURE</span>
     </div>
 
     <!-- Auth box -->
     <div class="auth-body">
+
       <div class="auth-header">
         <div class="auth-icon">▶</div>
+
         <div>
-          <h1 class="auth-title">ACCESS_TERMINAL</h1>
-          <p class="auth-subtitle">// insert credentials to proceed</p>
+          <h1 class="auth-title">LOGIN</h1>
+          <p class="auth-subtitle">insira suas credenciais</p>
         </div>
       </div>
 
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form" autocomplete="off">
+      <form
+        [formGroup]="loginForm"
+        (ngSubmit)="onSubmit()"
+        class="auth-form"
+        autocomplete="off"
+      >
 
+        <!-- EMAIL -->
         <div class="field-group">
-          <label class="field-label">
-            <span class="label-prefix">01 //</span> E-MAIL
-          </label>
-          <div class="field-wrapper" [class.field-error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+
+          <div
+            class="field-wrapper"
+            [class.field-error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+          >
             <span class="field-icon">@</span>
+
             <input
               type="email"
-              id="email"
               formControlName="email"
               class="field-input"
-              placeholder="player@domain.com"
+              placeholder="e-mail"
               autocomplete="off"
             >
           </div>
-          <span class="error-msg" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-            ⚠ E-mail inválido ou obrigatório
+
+          <span
+            class="error-msg"
+            *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+          >
+            ⚠ e-mail inválido
           </span>
+
         </div>
 
+        <!-- PASSWORD -->
         <div class="field-group">
-          <label class="field-label">
-            <span class="label-prefix">02 //</span> PASSWORD
-          </label>
-          <div class="field-wrapper" [class.field-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+
+          <div
+            class="field-wrapper"
+            [class.field-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          >
             <span class="field-icon">▒</span>
+
             <input
               type="password"
-              id="password"
               formControlName="password"
               class="field-input"
-              placeholder="••••••••"
+              placeholder="senha"
               autocomplete="current-password"
             >
           </div>
-          <span class="error-msg" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-            ⚠ Senha deve ter no mínimo 6 caracteres
+
+          <span
+            class="error-msg"
+            *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          >
+            ⚠ mínimo 6 caracteres
           </span>
+
         </div>
 
+        <!-- SERVER ERROR -->
         <div class="server-error" *ngIf="errorMessage">
-          <span class="error-tag">[DENIED]</span> {{ errorMessage }}
+          <span class="error-tag">[DENIED]</span>
+          {{ errorMessage }}
         </div>
 
-        <button type="submit" class="btn-submit" [disabled]="isLoading">
-          <span *ngIf="!isLoading">INITIALIZE_CONNECTION ▶</span>
-          <span *ngIf="isLoading" class="loading-text">AUTHENTICATING<span class="dots">...</span></span>
+        <!-- SUBMIT -->
+        <button
+          type="submit"
+          class="btn-submit"
+          [disabled]="isLoading"
+        >
+
+          <span *ngIf="!isLoading">
+            ENTRAR ▶
+          </span>
+
+          <span
+            *ngIf="isLoading"
+            class="loading-text"
+          >
+            AUTENTICANDO
+            <span class="dots">...</span>
+          </span>
+
         </button>
 
       </form>
 
-      <div class="auth-divider">
-        <span>────────────────────</span>
-      </div>
-
+      <!-- FOOTER -->
       <div class="auth-footer">
-        <p class="footer-text">NEW TO THE NETWORK?</p>
-        <a routerLink="/register" class="footer-link">→ CREATE_ACCOUNT</a>
+
+        <p class="footer-text">
+          novo na rede?
+        </p>
+
+        <a
+          routerLink="/register"
+          class="footer-link"
+        >
+          <span class="link-arrow">→</span>
+          <span class="link-text">CRIAR CONTA</span>
+        </a>
+
       </div>
+
     </div>
 
-    <!-- Terminal footer -->
-    <div class="terminal-footer">
-      <span>ARCHV.ROOMS OS v2.1.0</span>
-      <span>UPTIME: 99.2%</span>
-      <span>NODES: 47 ACTIVE</span>
-    </div>
   </div>
 </div>

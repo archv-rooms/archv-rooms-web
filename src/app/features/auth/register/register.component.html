@@ -3,22 +3,14 @@
   <div class="scanlines"></div>
 
   <div class="auth-terminal">
-    <!-- Terminal header -->
-    <div class="terminal-header">
-      <div class="terminal-dots">
-        <span class="dot dot--red"></span>
-        <span class="dot dot--yellow"></span>
-        <span class="dot dot--green"></span>
-      </div>
-      <span class="terminal-title">ARCHV.ROOMS // NEW_NODE_PROTOCOL v2.1</span>
-      <span class="terminal-status">● OPEN</span>
-    </div>
 
-    <!-- Boot lines -->
-    <div class="boot-sequence">
-      <p class="boot-line">[ OK ] Node registration module loaded...</p>
-      <p class="boot-line">[ OK ] Slot available in the network...</p>
-      <p class="boot-line">[ __ ] Awaiting new node credentials...</p>
+    <!-- Header -->
+    <div class="terminal-header">
+      <button class="back-btn" routerLink="/">
+        <span class="back-arrow">←</span>
+        <span class="back-text">HOME</span>
+      </button>
+      <span class="terminal-status">● OPEN</span>
     </div>
 
     <!-- Auth box -->
@@ -26,71 +18,35 @@
       <div class="auth-header">
         <div class="auth-icon">✦</div>
         <div>
-          <h1 class="auth-title">NEW_NODE_INIT</h1>
-          <p class="auth-subtitle">// register to join the archv network</p>
+          <h1 class="auth-title">CADASTRO</h1>
+          <p class="auth-subtitle">crie sua conta na rede</p>
         </div>
       </div>
 
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form" autocomplete="off">
 
         <div class="field-group">
-          <label class="field-label">
-            <span class="label-prefix">01 //</span> PLAYER NAME
-          </label>
           <div class="field-wrapper" [class.field-error]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
             <span class="field-icon">▣</span>
-            <input
-              type="text"
-              id="name"
-              formControlName="name"
-              class="field-input"
-              placeholder="Player_01"
-              autocomplete="off"
-            >
+            <input type="text" formControlName="name" class="field-input" placeholder="nome" autocomplete="off">
           </div>
-          <span class="error-msg" *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
-            ⚠ Nome deve ter no mínimo 3 caracteres
-          </span>
+          <span class="error-msg" *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">⚠ mínimo 3 caracteres</span>
         </div>
 
         <div class="field-group">
-          <label class="field-label">
-            <span class="label-prefix">02 //</span> E-MAIL
-          </label>
           <div class="field-wrapper" [class.field-error]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
             <span class="field-icon">@</span>
-            <input
-              type="email"
-              id="email"
-              formControlName="email"
-              class="field-input"
-              placeholder="player@domain.com"
-              autocomplete="off"
-            >
+            <input type="email" formControlName="email" class="field-input" placeholder="e-mail" autocomplete="off">
           </div>
-          <span class="error-msg" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
-            ⚠ E-mail inválido ou obrigatório
-          </span>
+          <span class="error-msg" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">⚠ e-mail inválido</span>
         </div>
 
         <div class="field-group">
-          <label class="field-label">
-            <span class="label-prefix">03 //</span> PASSWORD
-          </label>
           <div class="field-wrapper" [class.field-error]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
             <span class="field-icon">▒</span>
-            <input
-              type="password"
-              id="password"
-              formControlName="password"
-              class="field-input"
-              placeholder="••••••••"
-              autocomplete="new-password"
-            >
+            <input type="password" formControlName="password" class="field-input" placeholder="senha" autocomplete="new-password">
           </div>
-          <span class="error-msg" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-            ⚠ Senha deve ter no mínimo 6 caracteres
-          </span>
+          <span class="error-msg" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">⚠ mínimo 6 caracteres</span>
         </div>
 
         <div class="server-error" *ngIf="errorMessage">
@@ -98,27 +54,17 @@
         </div>
 
         <button type="submit" class="btn-submit" [disabled]="isLoading">
-          <span *ngIf="!isLoading">REGISTER_NODE ✦</span>
-          <span *ngIf="isLoading" class="loading-text">CREATING NODE<span class="dots">...</span></span>
+          <span *ngIf="!isLoading">CRIAR CONTA ✦</span>
+          <span *ngIf="isLoading" class="loading-text">CRIANDO<span class="dots">...</span></span>
         </button>
 
       </form>
 
-      <div class="auth-divider">
-        <span>────────────────────</span>
-      </div>
-
       <div class="auth-footer">
-        <p class="footer-text">ALREADY IN THE NETWORK?</p>
-        <a routerLink="/login" class="footer-link">→ ACCESS_TERMINAL</a>
+        <p class="footer-text">já tem conta?</p>
+        <a routerLink="/login" class="footer-link">→ ENTRAR</a>
       </div>
     </div>
 
-    <!-- Terminal footer -->
-    <div class="terminal-footer">
-      <span>ARCHV.ROOMS OS v2.1.0</span>
-      <span>UPTIME: 99.2%</span>
-      <span>NODES: 47 ACTIVE</span>
-    </div>
   </div>
 </div>
