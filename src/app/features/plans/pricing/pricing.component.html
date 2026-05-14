@@ -1,74 +1,185 @@
-<div class="pricing-wrapper">
+<!-- pricing.component.html -->
+<div class="home-wrapper">
 
-  <div class="bg-grid"></div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+
+      <!-- Home -->
+      <button class="nav-btn" title="Home" (click)="navigate('/')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="7" height="7"/>
+          <rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/>
+        </svg>
+      </button>
+
+      <!-- Biblioteca -->
+      <button class="nav-btn" title="Biblioteca" (click)="navigate('/library')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
+        </svg>
+      </button>
+
+      <!-- Loja / Rooms -->
+      <button class="nav-btn" title="Loja" (click)="navigate('/rooms')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M1 6C5.5 1.5 18.5 1.5 23 6"/>
+          <path d="M3.5 10C7 6.5 17 6.5 20.5 10"/>
+          <path d="M6.5 14C9 11.5 15 11.5 17.5 14"/>
+          <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
+        </svg>
+      </button>
+
+      <!-- Pricing — active -->
+      <button class="nav-btn active" title="Planos" (click)="navigate('/pricing')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+
+      <!-- Perfil (só quando logado) -->
+      <button class="nav-btn" title="Perfil" *ngIf="isLoggedIn" (click)="navigate('/profile')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+      </button>
+
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <span class="topbar-brand">▣ ARCHV.ROOMS</span>
+      <div class="topbar-right">
+
+        <!-- Logado -->
+        <ng-container *ngIf="isLoggedIn">
+          <span class="topbar-user" (click)="navigate('/profile')" style="cursor:pointer" title="Ver perfil">{{ userName }}</span>
+          <button class="btn btn-ghost btn-sm" (click)="logout()">LOGOUT</button>
+        </ng-container>
+
+        <!-- Não logado -->
+        <ng-container *ngIf="!isLoggedIn">
+          <button class="btn btn-ghost btn-sm" (click)="navigate('/login')">LOGIN</button>
+          <button class="btn btn-outline btn-sm" (click)="navigate('/register')">REGISTER</button>
+        </ng-container>
+
+      </div>
+    </header>
+
+    <!-- SCROLLABLE BODY -->
+    <div class="scroll-body">
+
+      <!-- HERO -->
+      <section class="hero">
+        <div class="boot-line">
+        </div>
+        <h1 class="hero-title">PLANOS</h1>
+        <p class="hero-sub">
+          Escolha sua classe de acesso ao arquivo principal.<br>
+          Biblioteca expandida. Transmissão prioritária.
+        </p>
+      </section>
+
+      <!-- LOADING -->
+      <div class="section" *ngIf="isLoading">
+        <span class="blink-text">LOADING ACCESS TIERS...</span>
+      </div>
+
+      <!-- ERROR -->
+      <div class="section" *ngIf="errorMessage">
+        <p class="error-msg">{{ errorMessage }}</p>
+      </div>
+
+      <!-- PLANS GRID -->
+      <section class="section" *ngIf="!isLoading && !errorMessage">
+
+        <div class="section-header">
+          <span class="section-label">ACCESS_TIERS</span>
+          <span class="section-meta">{{ plans.length }} PLANOS DISPONÍVEIS</span>
+        </div>
+
+        <div class="plans-grid">
+
+          <div
+            class="plan-card"
+            *ngFor="let plan of plans; let i = index"
+            [attr.data-tier]="i">
+
+            <!-- CARD HEADER -->
+            <div class="card-header">
+              <div class="card-dots">
+                <span class="cdot"></span>
+                <span class="cdot"></span>
+                <span class="cdot"></span>
+              </div>
+              <span class="card-label">TIER_{{ i + 1 }}</span>
+            </div>
+
+            <!-- CARD HERO -->
+            <div class="card-hero">
+              <div class="plan-icon">{{ plan.icon }}</div>
+              <h2 class="plan-name">{{ plan.name }}</h2>
+              <p class="plan-desc">{{ plan.description }}</p>
+            </div>
+
+            <!-- PRICE -->
+            <div class="price-block">
+              <div class="divider-line">── PRICE ───────────</div>
+              <div class="price-display">
+                <span class="currency">R$</span>
+                <span class="amount">{{ plan.price }}</span>
+                <span class="period">/mês</span>
+              </div>
+            </div>
+
+            <!-- BENEFITS -->
+            <div class="benefits-block">
+              <div class="divider-line">── FEATURES ────────</div>
+              <ul class="benefits-list">
+                <li *ngFor="let benefit of plan.benefits">
+                  <span class="bullet">▶</span>
+                  {{ benefit }}
+                </li>
+              </ul>
+            </div>
+
+            <!-- BUTTON -->
+            <button
+              class="btn btn-outline btn-plan"
+              (click)="onSelectPlan(plan)">
+              {{ plan.buttonText }}
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="site-footer">
+        <span>ARCHV.ROOMS OS v2.4.1</span>
+        <span class="footer-links">
+          <span (click)="navigate('/')"        class="footer-link">HOME</span>
+          <span (click)="navigate('/library')" class="footer-link">BIBLIOTECA</span>
+          <span (click)="navigate('/pricing')" class="footer-link">PLANOS</span>
+          <span (click)="navigate('/rooms')"   class="footer-link">LOJA</span>
+        </span>
+        <span>© 2025 ARCHV_SYSTEMS</span>
+      </footer>
+
+    </div>
+  </main>
+
+  <div class="crt-overlay"></div>
   <div class="scanlines"></div>
-
-  <!-- Header -->
-  <div class="page-header">
-    <div class="boot-line">
-      <span class="prompt">SYS &gt;</span>
-      <span class="boot-text">SUBSCRIPTION_TIERS.db — SELECT YOUR ACCESS CLASS</span>
-    </div>
-    <h1 class="page-title">CHOOSE_YOUR_CLASS</h1>
-    <p class="page-sub">Select a subscription plan to access the ROM repository.</p>
-  </div>
-
-  <!-- Loading -->
-  <div class="loading-state" *ngIf="isLoading">
-    <span class="blink-text">▓▓▓▓▓░░░░░ LOADING PLANS...</span>
-  </div>
-
-  <!-- Erro -->
-  <div class="error-state pixel-box" *ngIf="errorMessage">
-    <p class="error-msg"><span class="prompt err">ERR &gt;</span> {{ errorMessage }}</p>
-    <button class="archv-btn btn-ghost" (click)="loadPlans()">↺ RETRY</button>
-  </div>
-
-  <!-- Grid de planos -->
-  <div class="plans-grid" *ngIf="!isLoading && !errorMessage">
-    <div class="plan-card" *ngFor="let plan of plans; let i = index" [attr.data-tier]="i">
-
-      <!-- Header do card -->
-      <div class="card-header">
-        <div class="card-dots">
-          <span class="cdot"></span><span class="cdot"></span><span class="cdot"></span>
-        </div>
-        <span class="card-label">TIER_{{ i + 1 }}</span>
-      </div>
-
-      <!-- Ícone + nome -->
-      <div class="card-hero">
-        <div class="plan-icon">{{ plan.icon }}</div>
-        <h2 class="plan-name">{{ plan.name | uppercase }}</h2>
-        <p class="plan-desc">{{ plan.description }}</p>
-      </div>
-
-      <!-- Preço -->
-      <div class="price-block">
-        <div class="divider-line">── PRICE ─────────────────</div>
-        <div class="price-display">
-          <span class="currency">R$</span>
-          <span class="amount">{{ plan.price | number:'1.2-2' }}</span>
-          <span class="period">/mês</span>
-        </div>
-      </div>
-
-      <!-- Benefícios -->
-      <div class="benefits-block">
-        <div class="divider-line">── FEATURES ───────────────</div>
-        <ul class="benefits-list">
-          <li *ngFor="let benefit of plan.benefits">
-            <span class="bullet">▶</span> {{ benefit }}
-          </li>
-        </ul>
-      </div>
-
-      <!-- CTA -->
-      <a [routerLink]="['/checkout', plan.id]" class="archv-btn btn-plan">
-        <span>▶</span> {{ plan.buttonText }}
-      </a>
-
-    </div>
-  </div>
 
 </div>

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 import { PlanService, Plan } from '../../../core/services/plan.service';
 
 interface PlanVisuals {
@@ -12,57 +12,120 @@ interface PlanVisuals {
 @Component({
   selector: 'app-pricing',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule],
   templateUrl: './pricing.component.html',
   styleUrls: ['./pricing.component.scss']
 })
 export class PricingComponent implements OnInit {
-  private planService = inject(PlanService);
-  
-  plans: (Plan & PlanVisuals)[] = [];
-  isLoading: boolean = true;
-  errorMessage: string = '';
 
-  // Mapeamento visual para enriquecer os dados do banco
+  private router     = inject(Router);
+  private planService = inject(PlanService);
+
+  // ── Auth (mesmo padrão do Home) ──────────────────────
+  isLoggedIn = false;
+  userName   = '';
+
+  // ── Plans ────────────────────────────────────────────
+  plans: (Plan & PlanVisuals)[] = [];
+  isLoading    = true;
+  errorMessage = '';
+
   private visualMap: Record<string, PlanVisuals> = {
     'Basic': {
-      icon: '🕹️',
-      benefits: ['Acesso a jogos 8-bit', 'Suporte padrão', '1 tela simultânea'],
-      buttonText: 'SELECT BASIC'
+      icon: '▣',
+      benefits: [
+        'Acesso ao acervo 8-bit',
+        '1 dispositivo simultâneo',
+        'Download padrão',
+        'Atualizações mensais',
+      ],
+      buttonText: 'INITIALIZE BASIC',
     },
     'Pro': {
-      icon: '📼',
-      benefits: ['Acesso a jogos 16-bit', 'Suporte prioritário', 'Save na nuvem'],
-      buttonText: 'SELECT PRO'
+      icon: '◈',
+      benefits: [
+        'Acesso completo 16-bit',
+        'Save states em nuvem',
+        'Prioridade de sinal',
+        '3 dispositivos simultâneos',
+      ],
+      buttonText: 'INITIALIZE PRO',
     },
     'Ultimate': {
-      icon: '👑',
-      benefits: ['Acesso total (32-bit+)', 'Multiplayer online', 'Acesso antecipado'],
-      buttonText: 'SELECT ULTIMATE'
-    }
+      icon: '⬢',
+      benefits: [
+        'Acesso total ao arquivo',
+        'Multiplayer online',
+        'Early access releases',
+        'Transmissão premium ilimitada',
+      ],
+      buttonText: 'INITIALIZE ULTIMATE',
+    },
   };
 
+  // ─────────────────────────────────────────────────────
+
   ngOnInit(): void {
+    this.checkAuth();
     this.loadPlans();
   }
+
+  // ── Auth ─────────────────────────────────────────────
+
+  private checkAuth(): void {
+    const token   = localStorage.getItem('@ProjetoX:token');
+    const userStr = localStorage.getItem('@ProjetoX:user');
+
+    if (token) {
+      this.isLoggedIn = true;
+      this.userName   = userStr ? JSON.parse(userStr).name : 'USER';
+    }
+  }
+
+  logout(): void {
+    localStorage.removeItem('@ProjetoX:token');
+    localStorage.removeItem('@ProjetoX:user');
+
+    this.isLoggedIn = false;
+    this.userName   = '';
+
+    this.router.navigate(['/login']);
+  }
+
+  // ── Plans ────────────────────────────────────────────
 
   loadPlans(): void {
     this.planService.getPlans().subscribe({
       next: (response) => {
-        this.plans = response.data.plans.map(plan => {
-          const visuals = this.visualMap[plan.name] || {
+        this.plans = response.data.plans.map(plan => ({
+          ...plan,
+          ...(this.visualMap[plan.name] ?? {
             icon: '❓',
             benefits: ['Benefícios padrão'],
-            buttonText: 'SELECT'
-          };
-          return { ...plan, ...visuals };
-        });
+            buttonText: 'SELECT',
+          }),
+        }));
         this.isLoading = false;
       },
       error: () => {
-        this.errorMessage = 'Erro ao carregar os planos. Tente novamente.';
-        this.isLoading = false;
-      }
+        this.errorMessage = 'FALHA AO CARREGAR PLANOS. VERIFIQUE O SINAL.';
+        this.isLoading    = false;
+      },
     });
+  }
+
+  onSelectPlan(plan: Plan & PlanVisuals): void {
+    if (this.isLoggedIn) {
+      // TODO: chamar serviço de assinatura
+      console.log('Plan selected:', plan.name);
+    } else {
+      this.router.navigate(['/register']);
+    }
+  }
+
+  // ── Navigation (mesmo padrão do Home) ────────────────
+
+  navigate(path: string): void {
+    this.router.navigate([path]);
   }
 }

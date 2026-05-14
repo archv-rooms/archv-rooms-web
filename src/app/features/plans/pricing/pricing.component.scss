@@ -1,160 +1,404 @@
-.pricing-wrapper {
+// ─────────────────────────────────────────────────────
+// TOKENS  (idênticos ao Home)
+// ─────────────────────────────────────────────────────
+$bg:           #11131a;
+$bg-panel:     #181b24;
+$bg-card:      #202433;
+
+$border:       #34384a;
+$border-glow:  #6d4ed8;
+
+$purple:       #8b5cf6;
+$purple-dim:   #6d4ed8;
+$purple-bright:#fcfcfc;
+
+$text-dim:     #727896;
+$text-muted:   #9aa3c7;
+$text-base:    #bcc3e0;
+$text-bright:  #f2f4ff;
+
+$green-ok:     #4ade80;
+$amber:        #fbbf24;
+$red-alert:    #fb7185;
+
+// ─────────────────────────────────────────────────────
+// RESET
+// ─────────────────────────────────────────────────────
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  background: $bg;
+  font-family: 'Share Tech Mono', monospace;
+  color: $text-base;
+}
+
+// ─────────────────────────────────────────────────────
+// LAYOUT  (idêntico ao Home)
+// ─────────────────────────────────────────────────────
+.home-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: $bg;
   position: relative;
+}
+
+.main-content {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 50px 20px 60px;
-  min-height: calc(100vh - 80px);
   overflow: hidden;
 }
 
-/* Fundo */
-.bg-grid {
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,255,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.scanlines {
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent 3px,
-    rgba(0,0,0,0.12) 3px,
-    rgba(0,0,0,0.12) 4px
-  );
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Header */
-.page-header {
-  position: relative;
+// ─────────────────────────────────────────────────────
+// SIDEBAR  (idêntico ao Home)
+// ─────────────────────────────────────────────────────
+.sidebar {
+  width: 84px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 0;
+  gap: 10px;
+  flex-shrink: 0;
   z-index: 10;
+
+  background: linear-gradient(
+    180deg,
+    rgba($bg-panel, 1) 0%,
+    rgba(#1d2130, 1) 100%
+  );
+
+  border-right: 1px solid rgba($border-glow, 0.25);
+
+  box-shadow:
+    inset -1px 0 0 rgba(255,255,255,0.03),
+    0 0 25px rgba($purple, 0.08);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.nav-btn {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: $text-muted;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  &:hover {
+    border-color: $border-glow;
+    color: $purple-bright;
+    background: rgba($purple, 0.1);
+  }
+
+  &.active {
+    background: rgba($purple, 0.2);
+    border-color: $purple-dim;
+    color: $purple-bright;
+    box-shadow: 0 0 8px rgba($purple, 0.3);
+  }
+}
+
+// ─────────────────────────────────────────────────────
+// TOPBAR  (idêntico ao Home)
+// ─────────────────────────────────────────────────────
+.topbar {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: rgba($bg-panel, 0.92);
+  border-bottom: 1px solid $border;
+  flex-shrink: 0;
+}
+
+.topbar-brand {
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: $text-muted;
+  text-transform: uppercase;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-user {
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: $purple-bright;
+  padding: 4px 12px;
+  border: 1px solid $purple-dim;
+  border-radius: 4px;
+  transition: 0.2s;
+
+  &:hover {
+    background: rgba($purple, 0.15);
+  }
+}
+
+// ─────────────────────────────────────────────────────
+// SCROLL  (idêntico ao Home)
+// ─────────────────────────────────────────────────────
+.scroll-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  &::-webkit-scrollbar       { width: 5px; }
+  &::-webkit-scrollbar-track { background: $bg; }
+  &::-webkit-scrollbar-thumb { background: $border-glow; border-radius: 4px; }
+}
+
+// ─────────────────────────────────────────────────────
+// BUTTONS  (idênticos ao Home)
+// ─────────────────────────────────────────────────────
+.btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 2px;
+  padding: 10px 22px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &-outline {
+    background: transparent;
+    border: 1px solid $purple-bright;
+    color: $purple-bright;
+    box-shadow:
+      0 0 8px rgba($purple, 0.3),
+      inset 0 0 8px rgba($purple, 0.05);
+
+    &:hover {
+      background: rgba($purple, 0.15);
+      box-shadow: 0 0 16px rgba($purple, 0.5);
+    }
+  }
+
+  &-ghost {
+    background: transparent;
+    border: 1px solid $border-glow;
+    color: $text-muted;
+
+    &:hover {
+      border-color: $text-muted;
+      color: $text-bright;
+    }
+  }
+
+  &-sm {
+    font-size: 11px;
+    padding: 6px 14px;
+  }
+}
+
+// ─────────────────────────────────────────────────────
+// SECTIONS  (idênticas ao Home)
+// ─────────────────────────────────────────────────────
+.section {
+  padding: 28px 20px;
+  border-bottom: 1px solid $border;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.section-label {
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: $text-bright;
+  border-left: 2px solid $purple-bright;
+  padding-left: 10px;
+}
+
+.section-meta {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: $text-dim;
+}
+
+// ─────────────────────────────────────────────────────
+// HERO  (mesma estrutura do Home)
+// ─────────────────────────────────────────────────────
+.hero {
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px 40px;
   text-align: center;
-  margin-bottom: 50px;
+  position: relative;
+  border-bottom: 1px solid $border;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 700px;
+    height: 400px;
+    background: radial-gradient(
+      ellipse,
+      rgba($purple-bright, 0.10) 0%,
+      transparent 75%
+    );
+    pointer-events: none;
+  }
 }
 
 .boot-line {
   display: flex;
-  justify-content: center;
+  align-items: center;
   gap: 8px;
-  font-family: var(--font-title);
-  font-size: 0.7rem;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
+  font-size: 11px;
+  letter-spacing: 2px;
 }
 
 .prompt {
-  color: var(--color-primary);
-  &.err { color: #ff4444; }
+  color: $purple-bright;
 }
 
 .boot-text {
-  color: rgba(255,255,255,0.35);
+  color: $text-dim;
 }
 
-.page-title {
-  font-family: var(--font-title);
-  font-size: clamp(1.8rem, 5vw, 3rem);
-  color: var(--color-primary);
-  text-shadow: 0 0 30px rgba(0,255,255,0.4), 4px 4px 0 #000;
-  margin-bottom: 12px;
-  letter-spacing: 3px;
-}
-
-.page-sub {
-  color: rgba(255,255,255,0.4);
-  font-size: 0.95rem;
-  font-family: var(--font-text);
-}
-
-/* Loading / erro */
-.loading-state {
+.hero-title {
+  font-family: 'VT323', monospace;
+  font-size: clamp(64px, 9vw, 110px);
+  font-weight: 400;
+  letter-spacing: 6px;
+  color: $text-bright;
+  margin-bottom: 18px;
   position: relative;
-  z-index: 10;
-  margin-top: 60px;
+
+  text-shadow:
+    0 0 20px rgba($purple-bright, 0.35),
+    0 0 60px rgba($purple, 0.12);
+
+  animation: glitchIn 0.8s ease 0.3s both;
 }
 
+.hero-sub {
+  font-size: 16px;
+  line-height: 1.8;
+  letter-spacing: 1px;
+  color: $text-muted;
+}
+
+// ─────────────────────────────────────────────────────
+// LOADING / ERROR
+// ─────────────────────────────────────────────────────
 .blink-text {
-  font-family: var(--font-title);
-  color: var(--color-secondary);
-  font-size: 1rem;
-  animation: blink 1s step-end infinite;
+  color: $purple-bright;
+  font-size: 14px;
+  letter-spacing: 2px;
+  animation: pulse 1s infinite;
 }
 
-@keyframes blink { 50% { opacity: 0; } }
-
-.error-state {
-  position: relative;
-  z-index: 10;
-  text-align: center;
-  border-color: #ff4444;
-  padding: 20px;
-
-  .error-msg {
-    color: #ff6666;
-    font-family: var(--font-title);
-    font-size: 0.9rem;
-    margin-bottom: 16px;
-  }
+.error-msg {
+  color: $red-alert;
+  font-size: 13px;
+  letter-spacing: 1px;
 }
 
-/* Grid */
+// ─────────────────────────────────────────────────────
+// PLANS GRID
+// ─────────────────────────────────────────────────────
 .plans-grid {
-  position: relative;
-  z-index: 10;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
-  width: 100%;
-  max-width: 1100px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
 }
 
-/* Card */
+// ─────────────────────────────────────────────────────
+// PLAN CARD
+// ─────────────────────────────────────────────────────
 .plan-card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  background: rgba(0,0,0,0.88);
-  border: 1px solid rgba(0,255,255,0.25);
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  background: rgba($bg-card, 0.96);
+  border: 1px solid rgba($border-glow, 0.25);
+  border-radius: 6px;
+  overflow: hidden;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
-    transform: translateY(-8px);
-    border-color: var(--color-primary);
-    box-shadow: 0 0 30px rgba(0,255,255,0.12);
+    transform: translateY(-4px);
+    border-color: $purple-bright;
+    box-shadow:
+      0 0 20px rgba($purple, 0.18),
+      0 0 48px rgba($purple, 0.06);
   }
 
-  /* Tier destaque (índice 1 = Pro) */
+  // Plano premium (índice 1 = Pro)
   &[data-tier="1"] {
-    border-color: var(--color-secondary);
-    box-shadow: 0 0 20px rgba(255,215,0,0.08);
+    border-color: rgba($amber, 0.45);
+    box-shadow: 0 0 24px rgba($amber, 0.07);
 
-    .card-label { color: var(--color-secondary); }
-    .plan-name  { color: var(--color-secondary); text-shadow: 0 0 15px rgba(255,215,0,0.4); }
-    .bullet     { color: var(--color-secondary); }
+    .card-label  { color: $amber; }
+    .plan-name   { color: $amber; text-shadow: 0 0 12px rgba($amber, 0.3); }
+    .bullet      { color: $amber; }
 
-    &:hover {
-      border-color: var(--color-secondary);
-      box-shadow: 0 0 30px rgba(255,215,0,0.2);
+    .btn-plan {
+      border-color: rgba($amber, 0.55);
+      color: $amber;
+
+      &:hover {
+        background: rgba($amber, 0.12);
+        box-shadow: 0 0 14px rgba($amber, 0.18);
+      }
     }
   }
 }
 
-/* Card header */
+// ─── card header ─────────────────────────────────────
 .card-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: rgba(0,255,255,0.04);
-  border-bottom: 1px solid rgba(0,255,255,0.1);
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba($purple, 0.05);
+  border-bottom: 1px solid rgba($border, 0.7);
 }
 
 .card-dots {
@@ -170,139 +414,281 @@
 }
 
 .card-label {
-  margin-left: 6px;
-  font-family: var(--font-title);
-  font-size: 0.65rem;
-  color: rgba(0,255,255,0.4);
+  font-size: 10px;
   letter-spacing: 2px;
+  color: $text-dim;
 }
 
-/* Hero */
+// ─── card hero ───────────────────────────────────────
 .card-hero {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 28px 20px 16px;
+  padding: 36px 20px 24px;
   text-align: center;
 }
 
 .plan-icon {
-  font-size: 3.5rem;
-  margin-bottom: 14px;
-  filter: drop-shadow(0 0 10px rgba(0,255,255,0.3));
+  font-size: 52px;
+  margin-bottom: 18px;
+  filter: drop-shadow(0 0 10px rgba($purple, 0.3));
 }
 
 .plan-name {
-  font-family: var(--font-title);
-  font-size: 1.3rem;
-  color: var(--color-primary);
-  letter-spacing: 3px;
-  margin-bottom: 10px;
+  font-family: 'VT323', monospace;
+  font-size: 48px;
+  line-height: 1;
+  letter-spacing: 4px;
+  color: $text-bright;
+  margin-bottom: 12px;
 }
 
 .plan-desc {
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.35);
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.7;
+  color: $text-muted;
 }
 
-/* Preço */
-.price-block {
-  padding: 0 20px 16px;
+// ─── price ───────────────────────────────────────────
+.price-block,
+.benefits-block {
+  padding: 0 20px 22px;
 }
 
 .divider-line {
-  font-family: var(--font-title);
-  font-size: 0.6rem;
-  color: rgba(0,255,255,0.25);
-  letter-spacing: 1px;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba($text-dim, 0.6);
 }
 
 .price-display {
   display: flex;
   align-items: baseline;
-  gap: 4px;
-
-  .currency {
-    font-family: var(--font-title);
-    font-size: 0.9rem;
-    color: rgba(255,255,255,0.4);
-  }
-
-  .amount {
-    font-family: var(--font-title);
-    font-size: 2rem;
-    color: var(--color-text);
-    text-shadow: 2px 2px 0 #000;
-  }
-
-  .period {
-    font-size: 0.75rem;
-    color: rgba(255,255,255,0.3);
-  }
+  gap: 5px;
 }
 
-/* Benefícios */
+.currency {
+  font-size: 16px;
+  color: $text-dim;
+}
+
+.amount {
+  font-family: 'VT323', monospace;
+  font-size: 82px;
+  line-height: 0.9;
+  color: $text-bright;
+  text-shadow: 0 0 16px rgba($purple-bright, 0.1);
+}
+
+.period {
+  font-size: 12px;
+  color: $text-dim;
+}
+
+// ─── benefits ────────────────────────────────────────
 .benefits-block {
-  padding: 0 20px 20px;
-  flex-grow: 1;
+  flex: 1;
 }
 
 .benefits-list {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 
   li {
-    font-size: 0.9rem;
-    color: rgba(255,255,255,0.65);
-    line-height: 1.4;
-  }
-
-  .bullet {
-    font-size: 0.6rem;
-    color: var(--color-primary);
-    margin-right: 8px;
+    display: flex;
+    align-items: flex-start;
+    font-size: 13px;
+    line-height: 1.5;
+    color: $text-base;
   }
 }
 
-/* CTA */
-.archv-btn {
+.bullet {
+  margin-right: 10px;
+  color: $purple-bright;
+  font-size: 9px;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+// ─── btn plan ────────────────────────────────────────
+.btn-plan {
+  margin: auto 20px 20px;
+  padding: 13px 18px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: 1px solid $purple-bright;
+  border-radius: 4px;
+  background: transparent;
+  color: $purple-bright;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  box-shadow:
+    0 0 8px rgba($purple, 0.3),
+    inset 0 0 8px rgba($purple, 0.05);
+
+  &:hover {
+    background: rgba($purple, 0.14);
+    box-shadow: 0 0 16px rgba($purple, 0.45);
+  }
+}
+
+// ─────────────────────────────────────────────────────
+// CTA  (idêntico ao Home)
+// ─────────────────────────────────────────────────────
+.cta-section {
+  padding: 60px 20px;
+  border-bottom: 1px solid $border;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba($purple, 0.04) 100%
+  );
+}
+
+.cta-inner {
+  max-width: 620px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+}
+
+.cta-pre {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: $purple-bright;
+  text-transform: uppercase;
+}
+
+.cta-title {
+  font-family: 'VT323', monospace;
+  font-size: clamp(42px, 6vw, 64px);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 4px;
+  color: $text-bright;
+  text-shadow: 0 0 20px rgba($purple-bright, 0.25);
+}
+
+.cta-body {
+  font-size: 15px;
+  line-height: 1.8;
+  color: $text-muted;
+}
+
+.cta-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cta-note {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: $text-dim;
+}
+
+// ─────────────────────────────────────────────────────
+// FOOTER  (idêntico ao Home)
+// ─────────────────────────────────────────────────────
+.site-footer {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px;
-  font-family: var(--font-title);
-  font-size: 0.8rem;
-  letter-spacing: 1px;
-  text-decoration: none;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid $border;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: $text-dim;
+}
+
+.footer-links {
+  display: flex;
+  gap: 16px;
+}
+
+.footer-link {
   cursor: pointer;
-  border: none;
-  transition: all 0.15s;
+  transition: 0.2s;
+
+  &:hover { color: $purple-bright; }
 }
 
-.btn-plan {
-  background: rgba(0,255,255,0.08);
-  color: var(--color-primary);
-  border-top: 1px solid rgba(0,255,255,0.2);
-  margin-top: auto;
+// ─────────────────────────────────────────────────────
+// CRT  (idêntico ao Home)
+// ─────────────────────────────────────────────────────
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0,0,0,0.55) 100%
+  );
+  pointer-events: none;
+  z-index: 100;
+}
 
-  &:hover {
-    background: var(--color-primary);
-    color: #000;
+.scanlines {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,0.03) 3px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 99;
+}
+
+// ─────────────────────────────────────────────────────
+// ANIMATIONS
+// ─────────────────────────────────────────────────────
+@keyframes glitchIn {
+  0%   { opacity: 0; transform: translateX(-6px); filter: blur(4px); }
+  60%  { opacity: 1; transform: translateX(2px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 0.9; }
+}
+
+// ─────────────────────────────────────────────────────
+// RESPONSIVE
+// ─────────────────────────────────────────────────────
+@media (max-width: 900px) {
+  .plans-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-.btn-ghost {
-  background: transparent;
-  color: var(--color-text);
-  border: 1px solid rgba(255,255,255,0.2);
-
-  &:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+@media (max-width: 640px) {
+  .sidebar {
+    width: 60px;
   }
+
+  .nav-btn {
+    width: 44px;
+    height: 44px;
+
+    svg { width: 18px; height: 18px; }
+  }
+
+  .hero-title { font-size: 56px; }
 }
