@@ -1,0 +1,46 @@
+// ── TOKENS ────────────────────────────────────────────
+$bg-base:        #0d0b12;
+$bg-surface:     #13101d;
+$bg-card:        #1a1626;
+$bg-card-hover:  #201c30;
+$bg-input:       #110e1a;
+$border:         #2a2240;
+$border-accent:  #5b3fa0;
+
+$purple:         #7c3aed;
+$purple-bright:  #9d60f8;
+$purple-glow:    #a855f740;
+$yellow:         #f5d84b;
+$yellow-dim:     #c9ae3a;
+$red:            #e84040;
+$red-dim:        #b02e2e;
+$green:          #39e87a;
+
+$text-primary:   #e8e0f5;
+$text-secondary: #8b7daa;
+$text-muted:     #4a3f66;
+
+$font-mono:      'Share Tech Mono', monospace;
+$font-display:   'VT323', monospace;
+
+$sidebar-w:      164px;
+$topbar-h:       52px;
+$radius:         2px;
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: $bg-base; }
+::-webkit-scrollbar-thumb { background: $border-accent; border-radius: 2px; }
+
+html, body {
+  height: 100%;
+  background: $bg-base;
+  color: $text-primary;
+  font-family: $font-mono;
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  overflow-x: hidden;
+}
+
