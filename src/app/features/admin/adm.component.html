@@ -1,0 +1,563 @@
+<!-- GAMES -->
+<section class="section active" id="section-games">
+  <div class="section-header">
+    <span class="section-tag">▣</span> GAME_MATRIX_ADMIN
+
+    <button class="btn btn--primary" (click)="openGameModal()">
+      + INSERIR_JOGO
+    </button>
+  </div>
+
+  <!-- filtros -->
+  <div class="filter-bar">
+    <div class="filter-bar__input-wrap">
+      <span class="filter-bar__prompt">&gt;</span>
+
+      <input
+        type="text"
+        class="filter-bar__input"
+        placeholder="BUSCAR POR TÍTULO..."
+        [(ngModel)]="gameSearch"
+        (input)="filterGames()"
+      />
+    </div>
+
+    <select
+      class="filter-bar__select"
+      [(ngModel)]="gamePlatformFilter"
+      (change)="filterGames()"
+    >
+      <option value="">// PLATAFORMA</option>
+      <option value="arcade">ARCADE</option>
+      <option value="console">CONSOLE</option>
+      <option value="handheld">HANDHELD</option>
+    </select>
+
+    <select
+      class="filter-bar__select"
+      [(ngModel)]="gameStatusFilter"
+      (change)="filterGames()"
+    >
+      <option value="">// STATUS</option>
+      <option value="active">ATIVO</option>
+      <option value="hidden">OCULTO</option>
+    </select>
+  </div>
+
+  <!-- tabela -->
+  <div class="data-table-wrap">
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>TÍTULO</th>
+          <th>PLATAFORMA</th>
+          <th>ANO</th>
+          <th>DOWNLOADS</th>
+          <th>STATUS</th>
+          <th>AÇÕES</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let game of filteredGames">
+
+          <td class="text-muted">
+            {{ game.id }}
+          </td>
+
+          <td>
+            {{ game.title }}
+          </td>
+
+          <td>
+            {{ game.platform | uppercase }}
+          </td>
+
+          <td>
+            {{ game.year }}
+          </td>
+
+          <td>
+            {{ game.downloads }}
+          </td>
+
+          <td>
+            <span
+              class="badge"
+              [ngClass]="{
+                'badge--active': game.status === 'active',
+                'badge--hidden': game.status === 'hidden'
+              }"
+            >
+              {{ game.status | uppercase }}
+            </span>
+          </td>
+
+          <td>
+            <div class="actions-cell">
+
+              <button
+                class="btn btn--ghost btn--icon"
+                (click)="openGameModal(game)"
+              >
+                ✎
+              </button>
+
+              <button
+                class="btn btn--ghost btn--icon"
+                (click)="deleteGame(game.id)"
+              >
+                ✕
+              </button>
+
+            </div>
+          </td>
+
+        </tr>
+
+      </tbody>
+    </table>
+
+    <div
+      class="table-empty"
+      *ngIf="filteredGames.length === 0"
+    >
+      <span>// NO_SIGNAL — SEM REGISTROS</span>
+    </div>
+
+  </div>
+
+  <div class="table-footer">
+    <span>
+      TOTAL: {{ filteredGames.length }} REGISTROS
+    </span>
+  </div>
+</section>
+
+<!-- USERS -->
+<section class="section hidden" id="section-users">
+
+  <div class="section-header">
+    <span class="section-tag">▣</span> USER_LOG_MATRIX
+  </div>
+
+  <div class="stats-row">
+
+    <div class="stat-card">
+      <span class="stat-card__label">TOTAL_USERS</span>
+      <span class="stat-card__value">
+        {{ userStats.total }}
+      </span>
+    </div>
+
+    <div class="stat-card">
+      <span class="stat-card__label">ONLINE_NOW</span>
+      <span class="stat-card__value accent">
+        {{ userStats.online }}
+      </span>
+    </div>
+
+    <div class="stat-card">
+      <span class="stat-card__label">BANNED</span>
+      <span class="stat-card__value warn">
+        {{ userStats.banned }}
+      </span>
+    </div>
+
+    <div class="stat-card">
+      <span class="stat-card__label">NEW_24H</span>
+      <span class="stat-card__value">
+        {{ userStats.newLast24h }}
+      </span>
+    </div>
+
+  </div>
+
+  <!-- filtros -->
+  <div class="filter-bar">
+
+    <div class="filter-bar__input-wrap">
+      <span class="filter-bar__prompt">&gt;</span>
+
+      <input
+        type="text"
+        class="filter-bar__input"
+        placeholder="BUSCAR POR USERNAME..."
+        [(ngModel)]="userSearch"
+        (input)="filterUsers()"
+      />
+    </div>
+
+    <select
+      class="filter-bar__select"
+      [(ngModel)]="userStatusFilter"
+      (change)="filterUsers()"
+    >
+      <option value="">// STATUS</option>
+      <option value="active">ATIVO</option>
+      <option value="banned">BANIDO</option>
+    </select>
+
+  </div>
+
+  <!-- tabela -->
+  <div class="data-table-wrap">
+
+    <table class="data-table">
+
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>USERNAME</th>
+          <th>EMAIL</th>
+          <th>ÚLTIMO_LOGIN</th>
+          <th>DL_HOJE</th>
+          <th>STATUS</th>
+          <th>AÇÕES</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let user of filteredUsers">
+
+          <td class="text-muted">
+            {{ user.id }}
+          </td>
+
+          <td>
+            {{ user.username }}
+          </td>
+
+          <td>
+            {{ user.email }}
+          </td>
+
+          <td>
+            {{ user.lastLogin | date:'dd/MM/yyyy HH:mm' }}
+          </td>
+
+          <td>
+            {{ user.dailyDownloads }}
+          </td>
+
+          <td>
+
+            <span
+              class="badge"
+              [ngClass]="{
+                'badge--active': user.status === 'active',
+                'badge--banned': user.status === 'banned'
+              }"
+            >
+              {{ user.status | uppercase }}
+            </span>
+
+            <span
+              *ngIf="user.isSubscriber"
+              class="badge badge--sub"
+            >
+              SUB
+            </span>
+
+          </td>
+
+          <td>
+
+            <div class="actions-cell">
+
+              <button
+                *ngIf="user.status === 'active'"
+                class="btn btn--ghost btn--icon"
+                (click)="openBanModal(user)"
+              >
+                ⊘
+              </button>
+
+              <button
+                *ngIf="user.status === 'banned'"
+                class="btn btn--ghost btn--icon"
+                (click)="unbanUser(user.id)"
+              >
+                ↺
+              </button>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+    <div
+      class="table-empty"
+      *ngIf="filteredUsers.length === 0"
+    >
+      <span>// NO_SIGNAL — SEM REGISTROS</span>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- MODAL GAME -->
+<div
+  class="modal-backdrop"
+  *ngIf="showGameModal"
+>
+
+  <div class="modal">
+
+    <div class="modal__header">
+
+      <span>
+        {{ editingGame ? 'EDITAR_JOGO' : 'INSERIR_JOGO' }}
+      </span>
+
+      <button
+        class="modal__close"
+        (click)="closeGameModal()"
+      >
+        ✕
+      </button>
+
+    </div>
+
+    <div class="modal__body">
+
+      <div class="form-row">
+        <label class="form-label">TÍTULO</label>
+
+        <input
+          type="text"
+          class="form-input"
+          [(ngModel)]="gameForm.title"
+        />
+      </div>
+
+      <div class="form-row form-row--half">
+
+        <div>
+          <label class="form-label">PLATAFORMA</label>
+
+          <select
+            class="form-input"
+            [(ngModel)]="gameForm.platform"
+          >
+            <option value="arcade">ARCADE</option>
+            <option value="console">CONSOLE</option>
+            <option value="handheld">HANDHELD</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="form-label">ANO</label>
+
+          <input
+            type="number"
+            class="form-input"
+            [(ngModel)]="gameForm.year"
+          />
+        </div>
+
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">DESENVOLVEDOR</label>
+
+        <input
+          type="text"
+          class="form-input"
+          [(ngModel)]="gameForm.developer"
+        />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">LINK_DOWNLOAD</label>
+
+        <input
+          type="url"
+          class="form-input"
+          [(ngModel)]="gameForm.downloadLink"
+        />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">COVER_URL</label>
+
+        <input
+          type="url"
+          class="form-input"
+          [(ngModel)]="gameForm.coverUrl"
+        />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">DESCRIÇÃO</label>
+
+        <textarea
+          class="form-input form-textarea"
+          [(ngModel)]="gameForm.description"
+        ></textarea>
+      </div>
+
+      <div class="form-row form-row--half">
+
+        <div>
+          <label class="form-label">TAMANHO (MB)</label>
+
+          <input
+            type="number"
+            class="form-input"
+            [(ngModel)]="gameForm.sizeMb"
+          />
+        </div>
+
+        <div>
+          <label class="form-label">STATUS</label>
+
+          <select
+            class="form-input"
+            [(ngModel)]="gameForm.status"
+          >
+            <option value="active">ATIVO</option>
+            <option value="hidden">OCULTO</option>
+          </select>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="modal__footer">
+
+      <button
+        class="btn btn--ghost"
+        (click)="closeGameModal()"
+      >
+        CANCELAR
+      </button>
+
+      <button
+        class="btn btn--primary"
+        (click)="saveGame()"
+      >
+        SALVAR_JOGO
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- MODAL BAN -->
+<div
+  class="modal-backdrop"
+  *ngIf="showBanModal"
+>
+
+  <div class="modal modal--sm">
+
+    <div class="modal__header">
+
+      <span>BAN_PROTOCOL</span>
+
+      <button
+        class="modal__close"
+        (click)="closeBanModal()"
+      >
+        ✕
+      </button>
+
+    </div>
+
+    <div class="modal__body">
+
+      <p class="modal-target-info">
+        TARGET:
+        <span class="accent">
+          {{ selectedUser?.username }}
+        </span>
+      </p>
+
+      <div class="form-row">
+
+        <label class="form-label">
+          TIPO DE BAN
+        </label>
+
+        <select
+          class="form-input"
+          [(ngModel)]="banForm.type"
+        >
+          <option value="temporary">
+            TEMPORÁRIO
+          </option>
+
+          <option value="permanent">
+            PERMANENTE
+          </option>
+        </select>
+
+      </div>
+
+      <div
+        class="form-row"
+        *ngIf="banForm.type === 'temporary'"
+      >
+
+        <label class="form-label">
+          DURAÇÃO (HORAS)
+        </label>
+
+        <input
+          type="number"
+          class="form-input"
+          [(ngModel)]="banForm.durationHours"
+        />
+
+      </div>
+
+      <div class="form-row">
+
+        <label class="form-label">
+          MOTIVO
+        </label>
+
+        <textarea
+          class="form-input form-textarea"
+          [(ngModel)]="banForm.reason"
+        ></textarea>
+
+      </div>
+
+    </div>
+
+    <div class="modal__footer">
+
+      <button
+        class="btn btn--ghost"
+        (click)="closeBanModal()"
+      >
+        CANCELAR
+      </button>
+
+      <button
+        class="btn btn--danger"
+        (click)="executeBan()"
+      >
+        EXECUTAR_BAN
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
