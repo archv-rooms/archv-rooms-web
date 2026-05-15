@@ -251,12 +251,24 @@ const sections: Record<string, string> = {
 document.querySelectorAll<HTMLAnchorElement>(".nav-item").forEach((item) => {
   item.addEventListener("click", (e) => {
     e.preventDefault();
-    const target = item.dataset.section!;
-    document.querySelectorAll(".nav-item").forEach((n) => n.classList.remove("active"));
+
+    const target = item.dataset['section']!;
+
+    document.querySelectorAll(".nav-item").forEach((n) =>
+      n.classList.remove("active")
+    );
+
     item.classList.add("active");
-    document.querySelectorAll(".section").forEach((s) => s.classList.add("hidden"));
+
+    document.querySelectorAll(".section").forEach((s) =>
+      s.classList.add("hidden")
+    );
+
     el(`section-${target}`)?.classList.remove("hidden");
-    el("current-section-label").textContent = sections[target] ?? "";
+
+    el("current-section-label").textContent =
+      sections[target] ?? "";
+
     sectionDidMount(target);
   });
 });
@@ -637,18 +649,33 @@ function sectionDidMount(section: string): void {
 // ── GLOBAL EVENT DELEGATION ───────────────────────────
 document.addEventListener("click", (e) => {
   const target = e.target as HTMLElement;
+
   const btn = target.closest("[data-action]") as HTMLElement | null;
+
   if (!btn) return;
 
-  const action = btn.dataset.action!;
-  const id = btn.dataset.id ?? "";
-  const name = btn.dataset.name ?? "";
+  const action = btn.dataset['action']!;
+  const id = btn.dataset['id'] ?? "";
+  const name = btn.dataset['name'] ?? "";
 
   switch (action) {
-    case "edit-game":   { const g = allGames.find((x) => x.id === id); openGameModal(g); break; }
-    case "delete-game": deleteGame(id); break;
-    case "ban-user":    openBanModal(id, name); break;
-    case "unban-user":  unbanUser(id); break;
+    case "edit-game": {
+      const g = allGames.find((x) => x.id === id);
+      openGameModal(g);
+      break;
+    }
+
+    case "delete-game":
+      deleteGame(id);
+      break;
+
+    case "ban-user":
+      openBanModal(id, name);
+      break;
+
+    case "unban-user":
+      unbanUser(id);
+      break;
   }
 });
 
