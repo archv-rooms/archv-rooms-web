@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class GameService {
 
-  private baseUrl = 'https://archv-rooms.onrender.com/api/games';
+  private baseUrl = 'http://localhost:3000/api/games';
 
   constructor(private http: HttpClient) {}
 

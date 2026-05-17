@@ -55,6 +55,15 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/register`, userData);
   }
 
+  getUserRole(): string {
+  const userStr = localStorage.getItem(this.userKey);
+  if (userStr) {
+    const user = JSON.parse(userStr);
+    return user.role;
+  }
+  return 'user';
+}
+
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);

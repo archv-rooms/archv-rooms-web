@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { GameService } from '../../core/services/game.service';
-import { UserService } from '../../core/services/user.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-adm',
@@ -13,262 +14,160 @@ import { UserService } from '../../core/services/user.service';
 })
 export class AdmComponent implements OnInit {
 
+  private api = 'http://localhost:3000';
+
   constructor(
     private gameService: GameService,
-    private userService: UserService
+    private http: HttpClient,
+    private authService: AuthService
   ) {}
 
   currentSection = 'games';
-
-  loading = false;
   errorMessage = '';
 
-  // =========================
   // GAMES
-  // =========================
-
   games: any[] = [];
   filteredGames: any[] = [];
-
   gameSearch = '';
-  gamePlatformFilter = 'all';
-  gameStatusFilter = 'all';
-
+  gamePlatformFilter = '';
   showGameModal = false;
   editingGame = false;
+  gameForm: any = { title: '', platform: 'arcade', coverUrl: '', accessLevel: 0, planId: null };
 
-  gameForm: any = {
-    title: '',
-    platform: 'arcade',
-    year: new Date().getFullYear(),
-    developer: '',
-    downloadLink: '',
-    coverUrl: '',
-    description: '',
-    sizeMb: 0,
-    downloads: 0,
-    status: 'active'
-  };
-
-  // =========================
   // USERS
-  // =========================
-
   users: any[] = [];
   filteredUsers: any[] = [];
-
   userSearch = '';
-  userStatusFilter = 'all';
+  userStats = { total: 0, online: 0, banned: 0, newLast24h: 0 };
 
-  showBanModal = false;
-  selectedUser: any = null;
-
-  banForm = {
-    type: 'temporary',
-    durationHours: 24,
-    reason: ''
-  };
-
-  userStats = {
-    total: 0,
-    online: 0,
-    banned: 0,
-    newLast24h: 0
-  };
+  // CATEGORIES
+  categories: any[] = [];
+  showCategoryModal = false;
+  editingCategory = false;
+  categoryForm: any = { name: '' };
 
   ngOnInit(): void {
     this.loadGames();
     this.loadUsers();
+    this.loadCategories();
   }
 
-  // =========================
-  // LOAD GAMES
-  // =========================
+  private get authHeaders() {
+    return { Authorization: `Bearer ${this.authService.getToken()}` };
+  }
 
+  // GAMES
   loadGames(): void {
-    this.loading = true;
-
     this.gameService.getGames().subscribe({
-      next: (res) => {
-        this.games = res.data;
-        this.filteredGames = res.data;
-        this.loading = false;
-      },
-      error: () => {
-        this.errorMessage = 'Erro ao carregar jogos';
-        this.loading = false;
-      }
+      next: (res) => { this.games = res.data; this.filteredGames = res.data; },
+      error: () => this.errorMessage = 'Erro ao carregar jogos'
     });
   }
-
-  // =========================
-  // LOAD USERS + STATS
-  // =========================
-
-  loadUsers(): void {
-    this.loading = true;
-
-    this.userService.getAllUsers().subscribe({
-      next: (data) => {
-        this.users = data;
-        this.filteredUsers = data;
-
-        this.userStats.total = data.length;
-        this.userStats.banned = data.filter(u => u.status === 'banned').length;
-
-        this.loading = false;
-      },
-      error: () => {
-        this.errorMessage = 'Erro ao carregar usuários';
-        this.loading = false;
-      }
-    });
-
-    this.userService.getAdminStats().subscribe({
-      next: (stats) => {
-        this.userStats = stats;
-      },
-      error: () => {}
-    });
-  }
-
-  // =========================
-  // FILTER USERS
-  // =========================
-
-  filterUsers(): void {
-    const search = this.userSearch.toLowerCase();
-
-    this.filteredUsers = this.users.filter(user => {
-      const matchSearch =
-        user.username?.toLowerCase().includes(search) ||
-        user.email?.toLowerCase().includes(search);
-
-      const matchStatus =
-        this.userStatusFilter === '' ||
-        user.status === this.userStatusFilter;
-
-      return matchSearch && matchStatus;
-    });
-  }
-
-  // =========================
-  // BAN SYSTEM
-  // =========================
-
-  openBanModal(user: any): void {
-    this.selectedUser = user;
-    this.showBanModal = true;
-  }
-
-  closeBanModal(): void {
-    this.showBanModal = false;
-    this.selectedUser = null;
-  }
-
-  executeBan(): void {
-    if (!this.selectedUser) return;
-
-    this.userService.banUser(this.selectedUser.id, this.banForm).subscribe({
-      next: () => {
-        this.selectedUser.status = 'banned';
-        this.filterUsers();
-        this.closeBanModal();
-      },
-      error: () => alert('Erro ao banir usuário')
-    });
-  }
-
-  unbanUser(id: number): void {
-    this.userService.unbanUser(id).subscribe({
-      next: () => {
-        const user = this.users.find(u => u.id === id);
-        if (user) user.status = 'active';
-
-        this.filterUsers();
-      },
-      error: () => alert('Erro ao desbanir usuário')
-    });
-  }
-
-  // =========================
-  // GAMES FILTER
-  // =========================
 
   filterGames(): void {
     const search = this.gameSearch.toLowerCase();
-
     this.filteredGames = this.games.filter(game => {
-      return (
-        game.title?.toLowerCase().includes(search) ||
-        game.developer?.toLowerCase().includes(search)
-      );
+      const matchSearch = game.title?.toLowerCase().includes(search);
+      const matchPlataforma = !this.gamePlatformFilter || game.console === this.gamePlatformFilter;
+      return matchSearch && matchPlataforma;
     });
   }
-
-  // =========================
-  // MODALS GAMES
-  // =========================
 
   openGameModal(game?: any): void {
     this.showGameModal = true;
+    this.editingGame = !!game;
+    this.gameForm = game ? { ...game, platform: game.console } : { title: '', platform: 'arcade', coverUrl: '', accessLevel: 0, planId: null };
+  }
 
-    if (game) {
-      this.editingGame = true;
-      this.gameForm = { ...game };
+  closeGameModal(): void { this.showGameModal = false; }
+
+  changeSection(section: string): void { this.currentSection = section; }
+
+  saveGame(): void {
+    if (this.editingGame) {
+      this.gameService.updateGame(this.gameForm.id, this.gameForm).subscribe({
+        next: () => { this.loadGames(); this.closeGameModal(); },
+        error: () => alert('Erro ao atualizar jogo')
+      });
     } else {
-      this.editingGame = false;
+      this.gameService.createGame(this.gameForm).subscribe({
+        next: () => { this.loadGames(); this.closeGameModal(); },
+        error: () => alert('Erro ao criar jogo')
+      });
     }
   }
 
-  closeGameModal(): void {
-    this.showGameModal = false;
-  }
-
-  changeSection(section: string): void {
-    this.currentSection = section;
-  }
-
-  // =========================
-// SAVE GAME (criar ou editar)
-// =========================
-
-saveGame(): void {
-  if (this.editingGame) {
-    this.gameService.updateGame(this.gameForm.id, this.gameForm).subscribe({
-      next: () => {
-        const index = this.games.findIndex(g => g.id === this.gameForm.id);
-        if (index !== -1) this.games[index] = { ...this.gameForm };
-        this.filterGames();
-        this.closeGameModal();
-      },
-      error: () => alert('Erro ao atualizar jogo')
-    });
-  } else {
-    this.gameService.createGame(this.gameForm).subscribe({
-      next: (novoJogo) => {
-        this.games.push(novoJogo);
-        this.filterGames();
-        this.closeGameModal();
-      },
-      error: () => alert('Erro ao criar jogo')
+  deleteGame(id: string): void {
+    if (!confirm('Excluir este jogo?')) return;
+    this.gameService.deleteGame(id).subscribe({
+      next: () => this.loadGames(),
+      error: () => alert('Erro ao excluir jogo')
     });
   }
-}
 
-// =========================
-// DELETE GAME
-// =========================
+  // USERS
+  loadUsers(): void {
+    this.http.get<any>(`${this.api}/admin/users`, { headers: this.authHeaders }).subscribe({
+      next: (res) => {
+        this.users = res.data;
+        this.filteredUsers = res.data;
+        this.userStats.total = res.data.length;
+      },
+      error: () => this.errorMessage = 'Erro ao carregar usuários'
+    });
+  }
 
- deleteGame(id: string): void {
-  if (!confirm('Tem certeza que deseja excluir este jogo?')) return;
+  filterUsers(): void {
+    const search = this.userSearch.toLowerCase();
+    this.filteredUsers = this.users.filter(u =>
+      u.name?.toLowerCase().includes(search) || u.email?.toLowerCase().includes(search)
+    );
+  }
 
-  this.gameService.deleteGame(id).subscribe({
-    next: () => {
-      this.games = this.games.filter(g => g.id !== id);
-      this.filterGames();
-    },
-    error: () => alert('Erro ao excluir jogo')
-  });
-}
+  toggleUserRole(user: any): void {
+    const novoRole = user.role === 'admin' ? 'user' : 'admin';
+    this.http.patch(`${this.api}/admin/users/${user.id}/role`, { role: novoRole }, { headers: this.authHeaders }).subscribe({
+      next: () => user.role = novoRole,
+      error: () => alert('Erro ao alterar role')
+    });
+  }
+
+  // CATEGORIES
+  loadCategories(): void {
+    this.http.get<any>(`${this.api}/admin/categories`, { headers: this.authHeaders }).subscribe({
+      next: (res) => this.categories = res.data,
+      error: () => this.errorMessage = 'Erro ao carregar categorias'
+    });
+  }
+
+  openCategoryModal(cat?: any): void {
+    this.showCategoryModal = true;
+    this.editingCategory = !!cat;
+    this.categoryForm = cat ? { ...cat } : { name: '' };
+  }
+
+  closeCategoryModal(): void { this.showCategoryModal = false; }
+
+  saveCategory(): void {
+    const url = this.editingCategory
+      ? `${this.api}/admin/categories/${this.categoryForm.id}`
+      : `${this.api}/admin/categories`;
+
+    const req = this.editingCategory
+      ? this.http.put(url, { name: this.categoryForm.name }, { headers: this.authHeaders })
+      : this.http.post(url, { name: this.categoryForm.name }, { headers: this.authHeaders });
+
+    req.subscribe({
+      next: () => { this.loadCategories(); this.closeCategoryModal(); },
+      error: () => alert('Erro ao salvar categoria')
+    });
+  }
+
+  deleteCategory(id: number): void {
+    if (!confirm('Excluir categoria?')) return;
+    this.http.delete(`${this.api}/admin/categories/${id}`, { headers: this.authHeaders }).subscribe({
+      next: () => this.loadCategories(),
+      error: () => alert('Erro ao excluir categoria')
+    });
+  }
 }
