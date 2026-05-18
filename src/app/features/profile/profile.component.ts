@@ -1,5 +1,4 @@
-// profile.component.ts
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -15,7 +14,11 @@ import { UserService, UserProfile, Subscription } from '../../core/services/user
 })
 export class ProfileComponent implements AfterViewInit {
 
-  // ── Dados do usuário ──────────────────────────────────
+  private router = inject(Router);
+  private authService = inject(AuthService);
+  private userService = inject(UserService);
+  private cdr = inject(ChangeDetectorRef);
+
   user: UserProfile | null = null;
   activeSubscription: Subscription | null = null;
   userStats = {
@@ -28,23 +31,18 @@ export class ProfileComponent implements AfterViewInit {
   isLoading = true;
   errorMessage = '';
 
-  // ── Tabs ──────────────────────────────────────────────
   activeTab: 'overview' | 'library' | 'activity' | 'settings' = 'overview';
 
-  // ── Overview ──────────────────────────────────────────
   recentGames:   any[] = [];
   activityLog:   any[] = [];
 
-  // ── Biblioteca ────────────────────────────────────────
   userLibrary:   any[] = [];
   libFilter      = 'all';
   loadingLibrary = false;
 
-  // ── Atividade ─────────────────────────────────────────
   activityHeatmap: { date: string; count: number; level: number }[] = [];
   fullActivityLog: any[] = [];
 
-  // ── Configurações ─────────────────────────────────────
   editForm = { username: '', email: '', bio: '', location: '' };
   pwForm   = { current: '', new: '', confirm: '' };
   prefs    = { emailNotif: true, publicProfile: false, newsletter: false };
@@ -62,12 +60,6 @@ export class ProfileComponent implements AfterViewInit {
     if (/[^A-Za-z0-9]/.test(p)) s++;
     return s;
   }
-
-  constructor(
-    private router: Router,
-    private authService: AuthService,
-    private userService: UserService,
-  ) {}
 
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -107,10 +99,12 @@ export class ProfileComponent implements AfterViewInit {
           { type: 'info', icon: '▹', text: 'Sessão iniciada — ARCHV.ROOMS', time: 'AGORA' },
         ];
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.isLoading = false;
         this.errorMessage = err.error?.message || 'Erro ao carregar perfil.';
+        this.cdr.detectChanges();
       }
     });
   }

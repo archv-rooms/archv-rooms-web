@@ -37,7 +37,7 @@ interface ProfileResponse {
 export class UserService {
 
   private http = inject(HttpClient);
-  private apiUrl = 'https://archv-rooms.onrender.com/user';
+  private apiUrl = 'http://localhost:3000/user';
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('@ProjetoX:token');

@@ -1,5 +1,4 @@
-// rooms.component.ts
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -25,6 +24,7 @@ export class RoomsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private http = inject(HttpClient);
+  private cdr = inject(ChangeDetectorRef);
 
   game: Game | null = null;
   isLoading = true;
@@ -37,6 +37,7 @@ export class RoomsComponent implements OnInit {
     } else {
       this.errorMessage = 'ID do jogo não encontrado.';
       this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -44,8 +45,6 @@ export class RoomsComponent implements OnInit {
     const token = localStorage.getItem('@ProjetoX:token');
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
-    // Busca todos os jogos e filtra pelo ID
-    // (se quiser criar um endpoint GET /library/:id no backend, fica ainda mais limpo)
     this.http.get<{ success: boolean; data: { games: Game[] }; message: string }>(
       `${environment.apiUrl}/library`,
       { headers }
@@ -58,10 +57,12 @@ export class RoomsComponent implements OnInit {
           this.errorMessage = res.message;
         }
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.errorMessage = 'FALHA AO CARREGAR ARTEFATO. VERIFIQUE O SINAL.';
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
