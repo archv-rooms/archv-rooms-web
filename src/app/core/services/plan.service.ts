@@ -14,11 +14,11 @@ export interface Plan {
 @Injectable({ providedIn: 'root' })
 export class PlanService {
   private http = inject(HttpClient);
-  private apiUrl = 'https://archv-rooms.onrender.com/plans';
+  private apiUrl = 'http://localhost:3000/plans';
   // Planos são públicos — sem token
-  getPlans(): Observable<{ success: boolean; data: { plans: Plan[] }; message: string }> {
-    return this.http.get<{ success: boolean; data: { plans: Plan[] }; message: string }>(this.apiUrl);
-  }
+getPlans(): Observable<{ success: boolean; data: { plans: Plan[] }; message: string }> {
+  return this.http.get<{ success: boolean; data: { plans: Plan[] }; message: string }>(`${this.apiUrl}?t=${Date.now()}`);
+}
 
   // Subscribe requer auth
   subscribe(planId: number): Observable<any> {

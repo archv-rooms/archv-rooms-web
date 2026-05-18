@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { PlanService, Plan } from '../../../core/services/plan.service';
@@ -18,16 +18,15 @@ interface PlanVisuals {
 })
 export class PricingComponent implements OnInit {
 
-  private router     = inject(Router);
+  private router = inject(Router);
   private planService = inject(PlanService);
+  private cdr = inject(ChangeDetectorRef);
 
-  // ── Auth (mesmo padrão do Home) ──────────────────────
   isLoggedIn = false;
-  userName   = '';
+  userName = '';
 
-  // ── Plans ────────────────────────────────────────────
   plans: (Plan & PlanVisuals)[] = [];
-  isLoading    = true;
+  isLoading = true;
   errorMessage = '';
 
   private visualMap: Record<string, PlanVisuals> = {
@@ -63,40 +62,32 @@ export class PricingComponent implements OnInit {
     },
   };
 
-  // ─────────────────────────────────────────────────────
-
   ngOnInit(): void {
     this.checkAuth();
     this.loadPlans();
   }
 
-  // ── Auth ─────────────────────────────────────────────
-
   private checkAuth(): void {
-    const token   = localStorage.getItem('@ProjetoX:token');
+    const token = localStorage.getItem('@ProjetoX:token');
     const userStr = localStorage.getItem('@ProjetoX:user');
-
     if (token) {
       this.isLoggedIn = true;
-      this.userName   = userStr ? JSON.parse(userStr).name : 'USER';
+      this.userName = userStr ? JSON.parse(userStr).name : 'USER';
     }
   }
 
   logout(): void {
     localStorage.removeItem('@ProjetoX:token');
     localStorage.removeItem('@ProjetoX:user');
-
     this.isLoggedIn = false;
-    this.userName   = '';
-
+    this.userName = '';
     this.router.navigate(['/login']);
   }
-
-  // ── Plans ────────────────────────────────────────────
 
   loadPlans(): void {
     this.planService.getPlans().subscribe({
       next: (response) => {
+        console.log('RESPONSE:', response);
         this.plans = response.data.plans.map(plan => ({
           ...plan,
           ...(this.visualMap[plan.name] ?? {
@@ -106,24 +97,24 @@ export class PricingComponent implements OnInit {
           }),
         }));
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err) => {
+        console.log('ERROR:', err);
         this.errorMessage = 'FALHA AO CARREGAR PLANOS. VERIFIQUE O SINAL.';
-        this.isLoading    = false;
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }
 
   onSelectPlan(plan: Plan & PlanVisuals): void {
     if (this.isLoggedIn) {
-      // TODO: chamar serviço de assinatura
-      console.log('Plan selected:', plan.name);
+      this.router.navigate(['/checkout', plan.id]);
     } else {
       this.router.navigate(['/register']);
     }
   }
-
-  // ── Navigation (mesmo padrão do Home) ────────────────
 
   navigate(path: string): void {
     this.router.navigate([path]);

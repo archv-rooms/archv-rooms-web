@@ -35,9 +35,14 @@ export class LoginComponent {
 
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
-        this.isLoading = false;
-        this.router.navigate(['/library']);
-      },
+       this.isLoading = false;
+       const role = this.authService.getUserRole();
+       if (role === 'admin') {
+       this.router.navigate(['/admin']);
+       } else {
+       this.router.navigate(['/library']);
+    }
+},
       error: (err) => {
         this.isLoading = false;
         this.errorMessage = err.error?.message || 'Erro ao conectar ao servidor.';

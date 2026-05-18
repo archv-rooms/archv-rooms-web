@@ -1,5 +1,4 @@
-// checkout.component.ts
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -18,6 +17,7 @@ export class CheckoutComponent implements OnInit {
   private router = inject(Router);
   private planService = inject(PlanService);
   private http = inject(HttpClient);
+  private cdr = inject(ChangeDetectorRef);
 
   planId: number | null = null;
   selectedPlan: Plan | null = null;
@@ -34,6 +34,7 @@ export class CheckoutComponent implements OnInit {
     } else {
       this.errorMessage = 'ID do plano inválido.';
       this.isLoadingPlan = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -43,10 +44,12 @@ export class CheckoutComponent implements OnInit {
         this.selectedPlan = response.data.plans.find(p => p.id === this.planId) || null;
         if (!this.selectedPlan) this.errorMessage = 'Plano não encontrado no sistema.';
         this.isLoadingPlan = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.errorMessage = 'Erro ao carregar os detalhes do plano.';
         this.isLoadingPlan = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -60,9 +63,8 @@ export class CheckoutComponent implements OnInit {
     const token = localStorage.getItem('@ProjetoX:token');
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
-    // Usa POST /checkout conforme o backend
     this.http.post(
-      `${environment.apiUrl}/checkout`,
+      `${environment.apiUrl}/plans/subscribe`,
       { planId: this.planId },
       { headers }
     ).subscribe({
@@ -72,11 +74,13 @@ export class CheckoutComponent implements OnInit {
           this.router.navigate(['/library']);
         } else {
           this.errorMessage = res.message;
+          this.cdr.detectChanges();
         }
       },
       error: (err) => {
         this.isSubscribing = false;
         this.errorMessage = err.error?.message || 'Erro ao processar a assinatura.';
+        this.cdr.detectChanges();
       }
     });
   }
