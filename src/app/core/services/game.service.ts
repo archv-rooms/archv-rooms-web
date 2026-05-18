@@ -1,28 +1,33 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
 
-  private baseUrl = 'http://localhost:3000/api/games';
+  private baseUrl = 'http://localhost:3000';
 
   constructor(private http: HttpClient) {}
 
+  private get headers() {
+    const token = localStorage.getItem('@ProjetoX:token');
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
+  }
+
   getGames() {
-    return this.http.get<any>(this.baseUrl);
+    return this.http.get<any>(`${this.baseUrl}/api/games`, { headers: this.headers });
   }
 
   createGame(data: any) {
-    return this.http.post<any>(this.baseUrl, data);
+    return this.http.post<any>(`${this.baseUrl}/admin/games`, data, { headers: this.headers });
   }
 
   updateGame(id: string, data: any) {
-    return this.http.put<any>(`${this.baseUrl}/${id}`, data);
+    return this.http.put<any>(`${this.baseUrl}/admin/games/${id}`, data, { headers: this.headers });
   }
 
   deleteGame(id: string) {
-    return this.http.delete(`${this.baseUrl}/${id}`);
+    return this.http.delete(`${this.baseUrl}/admin/games/${id}`, { headers: this.headers });
   }
 }

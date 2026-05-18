@@ -30,7 +30,6 @@ export class RoomsComponent implements OnInit {
   isLoading = true;
   errorMessage = '';
 
-  // ── Auth (igual à home) ──────────────────────────────
   isLoggedIn = false;
   userName = '';
 
@@ -71,18 +70,17 @@ export class RoomsComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  // ── Game ─────────────────────────────────────────────
   loadGame(id: number): void {
     const token = localStorage.getItem('@ProjetoX:token');
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
-    this.http.get<{ success: boolean; data: { games: Game[] }; message: string }>(
-      `${environment.apiUrl}/library`,
+    this.http.get<{ success: boolean; data: Game; message: string }>(
+      `${environment.apiUrl}/api/games/${id}`,
       { headers }
     ).subscribe({
       next: (res) => {
         if (res.success) {
-          this.game = res.data.games.find(g => g.id === id) || null;
+          this.game = res.data;
           if (!this.game) this.errorMessage = 'ARTEFATO NÃO ENCONTRADO NO ARQUIVO.';
         } else {
           this.errorMessage = res.message;

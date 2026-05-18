@@ -11,6 +11,12 @@
       <button class="nav-btn" [class.active]="currentSection === 'users'" (click)="changeSection('users')" title="Usuários">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="4"/><path d="M5.5 20a7 7 0 0 1 13 0"/></svg>
       </button>
+      <button class="nav-btn" [class.active]="currentSection === 'sales'" (click)="changeSection('sales')" title="Vendas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </button>
+      <button class="nav-btn" [class.active]="currentSection === 'plans'" (click)="changeSection('plans')" title="Planos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
       <button class="nav-btn" [class.active]="currentSection === 'categories'" (click)="changeSection('categories')" title="Categorias">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
       </button>
@@ -24,7 +30,6 @@
   <!-- MAIN -->
   <div class="main-content">
 
-    <!-- TOPBAR -->
     <header class="topbar">
       <span class="topbar-brand">[ARCHV] ADMIN_OS</span>
       <div class="topbar-right">
@@ -32,7 +37,6 @@
       </div>
     </header>
 
-    <!-- SCROLL BODY -->
     <div class="scroll-body">
 
       <!-- GAMES -->
@@ -41,7 +45,6 @@
           <span class="section-tag">▣</span> GAME_MATRIX_ADMIN
           <button class="btn btn--primary" (click)="openGameModal()">+ INSERIR_JOGO</button>
         </div>
-
         <div class="filter-bar">
           <div class="filter-bar__input-wrap">
             <span class="filter-bar__prompt">&gt;</span>
@@ -49,22 +52,28 @@
           </div>
           <select class="filter-bar__select" [(ngModel)]="gamePlatformFilter" (change)="filterGames()">
             <option value="">// PLATAFORMA</option>
-            <option value="arcade">ARCADE</option>
-            <option value="console">CONSOLE</option>
-            <option value="handheld">HANDHELD</option>
+            <option value="NES">NES</option>
+            <option value="SNES">SNES</option>
+            <option value="GBA">GBA</option>
+            <option value="PS1">PS1</option>
+            <option value="N64">N64</option>
+            <option value="MD">MEGA DRIVE</option>
+            <option value="GB">GAME BOY</option>
           </select>
         </div>
-
         <div class="data-table-wrap">
           <table class="data-table">
             <thead>
-              <tr>
-                <th>ID</th><th>TÍTULO</th><th>PLATAFORMA</th><th>ACCESS LEVEL</th><th>AÇÕES</th>
-              </tr>
+              <tr><th>ID</th><th>CAPA</th><th>TÍTULO</th><th>PLATAFORMA</th><th>ACCESS LEVEL</th><th>AÇÕES</th></tr>
             </thead>
             <tbody>
               <tr *ngFor="let game of filteredGames">
                 <td class="text-muted">{{ game.id }}</td>
+                <td>
+                  <img [src]="game.image" [alt]="game.title"
+                    style="width:40px;height:40px;object-fit:cover;border-radius:3px;border:1px solid #34384a;"
+                    (error)="$any($event.target).src='assets/placeholder-game.png'"/>
+                </td>
                 <td>{{ game.title }}</td>
                 <td>{{ game.console | uppercase }}</td>
                 <td>{{ game.accessLevel }}</td>
@@ -79,7 +88,6 @@
           </table>
           <div class="table-empty" *ngIf="filteredGames.length === 0"><span>// NO_SIGNAL — SEM REGISTROS</span></div>
         </div>
-
         <div class="table-footer"><span>TOTAL: {{ filteredGames.length }} REGISTROS</span></div>
       </section>
 
@@ -88,21 +96,18 @@
         <div class="section-header">
           <span class="section-tag">▣</span> USER_LOG_MATRIX
         </div>
-
         <div class="stats-row">
           <div class="stat-card"><span class="stat-card__label">TOTAL_USERS</span><span class="stat-card__value">{{ userStats.total }}</span></div>
           <div class="stat-card"><span class="stat-card__label">ONLINE_NOW</span><span class="stat-card__value accent">{{ userStats.online }}</span></div>
           <div class="stat-card"><span class="stat-card__label">BANNED</span><span class="stat-card__value warn">{{ userStats.banned }}</span></div>
           <div class="stat-card"><span class="stat-card__label">NEW_24H</span><span class="stat-card__value">{{ userStats.newLast24h }}</span></div>
         </div>
-
         <div class="filter-bar">
           <div class="filter-bar__input-wrap">
             <span class="filter-bar__prompt">&gt;</span>
             <input type="text" class="filter-bar__input" placeholder="BUSCAR POR EMAIL..." [(ngModel)]="userSearch" (input)="filterUsers()"/>
           </div>
         </div>
-
         <div class="data-table-wrap">
           <table class="data-table">
             <thead>
@@ -131,13 +136,87 @@
         </div>
       </section>
 
+      <!-- SALES -->
+      <section class="section" [class.hidden]="currentSection !== 'sales'">
+        <div class="section-header">
+          <span class="section-tag">▣</span> SALES_MATRIX
+        </div>
+        <div class="stats-row">
+          <div class="stat-card"><span class="stat-card__label">TOTAL_VENDAS</span><span class="stat-card__value">{{ salesStats.total }}</span></div>
+          <div class="stat-card"><span class="stat-card__label">ATIVAS</span><span class="stat-card__value accent">{{ salesStats.active }}</span></div>
+          <div class="stat-card"><span class="stat-card__label">RECEITA_MÊS</span><span class="stat-card__value">R$ {{ salesStats.revenue | number:'1.2-2' }}</span></div>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>ID</th><th>USUÁRIO</th><th>EMAIL</th><th>PLANO</th><th>PREÇO</th><th>STATUS</th><th>DATA</th><th>AÇÕES</th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sale of sales">
+                <td class="text-muted">{{ sale.id }}</td>
+                <td>{{ sale.user?.name }}</td>
+                <td>{{ sale.user?.email }}</td>
+                <td>{{ sale.plan?.name | uppercase }}</td>
+                <td>R$ {{ sale.plan?.price | number:'1.2-2' }}</td>
+                <td>
+                  <span class="badge" [ngClass]="{
+                    'badge--active': sale.status === 'active',
+                    'badge--inactive': sale.status !== 'active'
+                  }">{{ sale.status | uppercase }}</span>
+                </td>
+                <td>{{ sale.createdAt | date:'dd/MM/yyyy' }}</td>
+                <td>
+                  <div class="actions-cell">
+                    <button class="btn btn--ghost btn--icon"
+                      *ngIf="sale.status === 'active'"
+                      (click)="cancelSale(sale.id)">✕</button>
+                    <span *ngIf="sale.status !== 'active'" class="text-muted">—</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="table-empty" *ngIf="sales.length === 0"><span>// NO_SIGNAL — SEM REGISTROS</span></div>
+        </div>
+        <div class="table-footer"><span>TOTAL: {{ sales.length }} ASSINATURAS</span></div>
+      </section>
+
+      <!-- PLANS -->
+      <section class="section" [class.hidden]="currentSection !== 'plans'">
+        <div class="section-header">
+          <span class="section-tag">▣</span> PLAN_MATRIX
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>ID</th><th>NOME</th><th>PREÇO</th><th>DESCRIÇÃO</th><th>ACCESS LEVEL</th><th>AÇÕES</th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let plan of plans">
+                <td class="text-muted">{{ plan.id }}</td>
+                <td>{{ plan.name }}</td>
+                <td>R$ {{ plan.price | number:'1.2-2' }}</td>
+                <td>{{ plan.description }}</td>
+                <td>{{ plan.accessLevel }}</td>
+                <td>
+                  <div class="actions-cell">
+                    <button class="btn btn--ghost btn--icon" (click)="openPlanModal(plan)">✎</button>
+                    <button class="btn btn--ghost btn--icon" (click)="deletePlan(plan.id)">✕</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="table-empty" *ngIf="plans.length === 0"><span>// NO_SIGNAL — SEM REGISTROS</span></div>
+        </div>
+      </section>
+
       <!-- CATEGORIES -->
       <section class="section" [class.hidden]="currentSection !== 'categories'">
         <div class="section-header">
           <span class="section-tag">▣</span> CATEGORY_MATRIX
           <button class="btn btn--primary" (click)="openCategoryModal()">+ INSERIR_CATEGORIA</button>
         </div>
-
         <div class="data-table-wrap">
           <table class="data-table">
             <thead>
@@ -201,9 +280,13 @@
         <div>
           <label class="form-label">PLATAFORMA</label>
           <select class="form-input" [(ngModel)]="gameForm.platform">
-            <option value="arcade">ARCADE</option>
-            <option value="console">CONSOLE</option>
-            <option value="handheld">HANDHELD</option>
+            <option value="NES">NES</option>
+            <option value="SNES">SNES</option>
+            <option value="GBA">GBA</option>
+            <option value="PS1">PS1</option>
+            <option value="N64">N64</option>
+            <option value="MD">MEGA DRIVE</option>
+            <option value="GB">GAME BOY</option>
           </select>
         </div>
         <div>
@@ -215,10 +298,50 @@
         <label class="form-label">COVER_URL</label>
         <input type="url" class="form-input" [(ngModel)]="gameForm.coverUrl"/>
       </div>
+      <div class="form-row" *ngIf="gameForm.coverUrl">
+        <label class="form-label">PREVIEW</label>
+        <img [src]="gameForm.coverUrl" alt="preview"
+          style="width:80px;height:80px;object-fit:cover;border-radius:4px;border:1px solid #34384a;"
+          (error)="$any($event.target).src='assets/placeholder-game.png'"/>
+      </div>
     </div>
     <div class="modal__footer">
       <button class="btn btn--ghost" (click)="closeGameModal()">CANCELAR</button>
       <button class="btn btn--primary" (click)="saveGame()">SALVAR_JOGO</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PLAN -->
+<div class="modal-backdrop" *ngIf="showPlanModal">
+  <div class="modal modal--sm">
+    <div class="modal__header">
+      <span>EDITAR_PLANO</span>
+      <button class="modal__close" (click)="closePlanModal()">✕</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-row">
+        <label class="form-label">NOME</label>
+        <input type="text" class="form-input" [(ngModel)]="planForm.name"/>
+      </div>
+      <div class="form-row">
+        <label class="form-label">DESCRIÇÃO</label>
+        <input type="text" class="form-input" [(ngModel)]="planForm.description"/>
+      </div>
+      <div class="form-row form-row--half">
+        <div>
+          <label class="form-label">PREÇO (R$)</label>
+          <input type="number" class="form-input" [(ngModel)]="planForm.price" step="0.01"/>
+        </div>
+        <div>
+          <label class="form-label">ACCESS LEVEL</label>
+          <input type="number" class="form-input" [(ngModel)]="planForm.accessLevel"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" (click)="closePlanModal()">CANCELAR</button>
+      <button class="btn btn--primary" (click)="savePlan()">SALVAR_PLANO</button>
     </div>
   </div>
 </div>
