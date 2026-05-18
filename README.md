@@ -6,7 +6,7 @@ Plataforma de acesso a jogos retro por assinatura. Desenvolvida com Angular + No
 
 | Serviço | URL |
 |---|---|
-| Frontend | `(https://archv-rooms-web.vercel.app/)` |
+| Frontend | *[Teste a plataforma](https://archv-rooms-web.vercel.app/)* |
 | Backend | `https://archv-rooms.onrender.com` |
 
 ## 🔑 Credenciais de Teste
@@ -16,9 +16,9 @@ Plataforma de acesso a jogos retro por assinatura. Desenvolvida com Angular + No
 | Usuário comum | `teste@teste.com` | `123456` |
 | Administrador | `admin@teste.com` | `123456` |
 
-> ⚠️ As credenciais acima são para o ambiente de testes. Não use em produção.
+> ⚠️ As credenciais acima são para o ambiente de testes. Não serão usadas em produção.
 
-## 🗺️ Mapa de Navegação
+## Mapa de Navegação
 
 ### Rotas públicas
 - `/` — Home com vitrine de jogos
@@ -38,7 +38,7 @@ Plataforma de acesso a jogos retro por assinatura. Desenvolvida com Angular + No
   - **Users:** listar usuários e alterar roles
   - **Categories:** CRUD de categorias
 
-## 🚀 Rodando Localmente
+## ⚙️ Rodando Localmente
 
 ### Frontend
 ```bash
