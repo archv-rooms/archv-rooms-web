@@ -37,7 +37,12 @@ export class LibraryComponent implements OnInit {
   activeFilter = 'all';
 
   filters = [
-    { label: 'TODOS', value: 'all' }
+    { label: 'TODOS', value: 'all' },
+    { label: 'NES',   value: 'nes' },
+    { label: 'SNES',  value: 'snes' },
+    { label: 'GBA',   value: 'gba' },
+    { label: 'PS1',   value: 'ps1' },
+    { label: 'N64',   value: 'n64' },
   ];
 
   constructor(
@@ -52,10 +57,7 @@ export class LibraryComponent implements OnInit {
 
     if (token) {
       this.isLoggedIn = true;
-      this.userName = userStr
-        ? JSON.parse(userStr).name
-        : 'USER';
-
+      this.userName = userStr ? JSON.parse(userStr).name : 'USER';
       this.loadGames();
     }
   }
@@ -67,22 +69,17 @@ export class LibraryComponent implements OnInit {
     this.loadingGames = true;
     this.gamesError = '';
 
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
     this.http.get<{
       success: boolean;
       data: { games: Game[] };
       message: string;
-    }>(
-      `${environment.apiUrl}/library`,
-      { headers }
-    ).subscribe({
+    }>(`${environment.apiUrl}/library`, { headers }).subscribe({
       next: (res) => {
         if (res.success) {
           this.games = res.data.games;
-          this.filteredGames = res.data.games;
+          this.applyFilters(); // aplica filtro atual após carregar
         } else {
           this.gamesError = res.message;
         }
@@ -97,21 +94,37 @@ export class LibraryComponent implements OnInit {
     });
   }
 
-  onSearch(): void {
+  // ── Filtro + busca combinados ──────────────────────
+  applyFilters(): void {
     const query = this.searchQuery.toLowerCase().trim();
-    this.filteredGames = this.games.filter(game =>
-      game.title.toLowerCase().includes(query) ||
-      game.console.toLowerCase().includes(query)
-    );
-  }
 
-  clearSearch(): void {
-    this.searchQuery = '';
-    this.filteredGames = this.games;
+    this.filteredGames = this.games.filter(game => {
+      const matchesFilter =
+        this.activeFilter === 'all' ||
+        game.console.toLowerCase() === this.activeFilter;
+
+      const matchesSearch =
+        !query ||
+        game.title.toLowerCase().includes(query) ||
+        game.console.toLowerCase().includes(query);
+
+      return matchesFilter && matchesSearch;
+    });
   }
 
   setFilter(value: string): void {
     this.activeFilter = value;
+    this.applyFilters();
+    this.cdr.detectChanges();
+  }
+
+  onSearch(): void {
+    this.applyFilters();
+  }
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.applyFilters();
   }
 
   onImgError(event: Event): void {
