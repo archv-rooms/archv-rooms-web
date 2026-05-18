@@ -6,7 +6,7 @@ Plataforma de acesso a jogos retro por assinatura. Desenvolvida com Angular + No
 
 | Serviço | URL |
 |---|---|
-| Frontend | `https://COLOCAR-URL-VERCEL-AQUI` |
+| Frontend | `(https://archv-rooms-web.vercel.app/)` |
 | Backend | `https://archv-rooms.onrender.com` |
 
 ## 🔑 Credenciais de Teste
