@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -42,7 +42,8 @@ export class LibraryComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -60,9 +61,7 @@ export class LibraryComponent implements OnInit {
   }
 
   loadGames(): void {
-
     const token = localStorage.getItem('@ProjetoX:token');
-
     if (!token) return;
 
     this.loadingGames = true;
@@ -80,40 +79,26 @@ export class LibraryComponent implements OnInit {
       `${environment.apiUrl}/library`,
       { headers }
     ).subscribe({
-
       next: (res) => {
-
         if (res.success) {
-
           this.games = res.data.games;
           this.filteredGames = res.data.games;
-
         } else {
-
           this.gamesError = res.message;
-
         }
-
         this.loadingGames = false;
+        this.cdr.detectChanges();
       },
-
       error: () => {
-
-        this.gamesError =
-          'FALHA AO CARREGAR ACERVO.';
-
+        this.gamesError = 'FALHA AO CARREGAR ACERVO.';
         this.loadingGames = false;
+        this.cdr.detectChanges();
       }
-
     });
   }
 
   onSearch(): void {
-
-    const query = this.searchQuery
-      .toLowerCase()
-      .trim();
-
+    const query = this.searchQuery.toLowerCase().trim();
     this.filteredGames = this.games.filter(game =>
       game.title.toLowerCase().includes(query) ||
       game.console.toLowerCase().includes(query)
@@ -121,7 +106,6 @@ export class LibraryComponent implements OnInit {
   }
 
   clearSearch(): void {
-
     this.searchQuery = '';
     this.filteredGames = this.games;
   }
@@ -131,9 +115,7 @@ export class LibraryComponent implements OnInit {
   }
 
   onImgError(event: Event): void {
-
     const img = event.target as HTMLImageElement;
-
     img.src = 'assets/placeholder-game.png';
   }
 
@@ -145,4 +127,3 @@ export class LibraryComponent implements OnInit {
     this.router.navigate(['/rooms', game.id]);
   }
 }
-

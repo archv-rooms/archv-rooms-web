@@ -1,50 +1,40 @@
-<!-- profile.component.html -->
 <div class="profile-wrapper">
 
-  <!-- SIDEBAR (igual à home) -->
   <aside class="sidebar">
-    <div class="sidebar-top">
-      <span class="sidebar-label">ARCHV</span>
-    </div>
     <nav class="sidebar-nav">
+
       <button class="nav-btn" title="Home" (click)="navigate('/')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
           <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
         </svg>
       </button>
+
       <button class="nav-btn" title="Biblioteca" (click)="navigate('/library')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
         </svg>
       </button>
-      <button class="nav-btn" title="Loja" (click)="navigate('/rooms')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M1 6C5.5 1.5 18.5 1.5 23 6"/>
-          <path d="M3.5 10C7 6.5 17 6.5 20.5 10"/>
-          <path d="M6.5 14C9 11.5 15 11.5 17.5 14"/>
-          <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
-        </svg>
-      </button>
+
       <button class="nav-btn" title="Planos" (click)="navigate('/pricing')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="12" r="3"/>
           <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
         </svg>
       </button>
+
       <button class="nav-btn active" title="Perfil">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="8" r="4"/>
           <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
         </svg>
       </button>
+
     </nav>
   </aside>
 
-  <!-- MAIN -->
   <main class="main-content">
 
-    <!-- TOPBAR -->
     <header class="topbar">
       <span class="topbar-brand">▣ ARCHV.ROOMS // USER_PROFILE</span>
       <div class="topbar-right">
@@ -53,10 +43,8 @@
       </div>
     </header>
 
-    <!-- SCROLL BODY -->
     <div class="scroll-body">
 
-      <!-- LOADING -->
       <div class="loading-fullscreen" *ngIf="isLoading">
         <div class="loading-row">
           <span class="loading-dot"></span>
@@ -66,17 +54,14 @@
         </div>
       </div>
 
-      <!-- ERRO -->
       <div class="error-fullscreen" *ngIf="errorMessage && !isLoading">
-        <span style="font-size:24px;color:#f87171">⚠</span>
-        <p style="font-size:10px;letter-spacing:2px;color:#f87171">[ERROR] {{ errorMessage }}</p>
+        <span style="font-size:24px;color:#f87185">⚠</span>
+        <p style="font-size:10px;letter-spacing:2px;color:#f87185">[ERROR] {{ errorMessage }}</p>
         <button class="btn btn-outline btn-sm" (click)="loadProfile()">↺ RETRY</button>
       </div>
 
-      <!-- CONTEÚDO PRINCIPAL -->
       <ng-container *ngIf="!isLoading && !errorMessage && user">
 
-        <!-- ① BREADCRUMB -->
         <div class="breadcrumb-bar">
           <span class="bc-item" (click)="navigate('/')">HOME</span>
           <span class="bc-sep">//</span>
@@ -85,12 +70,9 @@
           <span class="bc-item dim">{{ user?.name | uppercase }}</span>
         </div>
 
-        <!-- ② HERO DO PERFIL -->
         <section class="profile-hero">
           <div class="profile-hero-bg"></div>
-
           <div class="profile-hero-content">
-            <!-- Avatar -->
             <div class="avatar-wrap">
               <div class="avatar-ring"></div>
               <div class="avatar-core">
@@ -98,8 +80,6 @@
               </div>
               <div class="avatar-status online"></div>
             </div>
-
-            <!-- Info -->
             <div class="profile-info">
               <div class="profile-meta-top">
                 <span class="profile-tag">// USR_{{ user?.id?.toString()?.padStart(5,'0') }}</span>
@@ -110,7 +90,6 @@
               <h1 class="profile-username">{{ user?.name || 'ANON_USER' }}</h1>
               <p class="profile-email">{{ user?.email }}</p>
               <p class="profile-bio">// MEMBRO DO ARCHV.ROOMS</p>
-
               <div class="profile-stats-row">
                 <div class="pstat">
                   <span class="pstat-val">{{ userStats?.gamesInLibrary || 0 }}</span>
@@ -133,15 +112,11 @@
                 </div>
               </div>
             </div>
-
-            <!-- Ações -->
             <div class="profile-actions">
               <button class="btn btn-outline btn-sm" (click)="openEditModal()">EDIT_PROFILE</button>
               <button class="btn btn-ghost btn-sm" (click)="copyProfileLink()">SHARE_LINK</button>
             </div>
           </div>
-
-          <!-- Signal bar -->
           <div class="signal-bar">
             <span class="signal-label">SIGNAL_STRENGTH</span>
             <div class="signal-track">
@@ -151,7 +126,6 @@
           </div>
         </section>
 
-        <!-- ③ TABS DE NAVEGAÇÃO -->
         <div class="profile-tabs">
           <button class="tab-btn" [class.active]="activeTab === 'overview'"  (click)="setTab('overview')">OVERVIEW</button>
           <button class="tab-btn" [class.active]="activeTab === 'library'"   (click)="setTab('library')">BIBLIOTECA</button>
@@ -159,14 +133,9 @@
           <button class="tab-btn" [class.active]="activeTab === 'settings'"  (click)="setTab('settings')">CONFIGURAÇÕES</button>
         </div>
 
-        <!-- ④ TAB: OVERVIEW -->
         <div class="tab-panel" *ngIf="activeTab === 'overview'">
           <div class="overview-grid">
-
-            <!-- Coluna esquerda -->
             <div class="overview-col">
-
-              <!-- Terminal de status -->
               <div class="panel">
                 <div class="panel-header">
                   <span class="panel-label">SYSTEM_STATUS</span>
@@ -180,12 +149,8 @@
                   <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">SIGNAL_NODE</span><span class="t-val amber">{{ userStats?.signalLevel || 'LVL_00' }}</span></div>
                 </div>
               </div>
-
-              <!-- Plano atual -->
               <div class="panel plan-panel" [ngClass]="activeSubscription ? 'plan-bg-basic' : 'plan-bg-free'">
-                <div class="panel-header">
-                  <span class="panel-label">CURRENT_PLAN</span>
-                </div>
+                <div class="panel-header"><span class="panel-label">CURRENT_PLAN</span></div>
                 <div class="plan-display">
                   <span class="plan-name">{{ getPlanName() | uppercase }}_TIER</span>
                   <p class="plan-desc">{{ getPlanDesc() }}</p>
@@ -200,13 +165,8 @@
                   </button>
                 </div>
               </div>
-
             </div>
-
-            <!-- Coluna direita -->
             <div class="overview-col">
-
-              <!-- Dados da conta -->
               <div class="panel">
                 <div class="panel-header">
                   <span class="panel-label">ACCOUNT_DATA</span>
@@ -232,8 +192,6 @@
                   </div>
                 </div>
               </div>
-
-              <!-- Atividade recente (feed) -->
               <div class="panel">
                 <div class="panel-header">
                   <span class="panel-label">ACTIVITY_LOG</span>
@@ -254,12 +212,10 @@
                   <p>SEM ATIVIDADE REGISTRADA</p>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
 
-        <!-- ⑤ TAB: BIBLIOTECA -->
         <div class="tab-panel" *ngIf="activeTab === 'library'">
           <div class="section-header">
             <span class="section-label">MY_ARCHIVE_NODES</span>
@@ -271,12 +227,10 @@
               <button class="filter-btn" [class.active]="libFilter === 'gba'"  (click)="libFilter = 'gba'">GBA</button>
             </div>
           </div>
-
           <div class="loading-row" *ngIf="loadingLibrary">
             <span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span>
             <span class="loading-text">CARREGANDO ACERVO...</span>
           </div>
-
           <div class="games-grid" *ngIf="!loadingLibrary && getFilteredLibrary()?.length">
             <div class="game-card" *ngFor="let game of getFilteredLibrary()" (click)="onGameClick(game)">
               <div class="game-thumb">
@@ -290,7 +244,6 @@
               </div>
             </div>
           </div>
-
           <div class="empty-state centered" *ngIf="!loadingLibrary && !getFilteredLibrary()?.length">
             <span class="empty-icon">◈</span>
             <p>NENHUM ARTEFATO ENCONTRADO</p>
@@ -298,21 +251,15 @@
           </div>
         </div>
 
-        <!-- ⑥ TAB: ATIVIDADE -->
         <div class="tab-panel" *ngIf="activeTab === 'activity'">
           <div class="section-header">
             <span class="section-label">SIGNAL_HISTORY</span>
             <span class="section-meta">ÚLTIMOS 30 DIAS</span>
           </div>
-
           <div class="panel">
             <div class="panel-header"><span class="panel-label">ACTIVITY_HEATMAP</span></div>
             <div class="heatmap-grid">
-              <div class="heatmap-cell"
-                *ngFor="let cell of activityHeatmap"
-                [ngClass]="'heat-' + cell.level"
-                [title]="cell.date + ': ' + cell.count + ' ações'">
-              </div>
+              <div class="heatmap-cell" *ngFor="let cell of activityHeatmap" [ngClass]="'heat-' + cell.level" [title]="cell.date + ': ' + cell.count + ' ações'"></div>
             </div>
             <div class="heatmap-legend">
               <span class="hm-lbl">MENOS</span>
@@ -324,7 +271,6 @@
               <span class="hm-lbl">MAIS</span>
             </div>
           </div>
-
           <div class="panel" style="margin-top:12px">
             <div class="panel-header"><span class="panel-label">FULL_LOG</span></div>
             <div class="full-log">
@@ -337,11 +283,8 @@
           </div>
         </div>
 
-        <!-- ⑦ TAB: CONFIGURAÇÕES -->
         <div class="tab-panel" *ngIf="activeTab === 'settings'">
           <div class="settings-grid">
-
-            <!-- Dados pessoais -->
             <div class="panel">
               <div class="panel-header"><span class="panel-label">PERSONAL_DATA</span></div>
               <div class="settings-form">
@@ -367,8 +310,6 @@
                 <span class="save-ok" *ngIf="saveSuccess">▸ DADOS ATUALIZADOS COM SUCESSO</span>
               </div>
             </div>
-
-            <!-- Segurança -->
             <div class="panel">
               <div class="panel-header"><span class="panel-label">SECURITY_MODULE</span></div>
               <div class="settings-form">
@@ -396,7 +337,6 @@
                 </div>
                 <button class="btn btn-ghost btn-sm" (click)="changePassword()">UPDATE_PASSWORD</button>
               </div>
-
               <div class="sessions-section">
                 <p class="sessions-title">ACTIVE_SESSIONS</p>
                 <div class="session-item" *ngFor="let s of activeSessions">
@@ -409,8 +349,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- Preferências -->
             <div class="panel full-width-panel">
               <div class="panel-header"><span class="panel-label">PREFERENCES</span></div>
               <div class="prefs-grid">
@@ -450,18 +388,15 @@
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
-        <!-- FOOTER -->
         <footer class="site-footer">
           <span>ARCHV.ROOMS OS v2.4.1</span>
           <span class="footer-links">
             <span (click)="navigate('/')"        class="footer-link">HOME</span>
             <span (click)="navigate('/library')" class="footer-link">BIBLIOTECA</span>
             <span (click)="navigate('/pricing')" class="footer-link">PLANOS</span>
-            <span (click)="navigate('/rooms')"   class="footer-link">LOJA</span>
           </span>
           <span>© 2025 ARCHV_SYSTEMS</span>
         </footer>
