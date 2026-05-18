@@ -1,250 +1,600 @@
-// rooms.component.scss
-
-$bg:            #0a0a0f;
-$bg-panel:      #0f0f18;
-$bg-card:       #13131e;
-$border:        #1e1e2e;
-$border-glow:   #3d2e6e;
-$purple:        #7c3aed;
-$purple-dim:    #4c2a8a;
-$purple-bright: #a855f7;
-$text-dim:      #3a3a55;
-$text-muted:    #6b6b8a;
-$text-base:     #9999bb;
-$text-bright:   #ccccee;
+// ─────────────────────────────────────────────────────
+// TOKENS — iguais à home
+// ─────────────────────────────────────────────────────
+$bg:            #11131a;
+$bg-panel:      #181b24;
+$bg-card:       #202433;
+ 
+$border:        #34384a;
+$border-glow:   #6d4ed8;
+ 
+$purple:        #8b5cf6;
+$purple-dim:    #6d4ed8;
+$purple-bright: #fcfcfc;
+ 
+$text-dim:      #727896;
+$text-muted:    #9aa3c7;
+$text-base:     #bcc3e0;
+$text-bright:   #f2f4ff;
+ 
 $green-ok:      #4ade80;
-$amber:         #f59e0b;
-$red-alert:     #f87171;
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+$amber:         #fbbf24;
+$red-alert:     #fb7185;
+ 
+// ─────────────────────────────────────────────────────
+// RESET
+// ─────────────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+ 
 :host {
-  display: block; width: 100%; height: 100vh;
-  background: $bg; font-family: 'Share Tech Mono', monospace; color: $text-base;
+  display: block;
+  width: 100%;
+  height: 100vh;
+  background: $bg;
+  font-family: 'Share Tech Mono', monospace;
+  color: $text-base;
 }
-
+ 
+// ─────────────────────────────────────────────────────
+// LAYOUT
+// ─────────────────────────────────────────────────────
 .rooms-wrapper {
-  display: flex; width: 100%; height: 100vh;
-  position: relative; overflow: hidden; background: $bg;
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: $bg;
+  position: relative;
 }
-
-// ── SIDEBAR ───────────────────────────────────────────────
+ 
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+ 
+// ─────────────────────────────────────────────────────
+// SIDEBAR — idêntica à home
+// ─────────────────────────────────────────────────────
 .sidebar {
-  width: 52px; min-height: 100vh; background: $bg-panel;
-  border-right: 1px solid $border; display: flex; flex-direction: column;
-  align-items: center; padding: 12px 0; gap: 4px; z-index: 10; flex-shrink: 0;
+  width: 84px;
+  min-height: 100vh;
+ 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+ 
+  padding: 18px 0;
+  gap: 10px;
+ 
+  flex-shrink: 0;
+  z-index: 10;
+ 
+  background: linear-gradient(
+    180deg,
+    rgba($bg-panel, 1) 0%,
+    rgba(#1d2130, 1) 100%
+  );
+ 
+  border-right: 1px solid rgba($border-glow, 0.25);
+ 
+  box-shadow:
+    inset -1px 0 0 rgba(255, 255, 255, 0.03),
+    0 0 25px rgba($purple, 0.08);
 }
-
-.sidebar-top { width: 100%; display: flex; justify-content: center; margin-bottom: 12px; }
-
+ 
+.sidebar-top {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+ 
 .sidebar-label {
-  font-size: 8px; letter-spacing: 2px; color: $text-dim;
-  text-transform: uppercase; writing-mode: vertical-rl; transform: rotate(180deg);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: $text-dim;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
 }
-
-.sidebar-nav { display: flex; flex-direction: column; gap: 6px; width: 100%; align-items: center; }
-
+ 
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+ 
 .nav-btn {
-  width: 34px; height: 34px; background: transparent;
-  border: 1px solid transparent; border-radius: 4px;
-  color: $text-muted; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-  svg { width: 16px; height: 16px; }
-  &:hover { border-color: $border-glow; color: $purple-bright; background: rgba($purple, 0.1); }
-  &.active { background: rgba($purple, 0.2); border-color: $purple-dim; color: $purple-bright; box-shadow: 0 0 8px rgba($purple, 0.3); }
+  width: 52px;
+  height: 52px;
+ 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ 
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+ 
+  color: $text-muted;
+  cursor: pointer;
+ 
+  transition: all 0.2s ease;
+ 
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+ 
+  &:hover {
+    border-color: $border-glow;
+    color: $purple-bright;
+    background: rgba($purple, 0.1);
+  }
+ 
+  &.active {
+    background: rgba($purple, 0.2);
+    border-color: $purple-dim;
+    color: $purple-bright;
+    box-shadow: 0 0 8px rgba($purple, 0.3);
+  }
 }
-
-// ── MAIN ──────────────────────────────────────────────────
-.main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
-
-// ── TOPBAR ────────────────────────────────────────────────
+ 
+// ─────────────────────────────────────────────────────
+// TOPBAR — idêntica à home
+// ─────────────────────────────────────────────────────
 .topbar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 16px; border-bottom: 1px solid $border;
-  background: rgba($bg-panel, 0.9); height: 36px; flex-shrink: 0;
+  height: 52px;
+ 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+ 
+  padding: 0 20px;
+ 
+  background: rgba($bg-panel, 0.92);
+  border-bottom: 1px solid $border;
+ 
+  flex-shrink: 0;
 }
-
-.topbar-left  { display: flex; align-items: center; gap: 8px; }
-.topbar-brand { font-size: 10px; letter-spacing: 3px; color: $text-muted; }
-.topbar-sep   { color: $text-dim; }
-.topbar-page  { font-size: 10px; letter-spacing: 2px; color: $purple-bright; }
-
-.btn-back {
-  font-family: 'Share Tech Mono', monospace; font-size: 9px;
-  letter-spacing: 1px; background: transparent; border: none;
-  color: $text-muted; cursor: pointer; padding: 4px 0;
-  &:hover { color: $purple-bright; }
+ 
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-
-// ── BODY ──────────────────────────────────────────────────
+ 
+.topbar-brand {
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: $text-muted;
+  text-transform: uppercase;
+}
+ 
+.topbar-sep {
+  color: $text-dim;
+  font-size: 14px;
+}
+ 
+.topbar-page {
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: $purple-bright;
+}
+ 
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+ 
+.topbar-user {
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: $purple-bright;
+  padding: 4px 12px;
+  border: 1px solid $purple-dim;
+  border-radius: 4px;
+  transition: 0.2s;
+  cursor: pointer;
+ 
+  &:hover {
+    background: rgba($purple, 0.15);
+  }
+}
+ 
+// ─────────────────────────────────────────────────────
+// BUTTONS — padrão home
+// ─────────────────────────────────────────────────────
+.btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 2px;
+  padding: 10px 22px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+ 
+  &-outline {
+    background: transparent;
+    border: 1px solid $purple-bright;
+    color: $purple-bright;
+    box-shadow:
+      0 0 8px rgba($purple, 0.3),
+      inset 0 0 8px rgba($purple, 0.05);
+ 
+    &:hover {
+      background: rgba($purple, 0.15);
+      box-shadow: 0 0 16px rgba($purple, 0.5);
+    }
+  }
+ 
+  &-ghost {
+    background: transparent;
+    border: 1px solid $border-glow;
+    color: $text-muted;
+ 
+    &:hover {
+      border-color: $text-muted;
+      color: $text-bright;
+    }
+  }
+ 
+  &-sm {
+    font-size: 11px;
+    padding: 6px 14px;
+  }
+}
+ 
+// ─────────────────────────────────────────────────────
+// SCROLL BODY
+// ─────────────────────────────────────────────────────
 .rooms-body {
-  flex: 1; overflow-y: auto; padding: 20px;
-  &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: $border-glow; border-radius: 2px; }
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px 20px;
+ 
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+ 
+  &::-webkit-scrollbar-track {
+    background: $bg;
+  }
+ 
+  &::-webkit-scrollbar-thumb {
+    background: $border-glow;
+    border-radius: 4px;
+  }
 }
-
-// ── STATES ────────────────────────────────────────────────
-.loading-state, .error-state {
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: center; gap: 12px; padding: 80px 0; text-align: center;
+ 
+// ─────────────────────────────────────────────────────
+// STATES
+// ─────────────────────────────────────────────────────
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 80px 0;
+  text-align: center;
 }
-
+ 
 .loading-dots {
-  display: flex; gap: 6px;
+  display: flex;
+  gap: 6px;
+ 
   span {
-    width: 8px; height: 8px; border-radius: 50%; background: $purple-dim;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $purple-dim;
     animation: blink 1.2s ease-in-out infinite;
+ 
     &:nth-child(2) { animation-delay: 0.2s; }
     &:nth-child(3) { animation-delay: 0.4s; }
   }
 }
-
-.loading-text { font-size: 10px; letter-spacing: 3px; color: $text-dim; }
-
+ 
+.loading-text {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: $text-dim;
+}
+ 
 .error-state {
   span { font-size: 28px; color: $red-alert; }
   p    { font-size: 10px; letter-spacing: 1px; color: $red-alert; }
 }
-
-// ── ARTIFACT LAYOUT ───────────────────────────────────────
+ 
+// ─────────────────────────────────────────────────────
+// ARTIFACT LAYOUT
+// ─────────────────────────────────────────────────────
 .artifact-layout {
   display: grid;
   grid-template-columns: 1fr 320px;
   gap: 16px;
   max-width: 1000px;
-
+ 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
 }
-
-// ── LEFT ──────────────────────────────────────────────────
+ 
+// ─────────────────────────────────────────────────────
+// LEFT COLUMN
+// ─────────────────────────────────────────────────────
 .artifact-left {
-  display: flex; flex-direction: column; gap: 0;
-  border: 1px solid $border; border-radius: 2px; overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid $border;
+  border-radius: 6px;
+  overflow: hidden;
 }
-
+ 
 .artifact-img-wrap {
-  position: relative; width: 100%; aspect-ratio: 16/9;
-  background: $bg; overflow: hidden;
-
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: $bg;
+  overflow: hidden;
+ 
   img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 }
-
+ 
 .img-scanline {
-  position: absolute; inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
   pointer-events: none;
 }
-
+ 
 .artifact-title-bar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 14px; border-top: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 1px solid $border;
   background: rgba($bg-panel, 0.8);
 }
-
+ 
 .artifact-name {
-  font-family: 'VT323', monospace; font-size: 20px;
-  letter-spacing: 3px; color: $text-bright;
+  font-family: 'VT323', monospace;
+  font-size: 24px;
+  letter-spacing: 3px;
+  color: $text-bright;
 }
-
-.artifact-id { font-size: 9px; letter-spacing: 2px; color: $text-dim; }
-
+ 
+.artifact-id {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: $text-dim;
+}
+ 
 .artifact-description {
-  padding: 14px; border-top: 1px solid $border;
+  padding: 16px;
+  border-top: 1px solid $border;
   background: rgba($bg, 0.5);
 }
-
+ 
 .desc-label {
-  font-size: 9px; letter-spacing: 3px; color: $text-dim;
-  text-transform: uppercase; margin-bottom: 8px;
-  border-bottom: 1px solid $border; padding-bottom: 6px;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: $text-dim;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  border-bottom: 1px solid $border;
+  padding-bottom: 6px;
 }
-
+ 
 .desc-text {
-  font-size: 10px; letter-spacing: 1px; color: $text-muted; line-height: 1.8;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: $text-muted;
+  line-height: 1.8;
 }
-
+ 
 .status-archived { color: $green-ok; }
-
-// ── RIGHT ─────────────────────────────────────────────────
-.artifact-right { display: flex; flex-direction: column; gap: 12px; }
-
-// ── METADATA CLUSTER ──────────────────────────────────────
+ 
+// ─────────────────────────────────────────────────────
+// RIGHT COLUMN
+// ─────────────────────────────────────────────────────
+.artifact-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+ 
+// ─────────────────────────────────────────────────────
+// METADATA CLUSTER
+// ─────────────────────────────────────────────────────
 .metadata-cluster {
-  border: 1px solid $border; border-radius: 2px; overflow: hidden;
+  border: 1px solid $border;
+  border-radius: 6px;
+  overflow: hidden;
 }
-
+ 
 .metadata-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 8px 12px; background: $purple; 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: $purple-dim;
 }
-
-.metadata-title { font-size: 10px; letter-spacing: 2px; color: #fff; text-transform: uppercase; }
-.metadata-badge { font-size: 9px; color: rgba(255,255,255,0.7); }
-
+ 
+.metadata-title {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #fff;
+  text-transform: uppercase;
+}
+ 
+.metadata-badge {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+}
+ 
 .metadata-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 8px 12px; border-bottom: 1px solid $border;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid $border;
   background: $bg-card;
+ 
   &:last-child { border-bottom: none; }
 }
-
-.meta-key { font-size: 9px; letter-spacing: 2px; color: $text-dim; text-transform: uppercase; }
+ 
+.meta-key {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: $text-dim;
+  text-transform: uppercase;
+}
+ 
 .meta-val {
-  font-size: 9px; letter-spacing: 1px; color: $text-bright; text-align: right;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: $text-bright;
+  text-align: right;
+ 
   &.verified { color: $green-ok; }
 }
-
-// ── ACCESS PANEL ──────────────────────────────────────────
+ 
+// ─────────────────────────────────────────────────────
+// ACCESS PANEL
+// ─────────────────────────────────────────────────────
 .access-panel {
-  border: 1px solid $border; border-radius: 2px;
-  padding: 20px 16px; display: flex; flex-direction: column;
-  align-items: center; gap: 10px; text-align: center;
-
+  border: 1px solid $border;
+  border-radius: 6px;
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+ 
   &.access-ok {
     border-color: rgba($green-ok, 0.3);
     background: rgba($green-ok, 0.03);
   }
 }
-
-.access-icon { font-size: 24px; color: $green-ok; }
-
+ 
+.access-icon { font-size: 26px; color: $green-ok; }
+ 
 .access-title {
-  font-size: 9px; letter-spacing: 2px; color: $green-ok; text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: $green-ok;
+  text-transform: uppercase;
 }
-
-.access-sub { font-size: 9px; letter-spacing: 1px; color: $text-muted; }
-
+ 
+.access-sub {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: $text-muted;
+}
+ 
 .btn-access {
-  width: 100%; font-family: 'Share Tech Mono', monospace; font-size: 10px;
-  letter-spacing: 2px; padding: 10px; cursor: pointer; text-transform: uppercase;
-  background: transparent; border: 1px solid $purple-bright; color: $purple-bright;
-  border-radius: 2px; transition: all 0.2s;
-  box-shadow: 0 0 8px rgba($purple, 0.3);
-  &:hover { background: rgba($purple, 0.15); box-shadow: 0 0 16px rgba($purple, 0.5); }
+  width: 100%;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid $purple-bright;
+  color: $purple-bright;
+  border-radius: 4px;
+  transition: all 0.2s;
+  box-shadow:
+    0 0 8px rgba($purple, 0.3),
+    inset 0 0 8px rgba($purple, 0.05);
+ 
+  &:hover {
+    background: rgba($purple, 0.15);
+    box-shadow: 0 0 16px rgba($purple, 0.5);
+  }
 }
-
+ 
 .btn-download {
-  width: 100%; font-family: 'Share Tech Mono', monospace; font-size: 10px;
-  letter-spacing: 2px; padding: 10px; cursor: pointer; text-transform: uppercase;
-  background: transparent; border: 1px solid $border-glow; color: $text-muted;
-  border-radius: 2px; transition: all 0.2s;
-  &:hover { border-color: $text-muted; color: $text-bright; }
+  width: 100%;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid $border-glow;
+  color: $text-muted;
+  border-radius: 4px;
+  transition: all 0.2s;
+ 
+  &:hover {
+    border-color: $text-muted;
+    color: $text-bright;
+  }
 }
-
-.btn-outline {
-  font-family: 'Share Tech Mono', monospace; font-size: 10px;
-  letter-spacing: 2px; padding: 8px 20px; cursor: pointer;
-  background: transparent; border: 1px solid $purple-bright; color: $purple-bright;
-  border-radius: 2px; transition: all 0.2s;
-  &:hover { background: rgba($purple, 0.15); }
+ 
+// ─────────────────────────────────────────────────────
+// CRT EFFECT
+// ─────────────────────────────────────────────────────
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+  pointer-events: none;
+  z-index: 100;
 }
-
-// ── CRT ───────────────────────────────────────────────────
-.crt-overlay { position: fixed; inset: 0; background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.5) 100%); pointer-events: none; z-index: 100; }
-.scanlines   { position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px); pointer-events: none; z-index: 99; }
-
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+ 
+.scanlines {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.03) 3px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 99;
+}
+ 
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}

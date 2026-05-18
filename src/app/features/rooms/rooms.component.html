@@ -1,44 +1,48 @@
 <!-- rooms.component.html -->
 <div class="rooms-wrapper">
 
-  <!-- SIDEBAR -->
+  <!-- SIDEBAR — idêntica à home -->
   <aside class="sidebar">
-    <div class="sidebar-top">
-      <span class="sidebar-label">ARCHV</span>
-    </div>
     <nav class="sidebar-nav">
+
+      <!-- Home -->
       <button class="nav-btn" title="Home" (click)="navigate('/')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
           <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
         </svg>
       </button>
+
+      <!-- Biblioteca (active) -->
       <button class="nav-btn active" title="Biblioteca" (click)="navigate('/library')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
         </svg>
       </button>
-      <button class="nav-btn" title="Sinal">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M1 6C5.5 1.5 18.5 1.5 23 6"/>
-          <path d="M3.5 10C7 6.5 17 6.5 20.5 10"/>
-          <path d="M6.5 14C9 11.5 15 11.5 17.5 14"/>
-          <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
-        </svg>
-      </button>
-      <button class="nav-btn" title="Pricing" (click)="navigate('/pricing')">
+
+      <!-- Planos -->
+      <button class="nav-btn" title="Planos" (click)="navigate('/pricing')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="12" r="3"/>
           <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
         </svg>
       </button>
+
+      <!-- Perfil (só quando logado) -->
+      <button class="nav-btn" title="Perfil" *ngIf="isLoggedIn" (click)="navigate('/profile')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+      </button>
+
     </nav>
   </aside>
 
-  <!-- MAIN -->
+  <!-- MAIN CONTENT -->
   <main class="main-content">
 
-    <!-- TOPBAR -->
+    <!-- TOPBAR — idêntica à home -->
     <header class="topbar">
       <div class="topbar-left">
         <span class="topbar-brand">▣ ARCHV.ROOMS</span>
@@ -46,11 +50,23 @@
         <span class="topbar-page">ARTIFACT_VIEW</span>
       </div>
       <div class="topbar-right">
-        <button class="btn-back" (click)="navigate('/library')">← BACK_TO_LIBRARY</button>
+
+        <!-- Logado -->
+        <ng-container *ngIf="isLoggedIn">
+          <span class="topbar-user" (click)="navigate('/profile')" title="Ver perfil">{{ userName }}</span>
+          <button class="btn btn-ghost btn-sm" (click)="logout()">LOGOUT</button>
+        </ng-container>
+
+        <!-- Não logado -->
+        <ng-container *ngIf="!isLoggedIn">
+          <button class="btn btn-ghost btn-sm" (click)="navigate('/login')">LOGIN</button>
+          <button class="btn btn-outline btn-sm" (click)="navigate('/register')">REGISTER</button>
+        </ng-container>
+
       </div>
     </header>
 
-    <!-- CONTENT -->
+    <!-- SCROLLABLE BODY -->
     <div class="rooms-body">
 
       <!-- LOADING -->
@@ -65,7 +81,7 @@
       <div class="error-state" *ngIf="errorMessage && !isLoading">
         <span>⚠</span>
         <p>{{ errorMessage }}</p>
-        <button class="btn-outline" (click)="navigate('/library')">← VOLTAR</button>
+        <button class="btn btn-outline" (click)="navigate('/library')">← VOLTAR</button>
       </div>
 
       <!-- DETALHE DO JOGO -->
@@ -74,19 +90,16 @@
         <!-- COLUNA ESQUERDA: imagem + descrição -->
         <div class="artifact-left">
 
-          <!-- Imagem principal -->
           <div class="artifact-img-wrap">
             <img [src]="game.image" [alt]="game.title" (error)="onImgError($event)" />
             <div class="img-scanline"></div>
           </div>
 
-          <!-- Nome + ID -->
           <div class="artifact-title-bar">
             <span class="artifact-name">{{ game.title | uppercase }}</span>
             <span class="artifact-id">ID: {{ formatId(game.id) }}-{{ game.console }}</span>
           </div>
 
-          <!-- Descrição -->
           <div class="artifact-description">
             <p class="desc-label">DESCRIPTION</p>
             <p class="desc-text">
@@ -101,13 +114,11 @@
         <!-- COLUNA DIREITA: metadata + acesso -->
         <div class="artifact-right">
 
-          <!-- METADATA CLUSTER -->
           <div class="metadata-cluster">
             <div class="metadata-header">
               <span class="metadata-title">METADATA CLUSTER</span>
               <span class="metadata-badge">{{ game.id }}</span>
             </div>
-
             <div class="metadata-row">
               <span class="meta-key">CONSOLE</span>
               <span class="meta-val">{{ game.console | uppercase }}</span>
@@ -130,7 +141,6 @@
             </div>
           </div>
 
-          <!-- ACESSO LIBERADO -->
           <div class="access-panel access-ok">
             <div class="access-icon">▶</div>
             <p class="access-title">SIGNAL_CLEAR // ACESSO LIBERADO</p>

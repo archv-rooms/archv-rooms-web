@@ -30,7 +30,13 @@ export class RoomsComponent implements OnInit {
   isLoading = true;
   errorMessage = '';
 
+  // ── Auth (igual à home) ──────────────────────────────
+  isLoggedIn = false;
+  userName = '';
+
   ngOnInit(): void {
+    this.checkAuth();
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.loadGame(Number(id));
@@ -41,6 +47,31 @@ export class RoomsComponent implements OnInit {
     }
   }
 
+  checkAuth(): void {
+    const token = localStorage.getItem('@ProjetoX:token');
+    const user  = localStorage.getItem('@ProjetoX:user');
+
+    this.isLoggedIn = !!token;
+
+    if (user) {
+      try {
+        const parsed = JSON.parse(user);
+        this.userName = parsed.name ?? parsed.email ?? 'USER';
+      } catch {
+        this.userName = 'USER';
+      }
+    }
+  }
+
+  logout(): void {
+    localStorage.removeItem('@ProjetoX:token');
+    localStorage.removeItem('@ProjetoX:user');
+    this.isLoggedIn = false;
+    this.userName = '';
+    this.router.navigate(['/']);
+  }
+
+  // ── Game ─────────────────────────────────────────────
   loadGame(id: number): void {
     const token = localStorage.getItem('@ProjetoX:token');
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });

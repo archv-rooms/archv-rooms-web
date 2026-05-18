@@ -27,7 +27,12 @@ export class CheckoutComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
 
+  isLoggedIn = false;
+  userName = '';
+
   ngOnInit(): void {
+    this.checkAuth();
+
     this.planId = Number(this.route.snapshot.paramMap.get('planId'));
     if (this.planId) {
       this.loadPlanDetails();
@@ -36,6 +41,24 @@ export class CheckoutComponent implements OnInit {
       this.isLoadingPlan = false;
       this.cdr.detectChanges();
     }
+  }
+
+  checkAuth(): void {
+    const token = localStorage.getItem('@ProjetoX:token');
+    const user  = localStorage.getItem('@ProjetoX:user');
+    this.isLoggedIn = !!token;
+    if (user) {
+      try { this.userName = JSON.parse(user).name ?? 'USER'; }
+      catch { this.userName = 'USER'; }
+    }
+  }
+
+  logout(): void {
+    localStorage.removeItem('@ProjetoX:token');
+    localStorage.removeItem('@ProjetoX:user');
+    this.isLoggedIn = false;
+    this.userName = '';
+    this.router.navigate(['/']);
   }
 
   loadPlanDetails(): void {
