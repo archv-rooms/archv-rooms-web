@@ -384,3 +384,35 @@ $red-alert:     #fb7185;
 @keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes blink    { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
 @keyframes fadeIn   { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.form-input-file {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.save-err {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #f87185;
+  display: block;
+  margin-bottom: 8px;
+}

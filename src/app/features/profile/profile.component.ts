@@ -43,12 +43,16 @@ export class ProfileComponent implements AfterViewInit {
   activityHeatmap: { date: string; count: number; level: number }[] = [];
   fullActivityLog: any[] = [];
 
-  editForm = { username: '', email: '', bio: '', location: '' };
+  editForm = { username: '', email: '', bio: '', location: '', avatarUrl: '' };
   pwForm   = { current: '', new: '', confirm: '' };
   prefs    = { emailNotif: true, publicProfile: false, newsletter: false };
   activeSessions: any[] = [];
   savingProfile  = false;
   saveSuccess    = false;
+
+  uploadingAvatar = false;
+  avatarSuccess   = '';
+  avatarError     = '';
 
   get pwStrength(): number {
     const p = this.pwForm.new;
@@ -81,10 +85,11 @@ export class ProfileComponent implements AfterViewInit {
           this.activeSubscription = this.user.subscriptions[0];
         }
         this.editForm = {
-          username: this.user.name  || '',
-          email:    this.user.email || '',
-          bio:      '',
-          location: '',
+          username:  this.user.name  || '',
+          email:     this.user.email || '',
+          bio:       '',
+          location:  '',
+          avatarUrl: '',
         };
         this.userStats = {
           gamesInLibrary: 0,
@@ -104,6 +109,56 @@ export class ProfileComponent implements AfterViewInit {
       error: (err) => {
         this.isLoading = false;
         this.errorMessage = err.error?.message || 'Erro ao carregar perfil.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  getAvatarUrl(): string {
+    if (!this.user?.avatar) return '';
+    if (this.user.avatar.startsWith('http')) return this.user.avatar;
+    return `http://localhost:3000${this.user.avatar}`;
+  }
+
+  onAvatarFileChange(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.uploadingAvatar = true;
+    this.avatarError     = '';
+    this.avatarSuccess   = '';
+    this.userService.updateAvatarFile(file).subscribe({
+      next: (res) => {
+        if (this.user) this.user.avatar = res.data.avatar;
+        this.uploadingAvatar = false;
+        this.avatarSuccess   = '▸ AVATAR ATUALIZADO';
+        setTimeout(() => this.avatarSuccess = '', 3000);
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.uploadingAvatar = false;
+        this.avatarError     = 'Erro ao enviar arquivo.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  saveAvatarUrl(): void {
+    if (!this.editForm.avatarUrl) return;
+    this.uploadingAvatar = true;
+    this.avatarError     = '';
+    this.avatarSuccess   = '';
+    this.userService.updateAvatarUrl(this.editForm.avatarUrl).subscribe({
+      next: (res) => {
+        if (this.user) this.user.avatar = res.data.avatar;
+        this.uploadingAvatar  = false;
+        this.avatarSuccess    = '▸ AVATAR ATUALIZADO';
+        this.editForm.avatarUrl = '';
+        setTimeout(() => this.avatarSuccess = '', 3000);
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.uploadingAvatar = false;
+        this.avatarError     = 'URL inválida ou erro ao atualizar.';
         this.cdr.detectChanges();
       }
     });

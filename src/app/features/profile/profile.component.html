@@ -73,13 +73,17 @@
         <section class="profile-hero">
           <div class="profile-hero-bg"></div>
           <div class="profile-hero-content">
+
+            <!-- AVATAR -->
             <div class="avatar-wrap">
               <div class="avatar-ring"></div>
               <div class="avatar-core">
-                <span class="avatar-initials">{{ getInitials() }}</span>
+                <img *ngIf="getAvatarUrl()" [src]="getAvatarUrl()" alt="avatar" class="avatar-img" />
+                <span *ngIf="!getAvatarUrl()" class="avatar-initials">{{ getInitials() }}</span>
               </div>
               <div class="avatar-status online"></div>
             </div>
+
             <div class="profile-info">
               <div class="profile-meta-top">
                 <span class="profile-tag">// USR_{{ user?.id?.toString()?.padStart(5,'0') }}</span>
@@ -133,6 +137,7 @@
           <button class="tab-btn" [class.active]="activeTab === 'settings'"  (click)="setTab('settings')">CONFIGURAÇÕES</button>
         </div>
 
+        <!-- OVERVIEW -->
         <div class="tab-panel" *ngIf="activeTab === 'overview'">
           <div class="overview-grid">
             <div class="overview-col">
@@ -216,6 +221,7 @@
           </div>
         </div>
 
+        <!-- BIBLIOTECA -->
         <div class="tab-panel" *ngIf="activeTab === 'library'">
           <div class="section-header">
             <span class="section-label">MY_ARCHIVE_NODES</span>
@@ -251,6 +257,7 @@
           </div>
         </div>
 
+        <!-- ATIVIDADE -->
         <div class="tab-panel" *ngIf="activeTab === 'activity'">
           <div class="section-header">
             <span class="section-label">SIGNAL_HISTORY</span>
@@ -283,6 +290,7 @@
           </div>
         </div>
 
+        <!-- CONFIGURAÇÕES -->
         <div class="tab-panel" *ngIf="activeTab === 'settings'">
           <div class="settings-grid">
             <div class="panel">
@@ -304,6 +312,28 @@
                   <label class="form-label">LOCALIZAÇÃO</label>
                   <input class="form-input" type="text" [(ngModel)]="editForm.location" placeholder="ex: São Paulo, BR" />
                 </div>
+
+                <!-- AVATAR -->
+                <div class="form-group">
+                  <label class="form-label">AVATAR // UPLOAD_FILE</label>
+                  <input class="form-input-file" type="file" accept="image/*"
+                    (change)="onAvatarFileChange($event)"
+                    [disabled]="uploadingAvatar" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">AVATAR // URL_EXTERNA</label>
+                  <div class="input-row">
+                    <input class="form-input" type="text" [(ngModel)]="editForm.avatarUrl" placeholder="https://..." />
+                    <button class="btn btn-ghost btn-sm"
+                      (click)="saveAvatarUrl()"
+                      [disabled]="uploadingAvatar || !editForm.avatarUrl">
+                      {{ uploadingAvatar ? '...' : 'APPLY' }}
+                    </button>
+                  </div>
+                </div>
+                <span class="save-ok"  *ngIf="avatarSuccess">{{ avatarSuccess }}</span>
+                <span class="save-err" *ngIf="avatarError">⚠ {{ avatarError }}</span>
+
                 <button class="btn btn-outline btn-sm" (click)="saveProfile()" [disabled]="savingProfile">
                   {{ savingProfile ? 'SALVANDO...' : 'SAVE_CHANGES' }}
                 </button>
