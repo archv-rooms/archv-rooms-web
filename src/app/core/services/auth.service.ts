@@ -9,7 +9,7 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
-  private apiUrl = 'http://localhost:3000/auth';
+  private apiUrl = 'https://archv-rooms-web.vercel.app';
 
   private tokenKey = '@ProjetoX:token';
   private userKey = '@ProjetoX:user';

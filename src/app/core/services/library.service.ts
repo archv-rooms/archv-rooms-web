@@ -21,7 +21,7 @@ interface LibraryResponse {
 })
 export class LibraryService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/library';
+  private apiUrl = 'https://archv-rooms-web.vercel.app';
 
   getGames(): Observable<LibraryResponse> {
     return this.http.get<LibraryResponse>(this.apiUrl);

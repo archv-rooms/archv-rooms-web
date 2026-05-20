@@ -14,7 +14,7 @@ export interface Plan {
 @Injectable({ providedIn: 'root' })
 export class PlanService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/plans';
+  private apiUrl = 'https://archv-rooms-web.vercel.app';
   // Planos são públicos — sem token
 getPlans(): Observable<{ success: boolean; data: { plans: Plan[] }; message: string }> {
   return this.http.get<{ success: boolean; data: { plans: Plan[] }; message: string }>(`${this.apiUrl}?t=${Date.now()}`);

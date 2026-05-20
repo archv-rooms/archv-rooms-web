@@ -44,7 +44,7 @@ interface AvatarResponse {
 export class UserService {
 
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/user';
+  private apiUrl = 'https://archv-rooms-web.vercel.app';
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('@ProjetoX:token');
