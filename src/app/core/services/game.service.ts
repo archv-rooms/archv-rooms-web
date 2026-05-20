@@ -6,11 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class GameService {
 
-<<<<<<< HEAD
   private baseUrl = 'https://archv-rooms-web.vercel.app';
-=======
-  private baseUrl = 'http://archv-rooms.onrender.com';
->>>>>>> 057ffcff57a6a291664a3b2588af89448d29f066
 
   constructor(private http: HttpClient) {}
 
