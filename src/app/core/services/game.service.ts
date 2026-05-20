@@ -6,7 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class GameService {
 
-  private baseUrl = 'https://archv-rooms-web.vercel.app';
+  private baseUrl = 'https://archv-rooms-web.vercel.app/login';
 
   constructor(private http: HttpClient) {}
 
