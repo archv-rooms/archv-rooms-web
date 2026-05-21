@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environments'
 
 export interface Plan {
   id: number;
@@ -44,7 +45,7 @@ interface AvatarResponse {
 export class UserService {
 
   private http = inject(HttpClient);
-  private apiUrl = 'https://archv-rooms-web.vercel.app';
+  private apiUrl = environment.apiUrl;
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('@ProjetoX:token');
