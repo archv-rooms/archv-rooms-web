@@ -39,5 +39,14 @@
   "main": "index.js",
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/archv-rooms/archv-rooms-web.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/archv-rooms/archv-rooms-web/issues"
+  },
+  "homepage": "https://github.com/archv-rooms/archv-rooms-web#readme"
 }
