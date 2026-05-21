@@ -2,6 +2,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environments'
 
 export interface Plan {
   id: number;
@@ -14,7 +15,7 @@ export interface Plan {
 @Injectable({ providedIn: 'root' })
 export class PlanService {
   private http = inject(HttpClient);
-  private apiUrl = 'https://archv-rooms-web.vercel.app/pricing';
+  private apiUrl = environment.apiUrl;
   // Planos são públicos — sem token
 getPlans(): Observable<{ success: boolean; data: { plans: Plan[] }; message: string }> {
   return this.http.get<{ success: boolean; data: { plans: Plan[] }; message: string }>(`${this.apiUrl}?t=${Date.now()}`);
