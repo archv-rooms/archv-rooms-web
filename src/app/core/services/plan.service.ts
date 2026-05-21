@@ -16,7 +16,7 @@ export interface Plan {
 export class PlanService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
-  // Planos são públicos — sem token
+  // Planos são públicos / sem token
 getPlans(): Observable<{ success: boolean; data: { plans: Plan[] }; message: string }> {
   return this.http.get<{ success: boolean; data: { plans: Plan[] }; message: string }>(`${this.apiUrl}?t=${Date.now()}`);
 }
