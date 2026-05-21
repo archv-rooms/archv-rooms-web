@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../../environments/environments';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
 
-  private baseUrl = 'https://archv-rooms-web.vercel.app/login';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -16,18 +17,18 @@ export class GameService {
   }
 
   getGames() {
-    return this.http.get<any>(`${this.baseUrl}/api/games`, { headers: this.headers });
+    return this.http.get<any>(`${this.apiUrl}/api/games`, { headers: this.headers });
   }
 
   createGame(data: any) {
-    return this.http.post<any>(`${this.baseUrl}/admin/games`, data, { headers: this.headers });
+    return this.http.post<any>(`${this.apiUrl}/admin/games`, data, { headers: this.headers });
   }
 
   updateGame(id: string, data: any) {
-    return this.http.put<any>(`${this.baseUrl}/admin/games/${id}`, data, { headers: this.headers });
+    return this.http.put<any>(`${this.apiUrl}/admin/games/${id}`, data, { headers: this.headers });
   }
 
   deleteGame(id: string) {
-    return this.http.delete(`${this.baseUrl}/admin/games/${id}`, { headers: this.headers });
+    return this.http.delete(`${this.apiUrl}/admin/games/${id}`, { headers: this.headers });
   }
 }
