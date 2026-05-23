@@ -846,9 +846,12 @@ html, body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-&:hover {
-  border-color: #be3a50;
-  color: #fb7185;
-  background: rgba(#fb7185, 0.1);
+.nav-btn--exit {
+  margin-top: 8px;
+
+  &:hover {
+    border-color: #be3a50;
+    color: #fb7185;
+    background: rgba(#fb7185, 0.1);
+  }
 }
- 
