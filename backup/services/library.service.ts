@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environments';
 
@@ -24,17 +24,7 @@ export class LibraryService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
-  private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('@archv:token');
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-  }
-
-  // GET /library — requer auth + assinatura ativa
   getGames(): Observable<LibraryResponse> {
-    return this.http.get<LibraryResponse>(`${this.apiUrl}/library`, {
-      headers: this.getAuthHeaders()
-    });
+    return this.http.get<LibraryResponse>(this.apiUrl);
   }
 }

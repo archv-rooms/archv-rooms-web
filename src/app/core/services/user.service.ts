@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environments'
+import { environment } from '../../../environments/environments';
 
 export interface Plan {
   id: number;
@@ -43,95 +43,87 @@ interface AvatarResponse {
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('@ProjetoX:token');
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('@archv:token');
     return new HttpHeaders({
-      Authorization: `Bearer ${token}`
+      'Authorization': `Bearer ${token}`
     });
   }
 
-  // =========================
-  // PROFILE
-  // =========================
+  // ── PROFILE ──────────────────────────────────────────────
+  // GET /user/profile
   getProfile(): Observable<ProfileResponse> {
     return this.http.get<ProfileResponse>(
-      `${this.apiUrl}/profile`,
-      { headers: this.getHeaders() }
+      `${this.apiUrl}/user/profile`,
+      { headers: this.getAuthHeaders() }
     );
   }
 
-  // =========================
-  // AVATAR - URL EXTERNA
-  // =========================
+  // ── AVATAR (URL externa) ──────────────────────────────────
+  // PATCH /user/avatar-url
   updateAvatarUrl(avatarUrl: string): Observable<AvatarResponse> {
     return this.http.patch<AvatarResponse>(
-      `${this.apiUrl}/avatar-url`,
+      `${this.apiUrl}/user/avatar-url`,
       { avatarUrl },
-      { headers: this.getHeaders() }
-    );
-  }
-
-  // =========================
-  // AVATAR - UPLOAD DE ARQUIVO
-  // =========================
-  updateAvatarFile(file: File): Observable<AvatarResponse> {
-    const formData = new FormData();
-    formData.append('avatar', file);
-    const token = localStorage.getItem('@ProjetoX:token');
-    return this.http.patch<AvatarResponse>(
-      `${this.apiUrl}/avatar-file`,
-      formData,
       {
         headers: new HttpHeaders({
-          Authorization: `Bearer ${token}`
+          'Authorization': `Bearer ${localStorage.getItem('@archv:token')}`,
+          'Content-Type': 'application/json'
         })
       }
     );
   }
 
-  // =========================
-  // ADMIN - USERS
-  // =========================
-  getAllUsers(): Observable<any[]> {
-    return this.http.get<any[]>(
-      `${this.apiUrl}/admin/users`,
-      { headers: this.getHeaders() }
+  // ── AVATAR (upload de arquivo) ────────────────────────────
+  // PATCH /user/avatar-file
+  // Nota: não enviar Content-Type manualmente — o browser define o boundary do multipart automaticamente
+  updateAvatarFile(file: File): Observable<AvatarResponse> {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    return this.http.patch<AvatarResponse>(
+      `${this.apiUrl}/user/avatar-file`,
+      formData,
+      { headers: this.getAuthHeaders() }
     );
   }
 
-  // =========================
-  // ADMIN - STATS
-  // =========================
-  getAdminStats(): Observable<any> {
+  // ── ADMIN — USERS ─────────────────────────────────────────
+  // GET /admin/users
+  getAllUsers(): Observable<any> {
     return this.http.get<any>(
-      `${this.apiUrl}/admin/stats`,
-      { headers: this.getHeaders() }
+      `${this.apiUrl}/admin/users`,
+      { headers: this.getAuthHeaders() }
     );
   }
 
-  // =========================
-  // BAN USER
-  // =========================
-  banUser(id: number, data: any): Observable<any> {
-    return this.http.post(
-      `${this.apiUrl}/${id}/ban`,
-      data,
-      { headers: this.getHeaders() }
+  // PATCH /admin/users/:id/role
+  setUserRole(id: number, role: string): Observable<any> {
+    return this.http.patch(
+      `${this.apiUrl}/admin/users/${id}/role`,
+      { role },
+      {
+        headers: new HttpHeaders({
+          'Authorization': `Bearer ${localStorage.getItem('@archv:token')}`,
+          'Content-Type': 'application/json'
+        })
+      }
     );
   }
 
-  // =========================
-  // UNBAN USER
-  // =========================
-  unbanUser(id: number): Observable<any> {
-    return this.http.post(
-      `${this.apiUrl}/${id}/unban`,
-      {},
-      { headers: this.getHeaders() }
+  // PATCH /admin/users/:id/status
+  setUserStatus(id: number, status: string): Observable<any> {
+    return this.http.patch(
+      `${this.apiUrl}/admin/users/${id}/status`,
+      { status },
+      {
+        headers: new HttpHeaders({
+          'Authorization': `Bearer ${localStorage.getItem('@archv:token')}`,
+          'Content-Type': 'application/json'
+        })
+      }
     );
   }
 }

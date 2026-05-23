@@ -1,8 +1,7 @@
-// plan.service.ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environments'
+import { environment } from '../../../environments/environments';
 
 export interface Plan {
   id: number;
@@ -12,19 +11,34 @@ export interface Plan {
   accessLevel: number;
 }
 
+interface PlansResponse {
+  success: boolean;
+  data: { plans: Plan[] };
+  message: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PlanService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
-  // Planos são públicos / sem token
-getPlans(): Observable<{ success: boolean; data: { plans: Plan[] }; message: string }> {
-  return this.http.get<{ success: boolean; data: { plans: Plan[] }; message: string }>(`${this.apiUrl}?t=${Date.now()}`);
-}
 
-  // Subscribe requer auth
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('@archv:token');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
+
+  // GET /plans — público
+  getPlans(): Observable<PlansResponse> {
+    return this.http.get<PlansResponse>(`${this.apiUrl}/plans`);
+  }
+
+  // POST /plans/subscribe — requer auth
   subscribe(planId: number): Observable<any> {
-    const token = localStorage.getItem('@ProjetoX:token');
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.post(`${this.apiUrl}/subscribe`, { planId }, { headers });
+    return this.http.post(`${this.apiUrl}/plans/subscribe`, { planId }, {
+      headers: this.getAuthHeaders()
+    });
   }
 }

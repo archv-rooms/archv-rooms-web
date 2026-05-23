@@ -1,34 +1,51 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environments';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
-
+  private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
-
-  private get headers() {
-    const token = localStorage.getItem('@ProjetoX:token');
-    return new HttpHeaders({ Authorization: `Bearer ${token}` });
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('@archv:token');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
   }
 
-  getGames() {
-    return this.http.get<any>(`${this.apiUrl}/api/games`, { headers: this.headers });
+  // GET /api/games — público
+  getGames(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/api/games`);
   }
 
-  createGame(data: any) {
-    return this.http.post<any>(`${this.apiUrl}/admin/games`, data, { headers: this.headers });
+  // GET /api/games/:id — público
+  getGameById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/api/games/${id}`);
   }
 
-  updateGame(id: string, data: any) {
-    return this.http.put<any>(`${this.apiUrl}/admin/games/${id}`, data, { headers: this.headers });
+  // POST /admin/games — requer admin
+  createGame(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/admin/games`, data, {
+      headers: this.getAuthHeaders()
+    });
   }
 
-  deleteGame(id: string) {
-    return this.http.delete(`${this.apiUrl}/admin/games/${id}`, { headers: this.headers });
+  // PUT /admin/games/:id — requer admin
+  updateGame(id: number, data: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/admin/games/${id}`, data, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // DELETE /admin/games/:id — requer admin
+  deleteGame(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/admin/games/${id}`, {
+      headers: this.getAuthHeaders()
+    });
   }
 }

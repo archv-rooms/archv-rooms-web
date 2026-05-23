@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environments';
@@ -12,8 +12,8 @@ export class AuthService {
   private router = inject(Router);
   private apiUrl = environment.apiUrl;
 
-  private tokenKey = '@archv:token';
-  private userKey = '@archv:user';
+  private tokenKey = '@ProjetoX:token';
+  private userKey = '@ProjetoX:user';
 
   private authState = new BehaviorSubject<boolean>(this.hasToken());
 
@@ -40,19 +40,8 @@ export class AuthService {
     return 'Player 1';
   }
 
-  getUserRole(): string {
-    const userStr = localStorage.getItem(this.userKey);
-    if (userStr) {
-      const user = JSON.parse(userStr);
-      return user.role;
-    }
-    return 'user';
-  }
-
-  // POST /auth/login
-  login(credentials: { email: string; password: string }): Observable<any> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post(`${this.apiUrl}/auth/login`, credentials, { headers }).pipe(
+  login(credentials: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/login`, credentials).pipe(
       tap((response: any) => {
         if (response.success) {
           localStorage.setItem(this.tokenKey, response.data.token);
@@ -63,11 +52,18 @@ export class AuthService {
     );
   }
 
-  // POST /auth/register
-  register(userData: { name: string; email: string; password: string }): Observable<any> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post(`${this.apiUrl}/auth/register`, userData, { headers });
+  register(userData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/register`, userData);
   }
+
+  getUserRole(): string {
+  const userStr = localStorage.getItem(this.userKey);
+  if (userStr) {
+    const user = JSON.parse(userStr);
+    return user.role;
+  }
+  return 'user';
+}
 
   logout(): void {
     localStorage.removeItem(this.tokenKey);
