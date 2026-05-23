@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService, UserProfile, Subscription } from '../../core/services/user.service';
+import { environment } from '../../../environments/environments';
 
 @Component({
   selector: 'app-profile',
@@ -19,8 +20,10 @@ export class ProfileComponent implements AfterViewInit {
   private userService = inject(UserService);
   private cdr = inject(ChangeDetectorRef);
 
+  // ✅ Tipagem correta: null quando ainda não carregou
   user: UserProfile | null = null;
   activeSubscription: Subscription | null = null;
+
   userStats = {
     gamesInLibrary: 0,
     roomsAccessed:  0,
@@ -28,6 +31,7 @@ export class ProfileComponent implements AfterViewInit {
     signalLevel:    'LVL_00',
     signalPct:      0,
   };
+
   isLoading = true;
   errorMessage = '';
 
@@ -35,7 +39,6 @@ export class ProfileComponent implements AfterViewInit {
 
   recentGames:   any[] = [];
   activityLog:   any[] = [];
-
   userLibrary:   any[] = [];
   libFilter      = 'all';
   loadingLibrary = false;
@@ -95,8 +98,12 @@ export class ProfileComponent implements AfterViewInit {
           gamesInLibrary: 0,
           roomsAccessed:  0,
           daysActive:     this.calcDaysActive(this.user.createdAt),
-          signalLevel:    this.activeSubscription ? 'LVL_0' + (this.activeSubscription.plan.accessLevel || 1) : 'LVL_00',
-          signalPct:      this.activeSubscription ? Math.min(this.activeSubscription.plan.accessLevel * 20, 100) : 5,
+          signalLevel:    this.activeSubscription
+            ? 'LVL_0' + (this.activeSubscription.plan.accessLevel || 1)
+            : 'LVL_00',
+          signalPct: this.activeSubscription
+            ? Math.min(this.activeSubscription.plan.accessLevel * 20, 100)
+            : 5,
         };
         this.activityLog = [
           { type: 'sync', icon: '◈', text: 'Login registrado com sucesso',  time: 'AGORA' },
@@ -114,10 +121,11 @@ export class ProfileComponent implements AfterViewInit {
     });
   }
 
+  // ✅ Usando environment em vez de localhost hardcoded
   getAvatarUrl(): string {
     if (!this.user?.avatar) return '';
     if (this.user.avatar.startsWith('http')) return this.user.avatar;
-    return `http://localhost:3000${this.user.avatar}`;
+    return `${environment.apiUrl}${this.user.avatar}`;
   }
 
   onAvatarFileChange(event: Event): void {
@@ -150,8 +158,8 @@ export class ProfileComponent implements AfterViewInit {
     this.userService.updateAvatarUrl(this.editForm.avatarUrl).subscribe({
       next: (res) => {
         if (this.user) this.user.avatar = res.data.avatar;
-        this.uploadingAvatar  = false;
-        this.avatarSuccess    = '▸ AVATAR ATUALIZADO';
+        this.uploadingAvatar    = false;
+        this.avatarSuccess      = '▸ AVATAR ATUALIZADO';
         this.editForm.avatarUrl = '';
         setTimeout(() => this.avatarSuccess = '', 3000);
         this.cdr.detectChanges();
@@ -196,8 +204,8 @@ export class ProfileComponent implements AfterViewInit {
 
   loadMockSessions(): void {
     this.activeSessions = [
-      { id: 'sess_001', device: 'CHROMIUM_131 / WINDOWS', location: 'São Paulo, BR', lastSeen: 'AGORA', isCurrent: true },
-      { id: 'sess_002', device: 'FIREFOX_124 / ANDROID',  location: 'Rio de Janeiro, BR', lastSeen: 'HÁ 2 DIAS', isCurrent: false },
+      { id: 'sess_001', device: 'CHROMIUM_131 / WINDOWS', location: 'São Paulo, BR',       lastSeen: 'AGORA',     isCurrent: true  },
+      { id: 'sess_002', device: 'FIREFOX_124 / ANDROID',  location: 'Rio de Janeiro, BR',  lastSeen: 'HÁ 2 DIAS', isCurrent: false },
     ];
   }
 

@@ -1,9 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { GameService } from '../../core/services/game.service';
 import { AuthService } from '../../core/services/auth.service';
+import { environment } from '../../../environments/environments';
 
 @Component({
   selector: 'app-adm',
@@ -14,14 +15,11 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class AdmComponent implements OnInit {
 
-  private api = 'http://localhost:3000';
-
-  constructor(
-    private gameService: GameService,
-    private http: HttpClient,
-    private authService: AuthService,
-    private cdr: ChangeDetectorRef
-  ) {}
+  private gameService = inject(GameService);
+  private http        = inject(HttpClient);
+  private authService = inject(AuthService);
+  private cdr         = inject(ChangeDetectorRef);
+  private api         = environment.apiUrl;
 
   currentSection = 'games';
   errorMessage = '';
@@ -68,7 +66,7 @@ export class AdmComponent implements OnInit {
     return { Authorization: `Bearer ${this.authService.getToken()}` };
   }
 
-  // GAMES
+  // ── GAMES ─────────────────────────────────────────────────
   loadGames(): void {
     this.gameService.getGames().subscribe({
       next: (res) => {
@@ -122,7 +120,8 @@ export class AdmComponent implements OnInit {
     }
   }
 
-  deleteGame(id: string): void {
+  // ✅ Corrigido: id era string, agora converte para number
+  deleteGame(id: number): void {
     if (!confirm('Excluir este jogo?')) return;
     this.gameService.deleteGame(id).subscribe({
       next: () => { this.loadGames(); this.cdr.detectChanges(); },
@@ -130,7 +129,7 @@ export class AdmComponent implements OnInit {
     });
   }
 
-  // USERS
+  // ── USERS ─────────────────────────────────────────────────
   loadUsers(): void {
     this.http.get<any>(`${this.api}/admin/users`, { headers: this.authHeaders }).subscribe({
       next: (res) => {
@@ -162,7 +161,7 @@ export class AdmComponent implements OnInit {
     });
   }
 
-  // SALES
+  // ── SALES ─────────────────────────────────────────────────
   loadSales(): void {
     this.http.get<any>(`${this.api}/admin/sales`, { headers: this.authHeaders }).subscribe({
       next: (res) => {
@@ -186,7 +185,7 @@ export class AdmComponent implements OnInit {
     });
   }
 
-  // PLANS
+  // ── PLANS ─────────────────────────────────────────────────
   loadPlans(): void {
     this.http.get<any>(`${this.api}/admin/plans`, { headers: this.authHeaders }).subscribe({
       next: (res) => { this.plans = res.data; this.cdr.detectChanges(); },
@@ -224,7 +223,7 @@ export class AdmComponent implements OnInit {
     });
   }
 
-  // CATEGORIES
+  // ── CATEGORIES ────────────────────────────────────────────
   loadCategories(): void {
     this.http.get<any>(`${this.api}/admin/categories`, { headers: this.authHeaders }).subscribe({
       next: (res) => { this.categories = res.data; this.cdr.detectChanges(); },
