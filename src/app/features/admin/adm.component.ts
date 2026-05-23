@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { GameService } from '../../core/services/game.service';
 import { AuthService } from '../../core/services/auth.service';
 import { environment } from '../../../environments/environments';
@@ -19,6 +20,7 @@ export class AdmComponent implements OnInit {
   private http        = inject(HttpClient);
   private authService = inject(AuthService);
   private cdr         = inject(ChangeDetectorRef);
+  private router      = inject(Router);
   private api         = environment.apiUrl;
 
   currentSection = 'games';
@@ -64,6 +66,11 @@ export class AdmComponent implements OnInit {
 
   private get authHeaders() {
     return { Authorization: `Bearer ${this.authService.getToken()}` };
+  }
+
+  // ── NAVEGAÇÃO ─────────────────────────────────────────────
+  navigateToHome(): void {
+    this.router.navigate(['/']);
   }
 
   // ── GAMES ─────────────────────────────────────────────────
@@ -120,7 +127,6 @@ export class AdmComponent implements OnInit {
     }
   }
 
-  // ✅ Corrigido: id era string, agora converte para number
   deleteGame(id: number): void {
     if (!confirm('Excluir este jogo?')) return;
     this.gameService.deleteGame(id).subscribe({
