@@ -56,6 +56,46 @@ export class AdmComponent implements OnInit {
   editingCategory = false;
   categoryForm: any = { name: '' };
 
+  // ── BAN ──────────────────────────────────────────────────────
+  showBanModal = false;
+
+  banForm: {
+    userId: number | null;
+    userName: string;
+    userEmail: string;
+    type: 'temporary' | 'permanent';
+    durationHours: number;
+    reason: string;
+  } = {
+    userId: null,
+    userName: '',
+    userEmail: '',
+    type: 'temporary',
+    durationHours: 24,
+    reason: ''
+  };
+
+  // duração do BAN
+  readonly banDurationPresets = [
+    { label: '1H',   hours: 1   },
+    { label: '6H',   hours: 6   },
+    { label: '12H',  hours: 12  },
+    { label: '24H',  hours: 24  },
+    { label: '3D',   hours: 72  },
+    { label: '7D',   hours: 168 },
+    { label: '30D',  hours: 720 },
+  ];
+
+  // motivos para agilizar o preenchimento
+  readonly banReasonPresets = [
+    'Spam',
+    'Conteúdo impróprio',
+    'Abuso de sistema',
+    'Pirataria',
+    'Múltiplas contas',
+    'Violação de TOS',
+  ];
+
   ngOnInit(): void {
     this.loadGames();
     this.loadUsers();
@@ -142,9 +182,9 @@ export class AdmComponent implements OnInit {
         this.users = res.data;
         this.filteredUsers = res.data;
         const h24atras = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        this.userStats.total = res.data.length;
-        this.userStats.online = 0;
-        this.userStats.banned = res.data.filter((u: any) => u.role === 'banned').length;
+        this.userStats.total      = res.data.length;
+        this.userStats.online     = 0;
+        this.userStats.banned     = res.data.filter((u: any) => u.role === 'banned').length;
         this.userStats.newLast24h = res.data.filter((u: any) => new Date(u.createdAt) >= h24atras).length;
         this.cdr.detectChanges();
       },
@@ -161,10 +201,85 @@ export class AdmComponent implements OnInit {
 
   toggleUserRole(user: any): void {
     const novoRole = user.role === 'admin' ? 'user' : 'admin';
+    // ⚡ BACKEND LINK: PATCH /admin/users/:id/role  body: { role }
     this.http.patch(`${this.api}/admin/users/${user.id}/role`, { role: novoRole }, { headers: this.authHeaders }).subscribe({
       next: () => { user.role = novoRole; this.cdr.detectChanges(); },
       error: () => alert('Erro ao alterar role')
     });
+  }
+
+  // ── BAN ───────────────────────────────────────────────────
+
+  /** Abre o modal de ban pré-preenchendo os dados do usuário alvo */
+  openBanModal(user: any): void {
+    this.banForm = {
+      userId:        user.id,
+      userName:      user.name,
+      userEmail:     user.email,
+      type:          'temporary',
+      durationHours: 24,
+      reason:        ''
+    };
+    this.showBanModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeBanModal(): void {
+    this.showBanModal = false;
+    this.cdr.detectChanges();
+  }
+
+  //Executa o ban no backend.
+  confirmBan(): void {
+    if (!this.banForm.reason.trim()) return;
+
+    const payload: any = {
+      type:   this.banForm.type,
+      reason: this.banForm.reason,
+      ...(this.banForm.type === 'temporary' && { durationHours: this.banForm.durationHours })
+    };
+
+    // BACKEND LINK: troque o bloco abaixo pela chamada HTTP real
+    this.http
+      .post(`${this.api}/admin/users/${this.banForm.userId}/ban`, payload, { headers: this.authHeaders })
+      .subscribe({
+        next: () => {
+          // Atualiza localmente o role para refletir na tabela imediatamente
+          const target = this.users.find(u => u.id === this.banForm.userId);
+          if (target) target.role = 'banned';
+
+          this.filteredUsers = [...this.filteredUsers]; // força detecção de mudança
+          this.userStats.banned = this.users.filter(u => u.role === 'banned').length;
+
+          this.closeBanModal();
+          this.cdr.detectChanges();
+        },
+        error: (err) => alert(err.error?.message || 'Erro ao executar ban')
+      });
+  }
+
+  /**
+   * Remove o ban de um usuário.
+   *
+   *   BACKEND LINK:
+   *   Endpoint esperado: POST /admin/users/:id/unban
+   *   Deve restaurar o role para 'user' e limpar bannedUntil.
+   */
+  unbanUser(user: any): void {
+    if (!confirm(`Remover ban de ${user.name}?`)) return;
+
+    // BACKEND LINK: troque pelo endpoint real
+    this.http
+      .post(`${this.api}/admin/users/${user.id}/unban`, {}, { headers: this.authHeaders })
+      .subscribe({
+        next: () => {
+          user.role = 'user';
+          this.userStats.banned = this.users.filter(u => u.role === 'banned').length;
+          this.filteredUsers = [...this.filteredUsers];
+          this.cdr.detectChanges();
+        },
+        error: (err) => alert(err.error?.message || 'Erro ao remover ban')
+      });
   }
 
   // ── SALES ─────────────────────────────────────────────────
@@ -172,8 +287,8 @@ export class AdmComponent implements OnInit {
     this.http.get<any>(`${this.api}/admin/sales`, { headers: this.authHeaders }).subscribe({
       next: (res) => {
         this.sales = res.data;
-        this.salesStats.total = res.data.length;
-        this.salesStats.active = res.data.filter((s: any) => s.status === 'active').length;
+        this.salesStats.total   = res.data.length;
+        this.salesStats.active  = res.data.filter((s: any) => s.status === 'active').length;
         this.salesStats.revenue = res.data
           .filter((s: any) => s.status === 'active')
           .reduce((acc: number, s: any) => acc + (s.plan?.price ?? 0), 0);
@@ -212,8 +327,8 @@ export class AdmComponent implements OnInit {
 
   savePlan(): void {
     this.http.put(`${this.api}/admin/plans/${this.planForm.id}`, {
-      name: this.planForm.name,
-      price: Number(this.planForm.price),
+      name:        this.planForm.name,
+      price:       Number(this.planForm.price),
       description: this.planForm.description
     }, { headers: this.authHeaders }).subscribe({
       next: () => { this.loadPlans(); this.closePlanModal(); },
