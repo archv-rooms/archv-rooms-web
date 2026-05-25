@@ -138,7 +138,7 @@
                 <td>
                   <div class="actions-cell">
 
-                    <!-- Botão de toggle de role: oculto para admins -->
+                    <!-- Botão de trocar de role: oculto para admins -->
                     <button
                       *ngIf="user.role !== 'admin'"
                       class="btn btn--ghost btn--icon"
@@ -292,7 +292,6 @@
   <div class="modal modal--ban">
 
     <div class="modal__header modal__header--danger">
-      <!-- Pixel skull decoration -->
       <span class="ban-skull" aria-hidden="true">☠</span>
       <span>GAME_OVER_PROTOCOL</span>
       <button class="modal__close" (click)="closeBanModal()">✕</button>
