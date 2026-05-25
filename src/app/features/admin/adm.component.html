@@ -19,13 +19,9 @@
       </button>
 
       <button class="nav-btn nav-btn--exit" (click)="navigateToHome()" title="Sair para o site">
-        <!-- Ícone de porta com seta de saída -->
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <!-- Moldura da porta -->
           <path d="M13 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h7"/>
-          <!-- Seta apontando para fora (direita) -->
           <path d="M16 15l3-3-3-3"/>
-          <!-- Linha horizontal da seta -->
           <line x1="19" y1="12" x2="9" y2="12"/>
         </svg>
       </button>
@@ -129,14 +125,54 @@
                 <td>{{ user.name }}</td>
                 <td>{{ user.email }}</td>
                 <td>
-                  <span class="badge" [ngClass]="{'badge--active': user.role === 'admin', 'badge--inactive': user.role === 'user'}">
+                  <span class="badge"
+                    [ngClass]="{
+                      'badge--active':  user.role === 'admin',
+                      'badge--inactive': user.role === 'user',
+                      'badge--banned':  user.role === 'banned'
+                    }">
                     {{ user.role | uppercase }}
                   </span>
                 </td>
                 <td>{{ user.createdAt | date:'dd/MM/yyyy' }}</td>
                 <td>
                   <div class="actions-cell">
-                    <button class="btn btn--ghost btn--icon" (click)="toggleUserRole(user)">⇄</button>
+
+                    <!-- Botão de toggle de role: oculto para admins -->
+                    <button
+                      *ngIf="user.role !== 'admin'"
+                      class="btn btn--ghost btn--icon"
+                      (click)="toggleUserRole(user)"
+                      title="Alterar role">
+                      ⇄
+                    </button>
+
+                    <button
+                      *ngIf="user.role === 'user'"
+                      class="btn btn--ghost btn--icon"
+                      (click)="toggleUserRole(user)"
+                      title="Promover a admin">
+                      ★
+                    </button>
+
+                    <!-- BAN -->
+                    <button
+                      *ngIf="user.role !== 'admin'"
+                      class="btn btn--game-over"
+                      (click)="openBanModal(user)"
+                      title="Banir usuário">
+                      GAME OVER
+                    </button>
+
+                    <!-- UNBAN -->
+                    <button
+                      *ngIf="user.role === 'banned'"
+                      class="btn btn--ghost btn--sm"
+                      (click)="unbanUser(user)"
+                      title="Remover ban">
+                      CONTINUE
+                    </button>
+
                   </div>
                 </td>
               </tr>
@@ -170,17 +206,14 @@
                 <td>R$ {{ sale.plan?.price | number:'1.2-2' }}</td>
                 <td>
                   <span class="badge" [ngClass]="{
-                    'badge--active': sale.status === 'active',
+                    'badge--active':   sale.status === 'active',
                     'badge--inactive': sale.status !== 'active'
                   }">{{ sale.status | uppercase }}</span>
                 </td>
                 <td>{{ sale.createdAt | date:'dd/MM/yyyy' }}</td>
                 <td>
                   <div class="actions-cell">
-                    <button class="btn btn--ghost btn--icon"
-                      *ngIf="sale.status === 'active'"
-                      (click)="cancelSale(sale.id)">✕</button>
-                    <span *ngIf="sale.status !== 'active'" class="text-muted">—</span>
+                    <button class="btn btn--danger btn--sm" (click)="cancelSale(sale.id)" *ngIf="sale.status === 'active'">CANCELAR</button>
                   </div>
                 </td>
               </tr>
@@ -251,6 +284,104 @@
       </section>
 
     </div>
+  </div>
+</div>
+
+<!-- ═══════════ BAN ═══════════ -->
+<div class="modal-backdrop" *ngIf="showBanModal">
+  <div class="modal modal--ban">
+
+    <div class="modal__header modal__header--danger">
+      <!-- Pixel skull decoration -->
+      <span class="ban-skull" aria-hidden="true">☠</span>
+      <span>GAME_OVER_PROTOCOL</span>
+      <button class="modal__close" (click)="closeBanModal()">✕</button>
+    </div>
+
+    <div class="modal__body">
+
+      <!-- Target info -->
+      <div class="ban-target-card">
+        <span class="ban-target-card__label">TARGET_DETECTED</span>
+        <span class="ban-target-card__value">{{ banForm.userName }}</span>
+        <span class="ban-target-card__email">{{ banForm.userEmail }}</span>
+      </div>
+
+      <!-- Tipo de ban -->
+      <div class="form-row">
+        <label class="form-label">TIPO_DE_BAN</label>
+        <div class="ban-type-selector">
+          <button
+            class="ban-type-btn"
+            [class.active]="banForm.type === 'temporary'"
+            (click)="banForm.type = 'temporary'">
+            <span class="ban-type-btn__icon">⏱</span>
+            <span class="ban-type-btn__label">TEMPORÁRIO</span>
+          </button>
+          <button
+            class="ban-type-btn"
+            [class.active]="banForm.type === 'permanent'"
+            (click)="banForm.type = 'permanent'">
+            <span class="ban-type-btn__icon">∞</span>
+            <span class="ban-type-btn__label">PERMANENTE</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Duração (apenas para ban temporário) -->
+      <div class="form-row ban-duration-row" *ngIf="banForm.type === 'temporary'">
+        <label class="form-label">DURAÇÃO_DO_BAN</label>
+        <div class="ban-duration-grid">
+          <button
+            *ngFor="let preset of banDurationPresets"
+            class="ban-duration-preset"
+            [class.active]="banForm.durationHours === preset.hours"
+            (click)="banForm.durationHours = preset.hours">
+          </button>
+        </div>
+        <div class="ban-custom-duration">
+          <span class="filter-bar__prompt">&gt;</span>
+          <input
+            type="number"
+            class="form-input ban-custom-input"
+            [(ngModel)]="banForm.durationHours"
+            min="1"
+            placeholder="ou digite em horas"/>
+          <span class="config-unit">horas</span>
+        </div>
+      </div>
+
+      <!-- Motivo -->
+      <div class="form-row">
+        <label class="form-label">MOTIVO</label>
+        <div class="ban-reason-presets">
+          <button
+            *ngFor="let reason of banReasonPresets"
+            class="ban-reason-tag"
+            [class.active]="banForm.reason === reason"
+            (click)="banForm.reason = reason">
+          </button>
+        </div>
+        <textarea
+          class="form-input form-textarea"
+          [(ngModel)]="banForm.reason"
+          placeholder="Descreva o motivo do banimento...">
+        </textarea>
+      </div>
+
+    </div>
+
+    <div class="modal__footer modal__footer--danger">
+      <button class="btn btn--ghost" (click)="closeBanModal()">CANCELAR</button>
+      <!-- BACKEND LINK: chama POST /admin/users/:id/ban -->
+      <button
+        class="btn btn--game-over btn--game-over--lg"
+        (click)="confirmBan()"
+        [disabled]="!banForm.reason">
+        ☠ EXECUTAR BAN
+      </button>
+    </div>
+
   </div>
 </div>
 
