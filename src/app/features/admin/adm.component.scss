@@ -448,7 +448,7 @@ html, body {
 
 .text-muted { color: $text-dim; }
 
-// ── BADGES ─────────────────────────────────────────────────────────
+// ── BADGE BANNED (patch) ───────────────────────────────────────
 .badge {
   display: inline-block;
   padding: 2px 8px;
@@ -459,11 +459,18 @@ html, body {
   border: 1px solid;
   text-transform: uppercase;
 
+  &--banned { color: $red; border-color: $red-dim; background: rgba($red, 0.08); }
   &--active  { color: $green;    border-color: $green;    background: rgba($green, 0.08); }
   &--inactive { color: $text-dim; border-color: $border;   background: transparent; }
   &--banned  { color: $red;      border-color: $red;      background: rgba($red, 0.08); }
   &--sub     { color: $yellow;   border-color: $yellow;   background: rgba($yellow, 0.08); }
   &--hidden  { color: $text-dim; border-color: $border;   background: rgba(0,0,0,0.25); }
+}
+
+.badge--banned {
+  color: $red;
+  border-color: $red-dim;
+  background: rgba($red, 0.08);
 }
 
 .actions-cell {
@@ -853,5 +860,266 @@ html, body {
     border-color: #be3a50;
     color: #fb7185;
     background: rgba(#fb7185, 0.1);
+  }
+}
+
+// ── BOTÃO GAME OVER ────────────────────────────────────────────
+.btn--game-over {
+  background: transparent;
+  border: 1px solid $red-dim;
+  color: $red;
+  font-family: $font-mono;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 4px 10px;
+  border-radius: $radius;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+
+  // Efeito de glitch no hover
+  &::before {
+    content: 'GAME OVER';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $red;
+    opacity: 0;
+    transform: translateX(-2px);
+    transition: opacity 0.1s;
+    text-shadow: 1px 0 $yellow;
+  }
+
+  &:hover {
+    background: rgba($red, 0.1);
+    border-color: $red;
+    box-shadow: 0 0 10px rgba($red, 0.3), inset 0 0 8px rgba($red, 0.05);
+    animation: glitch-flicker 0.3s steps(2) infinite;
+
+    &::before { opacity: 0.4; }
+  }
+
+  // Variante grande dentro do modal
+  &--lg {
+    font-size: 12px;
+    padding: 9px 20px;
+    letter-spacing: 3px;
+
+    &:hover {
+      box-shadow: 0 0 20px rgba($red, 0.5), inset 0 0 12px rgba($red, 0.08);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    animation: none;
+  }
+}
+
+@keyframes glitch-flicker {
+  0%   { clip-path: inset(0 0 95% 0); }
+  25%  { clip-path: inset(40% 0 50% 0); }
+  50%  { clip-path: none; }
+  75%  { clip-path: inset(80% 0 5% 0); }
+  100% { clip-path: none; }
+}
+
+// ── BAN ──────────────────────────────────────────────────
+.modal--ban {
+  width: 460px;
+  border-color: rgba($red-dim, 0.5);
+  box-shadow: 0 0 40px rgba($red, 0.12), 0 0 80px rgba(0,0,0,0.6);
+}
+
+.modal__header--danger {
+  border-bottom-color: rgba($red-dim, 0.4);
+  color: $red;
+
+  .ban-skull {
+    font-size: 20px;
+    animation: skull-pulse 1.5s ease-in-out infinite;
+    margin-right: 2px;
+  }
+}
+
+@keyframes skull-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.92); }
+}
+
+.modal__footer--danger {
+  border-top-color: rgba($red-dim, 0.3);
+}
+
+// ── CARD DE TARGET ─────────────────────────────────────────────
+.ban-target-card {
+  background: rgba($red, 0.05);
+  border: 1px solid rgba($red-dim, 0.35);
+  border-radius: $radius;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  &__label {
+    font-size: 9px;
+    color: $red;
+    letter-spacing: 2px;
+    opacity: 0.7;
+    text-transform: uppercase;
+  }
+
+  &__value {
+    font-family: $font-display;
+    font-size: 20px;
+    color: $text-bright;
+    letter-spacing: 2px;
+  }
+
+  &__email {
+    font-size: 11px;
+    color: $text-dim;
+    letter-spacing: 1px;
+  }
+}
+
+// ── SELETOR TIPO DE BAN ────────────────────────────────────────
+.ban-type-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.ban-type-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  background: $bg-card;
+  border: 1px solid $border;
+  border-radius: $radius;
+  color: $text-muted;
+  font-family: $font-mono;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &__icon {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  &:hover {
+    border-color: $red-dim;
+    color: $text-base;
+  }
+
+  &.active {
+    background: rgba($red, 0.08);
+    border-color: $red;
+    color: $red;
+    box-shadow: 0 0 10px rgba($red, 0.15);
+  }
+}
+
+// ── PRESETS DE DURAÇÃO ─────────────────────────────────────────
+.ban-duration-row {
+  animation: fadeIn 0.2s ease;
+}
+
+.ban-duration-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.ban-duration-preset {
+  background: $bg-card;
+  border: 1px solid $border;
+  border-radius: $radius;
+  color: $text-muted;
+  font-family: $font-mono;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+
+  &:hover { border-color: $border-glow; color: $text-base; }
+
+  &.active {
+    background: rgba($red, 0.08);
+    border-color: $red-dim;
+    color: $red;
+  }
+}
+
+.ban-custom-duration {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: $bg-input;
+  border: 1px solid $border;
+  border-radius: $radius;
+  padding: 0 12px;
+  transition: border-color 0.2s;
+
+  &:focus-within { border-color: $red-dim; }
+
+  .filter-bar__prompt { color: $red; font-size: 13px; flex-shrink: 0; }
+}
+
+.ban-custom-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 9px 0;
+  color: $text-bright;
+  font-family: $font-mono;
+  font-size: 12px;
+  outline: none;
+  width: 80px;
+
+  &::-webkit-inner-spin-button { opacity: 0.3; }
+  &::placeholder { color: $text-dim; }
+}
+
+// ── PRESETS DE MOTIVO ─────────────────────────────────────────
+.ban-reason-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.ban-reason-tag {
+  background: $bg-card;
+  border: 1px solid $border;
+  border-radius: 20px;
+  color: $text-dim;
+  font-family: $font-mono;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover { border-color: $border-glow; color: $text-muted; }
+
+  &.active {
+    background: rgba($red, 0.08);
+    border-color: $red-dim;
+    color: $red;
   }
 }
