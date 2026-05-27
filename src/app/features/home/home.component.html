@@ -66,7 +66,7 @@
       <!-- ② HERO ----------------------------------------------------- -->
       <section class="hero">
         <h1 class="hero-title">archv.rooms</h1>
-        <p class="hero-sub">O maior arquivo de sinais retrô da rede.<br>Preservado. Verificado. Online.</p>
+        <p class="hero-sub">Nem tudo na internet foi feito para ser acessado.<br>Mas o passado foi feito para ser jogado.<br>Entre cartuchos, glitches e memórias. </p>
         <div class="hero-actions">
           <button class="btn btn-outline" (click)="onInitializeLink()">Login</button>
           <button class="btn btn-ghost"   (click)="navigate('/library')">Biblioteca</button>
@@ -78,7 +78,7 @@
       <!-- ④ BIBLIOTECA — jogos reais da API ---------------------------------------- -->
       <section class="section">
         <div class="section-header">
-          <span class="section-meta" *ngIf="!isLoggedIn">FAÇA LOGIN PARA ACESSAR O ACERVO COMPLETO</span>
+          <span class="section-meta" *ngIf="!isLoggedIn">FAÇA LOGIN PARA ACESSAR A BIBLIOTECA</span>
           <span class="section-meta" *ngIf="isLoggedIn && !loadingGames">{{ games.length }} ARTEFATOS CARREGADOS</span>
           <span class="section-link" (click)="navigate('/library')">VER TUDO ›</span>
         </div>
@@ -103,8 +103,8 @@
       <!-- ⑤ PLATAFORMAS ---------------------------------------- -->
       <section class="section">
         <div class="section-header">
-          <span class="section-label">PLATFORM_INDEX</span>
-          <span class="section-meta">{{ platforms.length }} PLATAFORMAS INDEXADAS</span>
+          <span class="section-label">PLATAFORMAS</span>
+          <span class="section-meta">{{ platforms.length }} PLATAFORMAS DISPONIVEIS</span>
           <span class="section-link" (click)="navigate('/library')">VER BIBLIOTECA ›</span>
         </div>
         <div class="platforms-grid">
