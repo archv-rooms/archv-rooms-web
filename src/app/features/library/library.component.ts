@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { environment } from '../../../environments/environments';
+import { AuthService } from '../../core/services/auth.service';
 
 interface Game {
   id: number;
@@ -48,22 +49,21 @@ export class LibraryComponent implements OnInit {
   constructor(
     private router: Router,
     private http: HttpClient,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService  // ← adicionado
   ) {}
 
   ngOnInit(): void {
-    const token = localStorage.getItem('@ProjetoX:token');
-    const userStr = localStorage.getItem('@ProjetoX:user');
+    this.isLoggedIn = this.authService.isAuthenticated();
 
-    if (token) {
-      this.isLoggedIn = true;
-      this.userName = userStr ? JSON.parse(userStr).name : 'USER';
+    if (this.isLoggedIn) {
+      this.userName = this.authService.getUserName();
       this.loadGames();
     }
   }
 
   loadGames(): void {
-    const token = localStorage.getItem('@ProjetoX:token');
+    const token = this.authService.getToken(); // ← corrigido
     if (!token) return;
 
     this.loadingGames = true;
@@ -79,7 +79,7 @@ export class LibraryComponent implements OnInit {
       next: (res) => {
         if (res.success) {
           this.games = res.data.games;
-          this.applyFilters(); // aplica filtro atual após carregar
+          this.applyFilters();
         } else {
           this.gamesError = res.message;
         }
@@ -94,7 +94,6 @@ export class LibraryComponent implements OnInit {
     });
   }
 
-  // ── Filtro + busca combinados ──────────────────────
   applyFilters(): void {
     const query = this.searchQuery.toLowerCase().trim();
 
@@ -118,9 +117,7 @@ export class LibraryComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  onSearch(): void {
-    this.applyFilters();
-  }
+  onSearch(): void { this.applyFilters(); }
 
   clearSearch(): void {
     this.searchQuery = '';
@@ -132,11 +129,7 @@ export class LibraryComponent implements OnInit {
     img.src = 'assets/placeholder-game.png';
   }
 
-  navigate(path: string): void {
-    this.router.navigate([path]);
-  }
+  navigate(path: string): void { this.router.navigate([path]); }
 
-  onGameClick(game: Game): void {
-    this.router.navigate(['/rooms', game.id]);
-  }
+  onGameClick(game: Game): void { this.router.navigate(['/rooms', game.id]); }
 }
