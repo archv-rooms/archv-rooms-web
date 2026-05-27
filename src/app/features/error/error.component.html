@@ -1,0 +1,89 @@
+<!-- error.component.html -->
+<div class="error-wrapper">
+
+  <!-- SIDEBAR (mesma estrutura do home) -->
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <button class="nav-btn" title="Home" (click)="navigate('/')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
+      </button>
+      <button class="nav-btn" title="Biblioteca" (click)="navigate('/library')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
+        </svg>
+      </button>
+      <button class="nav-btn" title="Planos" (click)="navigate('/pricing')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <span class="topbar-brand">▣ ARCHV.ROOMS</span>
+      <div class="topbar-right">
+        <span class="topbar-status">
+          <span class="status-dot"></span>
+          SINAL INTERROMPIDO
+        </span>
+      </div>
+    </header>
+
+    <!-- BODY -->
+    <div class="scroll-body">
+      <section class="error-section">
+
+        <!-- Código de erro grande (glitch) -->
+        <div class="error-code-wrap">
+          <p class="error-pre">// SISTEMA — FALHA DE LEITURA</p>
+          <h1 class="error-code" [attr.data-text]="errorCode">{{ errorCode }}</h1>
+          <div class="error-scanbar"></div>
+        </div>
+
+        <!-- Mensagem -->
+        <div class="error-body">
+          <p class="error-title">{{ errorTitle }}</p>
+          <p class="error-desc">{{ errorDesc }}</p>
+
+          <div class="error-log">
+            <span class="log-line"><span class="log-key">CÓDIGO</span> <span class="log-val">{{ errorCode }}</span></span>
+            <span class="log-line"><span class="log-key">ORIGEM</span> <span class="log-val">{{ currentPath }}</span></span>
+            <span class="log-line"><span class="log-key">TIMESTAMP</span> <span class="log-val">{{ timestamp }}</span></span>
+            <span class="log-line"><span class="log-key">STATUS</span> <span class="log-val error-status">FALHA</span></span>
+          </div>
+
+          <div class="error-actions">
+            <button class="btn btn-outline" (click)="navigate('/')">↩ VOLTAR AO INÍCIO</button>
+            <button class="btn btn-ghost" (click)="goBack()">← PÁGINA ANTERIOR</button>
+          </div>
+
+          <p class="error-note">SE O PROBLEMA PERSISTIR, VERIFIQUE O SINAL // ARCHV_SYSTEMS</p>
+        </div>
+
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="site-footer">
+        <span>ARCHV.ROOMS OS v2.4.1</span>
+        <span class="footer-links">
+          <span (click)="navigate('/')"        class="footer-link">HOME</span>
+          <span (click)="navigate('/library')" class="footer-link">BIBLIOTECA</span>
+          <span (click)="navigate('/pricing')" class="footer-link">PLANOS</span>
+        </span>
+        <span>© 2025 ARCHV_SYSTEMS</span>
+      </footer>
+    </div>
+  </main>
+
+  <div class="crt-overlay"></div>
+  <div class="scanlines"></div>
+</div>
