@@ -92,7 +92,7 @@
       <section class="section" *ngIf="!isLoading && !errorMessage">
 
         <div class="section-header">
-          <span class="section-label">ACCESS_TIERS</span>
+          <span class="section-label">PLANOS</span>
           <span class="section-meta">{{ plans.length }} PLANOS DISPONÍVEIS</span>
         </div>
 
@@ -122,7 +122,7 @@
 
             <!-- PRICE -->
             <div class="price-block">
-              <div class="divider-line">── PRICE ───────────</div>
+              <div class="divider-line">────────────────────</div>
               <div class="price-display">
                 <span class="currency">R$</span>
                 <span class="amount">{{ plan.price }}</span>
@@ -132,7 +132,7 @@
 
             <!-- BENEFITS -->
             <div class="benefits-block">
-              <div class="divider-line">── FEATURES ────────</div>
+              <div class="divider-line">────────────────────</div>
               <ul class="benefits-list">
                 <li *ngFor="let benefit of plan.benefits">
                   <span class="bullet">▶</span>
