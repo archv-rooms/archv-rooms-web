@@ -46,7 +46,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent)
   },
   {
+    path: 'error',
+    loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent)
+  },
+  {
     path: '**',
-    redirectTo: ''
+    loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent),
+    data: { code: 404 }
   }
 ];
