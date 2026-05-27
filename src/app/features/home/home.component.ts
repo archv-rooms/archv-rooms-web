@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { environment } from '../../../environments/environments';
+import { AuthService } from '../../core/services/auth.service';
 
 interface Game {
   id: number;
@@ -41,7 +42,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private authService: AuthService   // ← injetado corretamente
   ) {}
 
   ngOnInit(): void {
@@ -51,29 +53,21 @@ export class HomeComponent implements OnInit {
   // ── AUTH ─────────────────────────────────────────────
 
   private checkAuth(): void {
-    const token = localStorage.getItem('@ProjetoX:token');
-    const userStr = localStorage.getItem('@ProjetoX:user');
+    // Usa o AuthService — chaves corretas: @archv:token / @archv:user
+    this.isLoggedIn = this.authService.isAuthenticated();
 
-    if (token) {
-      this.isLoggedIn = true;
-
-      this.userName = userStr
-        ? JSON.parse(userStr).name
-        : 'USER';
-
-      this.loadGames(token);
+    if (this.isLoggedIn) {
+      this.userName = this.authService.getUserName();
+      const token = this.authService.getToken();
+      if (token) this.loadGames(token);
     }
   }
 
   logout(): void {
-    localStorage.removeItem('@ProjetoX:token');
-    localStorage.removeItem('@ProjetoX:user');
-
+    this.authService.logout(); // já limpa o localStorage e redireciona para /login
     this.isLoggedIn = false;
     this.userName = '';
     this.games = [];
-
-    this.router.navigate(['/login']);
   }
 
   // ── GAMES ────────────────────────────────────────────
@@ -100,16 +94,11 @@ export class HomeComponent implements OnInit {
         } else {
           this.gamesError = res.message;
         }
-
         this.loadingGames = false;
       },
-
       error: (err) => {
         console.error(err);
-
-        this.gamesError =
-          'FALHA AO CARREGAR ACERVO. VERIFIQUE O SINAL.';
-
+        this.gamesError = 'FALHA AO CARREGAR ACERVO. VERIFIQUE O SINAL.';
         this.loadingGames = false;
       }
     });

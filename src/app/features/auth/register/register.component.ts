@@ -9,7 +9,7 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './register.component.html',
-  styleUrls: ['../login/login.component.scss'] // Reutilizando os estilos do login
+  styleUrls: ['../login/login.component.scss']
 })
 export class RegisterComponent {
   private fb = inject(FormBuilder);
@@ -23,6 +23,7 @@ export class RegisterComponent {
   });
 
   errorMessage: string = '';
+  successMessage: string = '';
   isLoading: boolean = false;
 
   onSubmit(): void {
@@ -33,23 +34,13 @@ export class RegisterComponent {
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.successMessage = '';
 
     this.authService.register(this.registerForm.value).subscribe({
       next: () => {
-        // Após cadastrar, faz login automaticamente
-        this.authService.login({
-          email: this.registerForm.value.email,
-          password: this.registerForm.value.password
-        }).subscribe({
-          next: () => {
-            this.isLoading = false;
-            this.router.navigate(['/pricing']); // Redireciona para escolher um plano
-          },
-          error: () => {
-            this.isLoading = false;
-            this.router.navigate(['/login']);
-          }
-        });
+        this.isLoading = false;
+        // Redireciona para o login após cadastro — sem login automático
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         this.isLoading = false;
