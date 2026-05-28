@@ -637,6 +637,8 @@ $red-alert: #fb7185;
 .cta-brand {
   font-family: 'VT323', monospace;
 
+  font-size: clamp(42px, 6vw, 64px);
+  font-weight: 400;
 }
 
 .cta-body {
