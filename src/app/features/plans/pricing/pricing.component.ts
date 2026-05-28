@@ -72,6 +72,17 @@ export class PricingComponent implements OnInit {
       ],
       buttonText: 'INITIALIZE ULTIMATE',
     },
+    
+    'Ultra Gamer': {
+      icon: '⬢',
+      benefits: [
+        'Acesso total ao arquivo',
+        'Multiplayer online',
+        'Early access releases',
+        'Transmissão premium ilimitada',
+      ],
+      buttonText: 'INITIALIZE ULTIMATE',
+    },
   };
 
   ngOnInit(): void {
