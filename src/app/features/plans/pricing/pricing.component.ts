@@ -50,6 +50,18 @@ export class PricingComponent implements OnInit {
       ],
       buttonText: 'INITIALIZE PRO',
     },
+
+    'Premium': {
+      icon: '◈',
+      benefits: [
+        'Acesso completo 16-bit',
+        'Save states em nuvem',
+        'Prioridade de sinal',
+        '3 dispositivos simultâneos',
+      ],
+      buttonText: 'INITIALIZE PRO',
+    },
+
     'Ultimate': {
       icon: '⬢',
       benefits: [
