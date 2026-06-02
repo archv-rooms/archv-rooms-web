@@ -201,7 +201,7 @@ export class AdmComponent implements OnInit {
 
   /**
    * Promove um usuário comum para admin.
-   * ⚡ BACKEND LINK: PATCH /admin/users/:id/role  body: { role: 'admin' }
+   * BACKEND LINK: PATCH /admin/users/:id/role  body: { role: 'admin' }
    */
   promoteToAdmin(user: any): void {
     if (!confirm(`Promover "${user.name}" a administrador?`)) return;
