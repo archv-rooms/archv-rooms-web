@@ -297,18 +297,6 @@ export class AdmComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  /**
-   * Executa o ban no backend.
-   *
-   * ⚡ BACKEND LINK:
-   *   Endpoint esperado: POST /admin/users/:id/ban
-   *   Body: { type: 'temporary' | 'permanent', durationHours?: number, reason: string }
-   *   Resposta esperada: { success: true } ou erro HTTP.
-   *
-   *   Para ban temporário o backend deve salvar `bannedUntil = now + durationHours`
-   *   e alterar o role para 'banned'.
-   *   Para ban permanente, apenas altera role para 'banned' sem expiração.
-   */
   confirmBan(): void {
     if (!this.banForm.reason.trim()) return;
 
