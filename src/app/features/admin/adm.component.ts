@@ -251,7 +251,7 @@ export class AdmComponent implements OnInit {
 
   /**
    * Concede um plano gratuitamente ao usuário.
-   * ⚡ BACKEND LINK: POST /admin/users/:id/grant-plan
+   *   BACKEND LINK: POST /admin/users/:id/grant-plan
    *   Body: { planId: number, durationDays: number }
    *   durationDays = 0 significa acesso permanente.
    *   O backend deve criar a assinatura com status 'active' e price = 0.
