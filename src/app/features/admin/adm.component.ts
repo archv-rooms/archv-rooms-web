@@ -306,7 +306,7 @@ export class AdmComponent implements OnInit {
       ...(this.banForm.type === 'temporary' && { durationHours: this.banForm.durationHours })
     };
 
-    // ⚡ BACKEND LINK: troque o bloco abaixo pela chamada HTTP real
+    //  BACKEND LINK: troque o bloco abaixo pela chamada HTTP real
     this.http
       .post(`${this.api}/admin/users/${this.banForm.userId}/ban`, payload, { headers: this.authHeaders })
       .subscribe({
