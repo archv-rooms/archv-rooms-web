@@ -75,7 +75,7 @@ export class AdmComponent implements OnInit {
     reason: ''
   };
 
-  // duração do BAN
+  // Presets de duração exibidos como atalhos no modal
   readonly banDurationPresets = [
     { label: '1H',   hours: 1   },
     { label: '6H',   hours: 6   },
@@ -86,7 +86,7 @@ export class AdmComponent implements OnInit {
     { label: '30D',  hours: 720 },
   ];
 
-  // motivos para agilizar o preenchimento
+  // Presets de motivo para agilizar o preenchimento
   readonly banReasonPresets = [
     'Spam',
     'Conteúdo impróprio',
@@ -199,12 +199,80 @@ export class AdmComponent implements OnInit {
     );
   }
 
-  toggleUserRole(user: any): void {
-    const novoRole = user.role === 'admin' ? 'user' : 'admin';
-    // BACKEND LINK: PATCH /admin/users/:id/role  body: { role }
-    this.http.patch(`${this.api}/admin/users/${user.id}/role`, { role: novoRole }, { headers: this.authHeaders }).subscribe({
-      next: () => { user.role = novoRole; this.cdr.detectChanges(); },
-      error: () => alert('Erro ao alterar role')
+  /**
+   * Promove um usuário comum para admin.
+   * ⚡ BACKEND LINK: PATCH /admin/users/:id/role  body: { role: 'admin' }
+   */
+  promoteToAdmin(user: any): void {
+    if (!confirm(`Promover "${user.name}" a administrador?`)) return;
+    this.http.patch(`${this.api}/admin/users/${user.id}/role`, { role: 'admin' }, { headers: this.authHeaders }).subscribe({
+      next: () => { user.role = 'admin'; this.cdr.detectChanges(); },
+      error: () => alert('Erro ao promover usuário')
+    });
+  }
+
+  /**
+   * Revoga o cargo de admin, rebaixando para usuário comum.
+   * ⚡ BACKEND LINK: PATCH /admin/users/:id/role  body: { role: 'user' }
+   */
+  demoteFromAdmin(user: any): void {
+    if (!confirm(`Revogar cargo de admin de "${user.name}"? Ele voltará a ser um usuário comum.`)) return;
+    this.http.patch(`${this.api}/admin/users/${user.id}/role`, { role: 'user' }, { headers: this.authHeaders }).subscribe({
+      next: () => { user.role = 'user'; this.cdr.detectChanges(); },
+      error: () => alert('Erro ao revogar cargo de admin')
+    });
+  }
+
+  // ── SUBSCRIPTION MODAL ────────────────────────────────────
+  showSubscriptionModal = false;
+  subscriptionTarget: any = null;
+  grantPlanId: number | null = null;
+  grantDurationDays = 30;
+
+  /**
+   * Abre o modal de assinatura para o usuário alvo.
+   * O objeto `user.subscription` deve vir preenchido pelo backend em loadUsers().
+   * ⚡ BACKEND LINK: certifique-se que GET /admin/users retorna o campo
+   *   subscription: { plan, status, createdAt } | null  para cada usuário.
+   */
+  openSubscriptionModal(user: any): void {
+    this.subscriptionTarget = user;
+    this.grantPlanId = null;
+    this.grantDurationDays = 30;
+    this.showSubscriptionModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeSubscriptionModal(): void {
+    this.showSubscriptionModal = false;
+    this.subscriptionTarget = null;
+    this.cdr.detectChanges();
+  }
+
+  /**
+   * Concede um plano gratuitamente ao usuário.
+   * ⚡ BACKEND LINK: POST /admin/users/:id/grant-plan
+   *   Body: { planId: number, durationDays: number }
+   *   durationDays = 0 significa acesso permanente.
+   *   O backend deve criar a assinatura com status 'active' e price = 0.
+   */
+  grantPlan(): void {
+    if (!this.grantPlanId || !this.subscriptionTarget) return;
+    const payload = { planId: this.grantPlanId, durationDays: this.grantDurationDays };
+    this.http.post(`${this.api}/admin/users/${this.subscriptionTarget.id}/grant-plan`, payload, { headers: this.authHeaders }).subscribe({
+      next: (res: any) => {
+        // Atualiza localmente o objeto de assinatura do usuário
+        const plan = this.plans.find(p => p.id === this.grantPlanId);
+        this.subscriptionTarget.subscription = {
+          plan,
+          status: 'active',
+          createdAt: new Date().toISOString(),
+          ...(res?.data ?? {})
+        };
+        this.cdr.detectChanges();
+        alert(`Plano "${plan?.name}" concedido com sucesso!`);
+      },
+      error: (err) => alert(err.error?.message || 'Erro ao conceder plano')
     });
   }
 
@@ -229,7 +297,18 @@ export class AdmComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  //Executa o ban no backend.
+  /**
+   * Executa o ban no backend.
+   *
+   * ⚡ BACKEND LINK:
+   *   Endpoint esperado: POST /admin/users/:id/ban
+   *   Body: { type: 'temporary' | 'permanent', durationHours?: number, reason: string }
+   *   Resposta esperada: { success: true } ou erro HTTP.
+   *
+   *   Para ban temporário o backend deve salvar `bannedUntil = now + durationHours`
+   *   e alterar o role para 'banned'.
+   *   Para ban permanente, apenas altera role para 'banned' sem expiração.
+   */
   confirmBan(): void {
     if (!this.banForm.reason.trim()) return;
 
@@ -239,7 +318,7 @@ export class AdmComponent implements OnInit {
       ...(this.banForm.type === 'temporary' && { durationHours: this.banForm.durationHours })
     };
 
-    // BACKEND LINK: troque o bloco abaixo pela chamada HTTP real
+    // ⚡ BACKEND LINK: troque o bloco abaixo pela chamada HTTP real
     this.http
       .post(`${this.api}/admin/users/${this.banForm.userId}/ban`, payload, { headers: this.authHeaders })
       .subscribe({
@@ -261,14 +340,14 @@ export class AdmComponent implements OnInit {
   /**
    * Remove o ban de um usuário.
    *
-   *   BACKEND LINK:
+   * ⚡ BACKEND LINK:
    *   Endpoint esperado: POST /admin/users/:id/unban
    *   Deve restaurar o role para 'user' e limpar bannedUntil.
    */
   unbanUser(user: any): void {
     if (!confirm(`Remover ban de ${user.name}?`)) return;
 
-    // BACKEND LINK: troque pelo endpoint real
+    // ⚡ BACKEND LINK: troque pelo endpoint real
     this.http
       .post(`${this.api}/admin/users/${user.id}/unban`, {}, { headers: this.authHeaders })
       .subscribe({
