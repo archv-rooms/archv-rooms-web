@@ -326,9 +326,9 @@ export class AdmComponent implements OnInit {
   }
 
   /**
-   * Remove o ban de um usuário.
+   * Removendo o ban de um usuário.
    *
-   * ⚡ BACKEND LINK:
+   *   BACKEND LINK:
    *   Endpoint esperado: POST /admin/users/:id/unban
    *   Deve restaurar o role para 'user' e limpar bannedUntil.
    */
