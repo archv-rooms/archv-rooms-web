@@ -201,7 +201,7 @@ export class AdmComponent implements OnInit {
 
   toggleUserRole(user: any): void {
     const novoRole = user.role === 'admin' ? 'user' : 'admin';
-    // ⚡ BACKEND LINK: PATCH /admin/users/:id/role  body: { role }
+    // BACKEND LINK: PATCH /admin/users/:id/role  body: { role }
     this.http.patch(`${this.api}/admin/users/${user.id}/role`, { role: novoRole }, { headers: this.authHeaders }).subscribe({
       next: () => { user.role = novoRole; this.cdr.detectChanges(); },
       error: () => alert('Erro ao alterar role')
