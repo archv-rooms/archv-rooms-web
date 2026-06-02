@@ -232,7 +232,7 @@ export class AdmComponent implements OnInit {
   /**
    * Abre o modal de assinatura para o usuário alvo.
    * O objeto `user.subscription` deve vir preenchido pelo backend em loadUsers().
-   * ⚡ BACKEND LINK: certifique-se que GET /admin/users retorna o campo
+   *   BACKEND LINK: certifique-se que GET /admin/users retorna o campo
    *   subscription: { plan, status, createdAt } | null  para cada usuário.
    */
   openSubscriptionModal(user: any): void {
