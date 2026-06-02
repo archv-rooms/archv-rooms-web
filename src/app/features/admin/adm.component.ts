@@ -335,7 +335,7 @@ export class AdmComponent implements OnInit {
   unbanUser(user: any): void {
     if (!confirm(`Remover ban de ${user.name}?`)) return;
 
-    // ⚡ BACKEND LINK: troque pelo endpoint real
+    //  BACKEND LINK: trocar pelo endpoint real
     this.http
       .post(`${this.api}/admin/users/${user.id}/unban`, {}, { headers: this.authHeaders })
       .subscribe({
