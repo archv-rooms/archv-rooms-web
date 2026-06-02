@@ -138,24 +138,35 @@
                 <td>
                   <div class="actions-cell">
 
-                    <!-- Botão de trocar de role: oculto para admins -->
+                    <!-- Ver/gerenciar assinatura: aparece para todos exceto banned -->
                     <button
-                      *ngIf="user.role !== 'admin'"
+                      *ngIf="user.role !== 'banned'"
                       class="btn btn--ghost btn--icon"
-                      (click)="toggleUserRole(user)"
-                      title="Alterar role">
-                      ⇄
+                      [class.btn--has-plan]="user.subscription"
+                      (click)="openSubscriptionModal(user)"
+                      [title]="user.subscription ? 'Ver assinatura ativa' : 'Usuário sem plano'">
+                      {{ user.subscription ? '💳' : '⊘' }}
                     </button>
 
+                    <!-- Promover a admin: só para user comum -->
                     <button
                       *ngIf="user.role === 'user'"
-                      class="btn btn--ghost btn--icon"
-                      (click)="toggleUserRole(user)"
+                      class="btn btn--ghost btn--icon btn--promote"
+                      (click)="promoteToAdmin(user)"
                       title="Promover a admin">
                       ★
                     </button>
 
-                    <!-- BAN -->
+                    <!-- Revogar admin: aparece para admins (permite rebaixar) -->
+                    <button
+                      *ngIf="user.role === 'admin'"
+                      class="btn btn--ghost btn--icon btn--demote"
+                      (click)="demoteFromAdmin(user)"
+                      title="Revogar cargo de admin">
+                      ✦
+                    </button>
+
+                    <!-- GAME OVER: aparece para user e banned, nunca para admin -->
                     <button
                       *ngIf="user.role !== 'admin'"
                       class="btn btn--game-over"
@@ -164,7 +175,7 @@
                       GAME OVER
                     </button>
 
-                    <!-- UNBAN -->
+                    <!-- Desbanir: só aparece para banned -->
                     <button
                       *ngIf="user.role === 'banned'"
                       class="btn btn--ghost btn--sm"
@@ -287,11 +298,94 @@
   </div>
 </div>
 
-<!-- ═══════════ BAN ═══════════ -->
+<!-- ═══════════ MODAL: ASSINATURA ═══════════ -->
+<div class="modal-backdrop" *ngIf="showSubscriptionModal">
+  <div class="modal modal--sm">
+
+    <div class="modal__header">
+      <span>SUBSCRIPTION_STATUS</span>
+      <button class="modal__close" (click)="closeSubscriptionModal()">✕</button>
+    </div>
+
+    <div class="modal__body">
+
+      <!-- Info do usuário -->
+      <div class="sub-user-card">
+        <span class="sub-user-card__name">{{ subscriptionTarget?.name }}</span>
+        <span class="sub-user-card__email">{{ subscriptionTarget?.email }}</span>
+      </div>
+
+      <!-- Plano atual -->
+      <div class="sub-status-block" *ngIf="subscriptionTarget?.subscription; else noSub">
+        <div class="sub-status-block__badge sub-status-block__badge--active">PLANO ATIVO</div>
+        <div class="sub-detail-row">
+          <span class="sub-detail-label">PLANO</span>
+          <span class="sub-detail-value">{{ subscriptionTarget.subscription.plan?.name | uppercase }}</span>
+        </div>
+        <div class="sub-detail-row">
+          <span class="sub-detail-label">VALOR</span>
+          <span class="sub-detail-value">R$ {{ subscriptionTarget.subscription.plan?.price | number:'1.2-2' }}</span>
+        </div>
+        <div class="sub-detail-row">
+          <span class="sub-detail-label">INÍCIO</span>
+          <span class="sub-detail-value">{{ subscriptionTarget.subscription.createdAt | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="sub-detail-row">
+          <span class="sub-detail-label">STATUS</span>
+          <span class="sub-detail-value accent">{{ subscriptionTarget.subscription.status | uppercase }}</span>
+        </div>
+      </div>
+
+      <ng-template #noSub>
+        <div class="sub-status-block">
+          <div class="sub-status-block__badge sub-status-block__badge--none">SEM PLANO ATIVO</div>
+          <p class="sub-hint">Este usuário não possui assinatura. Você pode conceder um plano gratuitamente abaixo.</p>
+        </div>
+      </ng-template>
+
+      <!-- Conceder plano gratuito -->
+      <div class="sub-grant-section">
+        <div class="sub-grant-section__header">
+          <span class="section-tag">▣</span> GRANT_FREE_ACCESS
+        </div>
+        <div class="form-row">
+          <label class="form-label">SELECIONAR PLANO</label>
+          <select class="form-input" [(ngModel)]="grantPlanId">
+            <option [ngValue]="null">// ESCOLHA UM PLANO</option>
+            <option *ngFor="let plan of plans" [ngValue]="plan.id">
+              {{ plan.name | uppercase }} — R$ {{ plan.price | number:'1.2-2' }}
+            </option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label">DURAÇÃO (DIAS) — 0 = PERMANENTE</label>
+          <input type="number" class="form-input" [(ngModel)]="grantDurationDays" min="0" />
+        </div>
+        <!--  BACKEND LINK: chama POST /admin/users/:id/grant-plan -->
+        <button
+          class="btn btn--primary"
+          style="align-self: flex-end; margin-top: 4px;"
+          (click)="grantPlan()"
+          [disabled]="!grantPlanId">
+          CONCEDER_PLANO
+        </button>
+      </div>
+
+    </div>
+
+    <div class="modal__footer">
+      <button class="btn btn--ghost" (click)="closeSubscriptionModal()">FECHAR</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════ MODAL: BAN (GAME OVER) ═══════════ -->
 <div class="modal-backdrop" *ngIf="showBanModal">
   <div class="modal modal--ban">
 
     <div class="modal__header modal__header--danger">
+      <!-- Pixel skull decoration -->
       <span class="ban-skull" aria-hidden="true">☠</span>
       <span>GAME_OVER_PROTOCOL</span>
       <button class="modal__close" (click)="closeBanModal()">✕</button>
@@ -336,6 +430,7 @@
             class="ban-duration-preset"
             [class.active]="banForm.durationHours === preset.hours"
             (click)="banForm.durationHours = preset.hours">
+            {{ preset.label }}
           </button>
         </div>
         <div class="ban-custom-duration">
@@ -359,6 +454,7 @@
             class="ban-reason-tag"
             [class.active]="banForm.reason === reason"
             (click)="banForm.reason = reason">
+            {{ reason }}
           </button>
         </div>
         <textarea
@@ -372,7 +468,7 @@
 
     <div class="modal__footer modal__footer--danger">
       <button class="btn btn--ghost" (click)="closeBanModal()">CANCELAR</button>
-      <!-- BACKEND LINK: chama POST /admin/users/:id/ban -->
+      <!--  BACKEND LINK: chama POST /admin/users/:id/ban -->
       <button
         class="btn btn--game-over btn--game-over--lg"
         (click)="confirmBan()"
