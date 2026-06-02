@@ -212,8 +212,8 @@ export class AdmComponent implements OnInit {
   }
 
   /**
-   * Revoga o cargo de admin, rebaixando para usuário comum.
-   * ⚡ BACKEND LINK: PATCH /admin/users/:id/role  body: { role: 'user' }
+   * Revogar admin, rebaixando para usuário comum.
+   *  BACKEND LINK: PATCH /admin/users/:id/role  body: { role: 'user' }
    */
   demoteFromAdmin(user: any): void {
     if (!confirm(`Revogar cargo de admin de "${user.name}"? Ele voltará a ser um usuário comum.`)) return;
