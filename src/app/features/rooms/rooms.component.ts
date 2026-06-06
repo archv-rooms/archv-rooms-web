@@ -9,6 +9,7 @@ interface Game {
   title: string;
   console: string;
   image: string;
+  fileUrl?: string;    
   accessLevel: number;
   planId?: number;
 }
@@ -94,6 +95,18 @@ loadGame(id: number): void {
       this.cdr.detectChanges();
     }
   });
+}
+
+downloadRom(): void {
+  if (!this.game?.fileUrl) {
+    alert('Arquivo não disponível.');
+    return;
+  }
+  const a = document.createElement('a');
+  a.href = this.game.fileUrl;
+  a.download = this.game.title;
+  a.target = '_blank';
+  a.click();
 }
 
   getRegion(console: string): string {
