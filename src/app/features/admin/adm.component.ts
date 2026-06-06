@@ -218,6 +218,14 @@ private uploadGameFiles(gameId: number, onDone: () => void): void {
     .catch(() => { alert('Jogo salvo, mas erro no upload dos arquivos.'); onDone(); });
 }
 
+deleteGame(id: number): void {
+  if (!confirm('Excluir este jogo?')) return;
+  this.gameService.deleteGame(id).subscribe({
+    next: () => { this.loadGames(); this.cdr.detectChanges(); },
+    error: () => alert('Erro ao excluir jogo')
+  });
+}
+
   // ── USERS ─────────────────────────────────────────────────
   loadUsers(): void {
     this.http.get<any>(`${this.api}/admin/users`, { headers: this.authHeaders }).subscribe({
