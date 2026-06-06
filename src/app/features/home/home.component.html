@@ -35,84 +35,99 @@
           <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
         </svg>
       </button>
+
     </nav>
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="main-content">
 
-    <!-- TOP BAR -->
+    <!-- TOPBAR -->
     <header class="topbar">
       <span class="topbar-brand">▣ ARCHV.ROOMS</span>
       <div class="topbar-right">
 
-        <!-- Logado: mostra nome e acesso ao perfil -->
+        <!-- Logado -->
         <ng-container *ngIf="isLoggedIn">
-          <span class="topbar-user" (click)="navigate('/profile')" style="cursor:pointer" title="Ver perfil">{{ userName }}</span>
-          <button class="btn btn-ghost btn-sm" (click)="logout()">LOGOUT</button>
+          <span class="topbar-user" (click)="navigate('/profile')" title="Ver perfil">{{ userName }}</span>
+          <button class="btn btn-ghost btn-sm" (click)="logout()">sair</button>
         </ng-container>
-        
-        <!-- Não logado: login e register -->
+
+        <!-- Não logado -->
         <ng-container *ngIf="!isLoggedIn">
-          <button class="btn btn-ghost btn-sm" (click)="navigate('/login')">LOGIN</button>
-          <button class="btn btn-outline btn-sm" (click)="navigate('/register')">REGISTER</button>
+          <button class="btn btn-ghost btn-sm" (click)="navigate('/login')">entrar</button>
+          <button class="btn btn-outline btn-sm" (click)="navigate('/register')">cadastrar</button>
         </ng-container>
+
       </div>
     </header>
 
-    <!-- SCROLLABLE BODY -->
+    <!-- CORPO ROLÁVEL -->
     <div class="scroll-body">
 
-      <!-- HERO ----------------------------------------------------- -->
+      <!-- HERO ---------------------------------------------------- -->
       <section class="hero">
         <h1 class="hero-title">archv.rooms</h1>
-        <p class="hero-sub">Nem tudo na internet foi feito para ser acessado.<br>Mas o passado foi feito para ser jogado.<br>Entre cartuchos, glitches e memórias. </p>
+        <p class="hero-sub">
+          Nem tudo na internet foi feito para ser acessado.<br>
+          Mas o passado foi feito para ser jogado.<br>
+          Entre cartuchos, glitches e memórias.
+        </p>
         <div class="hero-actions">
-          <button class="btn btn-outline" (click)="onInitializeLink()">Login</button>
-          <button class="btn btn-ghost"   (click)="navigate('/library')">Biblioteca</button>
+          <button class="btn btn-outline" (click)="onInitializeLink()">entrar</button>
+          <button class="btn btn-ghost"   (click)="navigate('/library')">biblioteca</button>
         </div>
-        <div class="hero-scroll-hint">▼ SAIBA MAIS ▼</div>
+        <div class="hero-scroll-hint">▼</div>
       </section>
 
-
-      <!-- BIBLIOTECA — jogos reais da API ---------------------------------------- -->
-      <section class="section">
+      <!-- CARROSSEL DE JOGOS --------------------------------------- -->
+      <section class="section" *ngIf="isLoggedIn">
         <div class="section-header">
-          <span class="section-meta" *ngIf="!isLoggedIn">FAÇA LOGIN PARA ACESSAR A BIBLIOTECA</span>
-          <span class="section-meta" *ngIf="isLoggedIn && !loadingGames">{{ games.length }} ARTEFATOS CARREGADOS</span>
-          <span class="section-link" (click)="navigate('/library')">VER TUDO ›</span>
+          <span class="section-label">acervo</span>
+          <span class="section-meta" *ngIf="!loadingGames">{{ games.length }} títulos</span>
+          <span class="section-link" (click)="navigate('/library')">ver tudo ›</span>
         </div>
 
-      
-        <!-- Grid de jogos ---------------------------------------- -->
-        <div class="games-grid" *ngIf="isLoggedIn && !loadingGames && !gamesError">
-          <div class="game-card" *ngFor="let game of games.slice(0, 12)" (click)="onGameClick(game)">
-            <div class="game-thumb">
-              <img [src]="game.image" [alt]="game.title" (error)="onImgError($event)" />
-              <div class="card-scanline"></div>
-              <span class="game-console-badge">{{ game.console }}</span>
-            </div>
-            <div class="game-info">
-              <p class="game-title">{{ game.title }}</p>
-              <p class="game-id">ID: {{ game.id.toString().padStart(6, '0') }}-{{ game.console | uppercase }}</p>
+        <!-- Carrossel com navegação -->
+        <div class="carousel-wrap" *ngIf="!loadingGames && !gamesError">
+          <button class="carousel-btn" (click)="carouselPrev()" [disabled]="!carouselHasPrev">‹</button>
+
+          <div class="games-grid">
+            <div class="game-card" *ngFor="let game of carouselGames" (click)="onGameClick(game)">
+              <div class="game-thumb">
+                <img [src]="game.image" [alt]="game.title" (error)="onImgError($event)" />
+                <div class="card-scanline"></div>
+                <span class="game-console-badge">{{ game.console }}</span>
+              </div>
+              <div class="game-info">
+                <p class="game-title">{{ game.title }}</p>
+                <p class="game-id">#{{ game.id.toString().padStart(6, '0') }}</p>
+              </div>
             </div>
           </div>
+
+          <button class="carousel-btn" (click)="carouselNext()" [disabled]="!carouselHasNext">›</button>
         </div>
+
+        <!-- Não logado -->
+        <p class="section-hint" *ngIf="!isLoggedIn">
+          faça login para acessar o acervo.
+        </p>
+
       </section>
 
-      <!-- PLATAFORMAS ---------------------------------------- -->
-      <section class="section">
+      <!-- PLATAFORMAS --------------------------------------------- -->
+      <section class="section" *ngIf="platforms.length > 0">
         <div class="section-header">
-          <span class="section-label">PLATAFORMAS</span>
-          <span class="section-meta">{{ platforms.length }} PLATAFORMAS DISPONIVEIS</span>
-          <span class="section-link" (click)="navigate('/library')">VER BIBLIOTECA ›</span>
+          <span class="section-label">plataformas</span>
+          <span class="section-meta">{{ platforms.length }} disponíveis</span>
+          <span class="section-link" (click)="navigate('/library')">ver biblioteca ›</span>
         </div>
         <div class="platforms-grid">
           <div class="platform-card" *ngFor="let p of platforms" (click)="navigate('/library')">
-            
             <div class="platform-info">
               <span class="platform-name">{{ p.name }}</span>
-              <span class="platform-count">{{ p.count }} arquivos</span>
+              <span class="platform-count">{{ p.count }} títulos</span>
             </div>
             <div class="platform-bar">
               <div class="platform-bar-fill" [style.width.%]="p.pct"></div>
@@ -121,35 +136,30 @@
         </div>
       </section>
 
-
-      <!-- CTA ---------------------------------------- -->
+      <!-- SOBRE --------------------------------------------------- -->
       <section class="cta-section">
         <div class="cta-inner">
-          <p class="cta-pre">// SOBRE NÓS</p>
-          <h2 class="cta-title">Preservando sinais.<br>Um artefato por vez.</h2>
+          <p class="cta-pre">// sobre</p>
+          <h2 class="cta-title">Um arquivo vivo<br>da história dos games.</h2>
           <p class="cta-body">
-            O <span class="cta-brand">archv.rooms</span> é um arquivo vivo da história dos games. 
-            Aqui, cada ROM não é apenas guardada; ela é verificada, catalogada e transmitida em sinal puro, exatamente como foi concebida.
-            Não somos apenas um site de jogos. Somos um santuário para os jogos que o tempo tentou apagar. 
-            Conecte-se e faça parte.
+            O <span class="cta-brand">archv.rooms</span> cataloga e distribui ROMs verificadas,
+            exatamente como foram concebidas. Conecte-se e faça parte.
           </p>
           <div class="cta-actions">
-            <button class="btn btn-outline" (click)="onInitializeLink()">LOGIN</button>
-            <button class="btn btn-ghost"   (click)="navigate('/pricing')">VER PLANOS</button>
+            <button class="btn btn-outline" (click)="onInitializeLink()">entrar</button>
+            <button class="btn btn-ghost"   (click)="navigate('/pricing')">ver planos</button>
           </div>
-          <p class="cta-note">SINAL GRATUITO DISPONÍVEL // SEM CARTÃO NECESSÁRIO</p>
         </div>
       </section>
 
-      <!-- FOOTER ---------------------------------------- -->
+      <!-- FOOTER -------------------------------------------------- -->
       <footer class="site-footer">
-        <span>ARCHV.ROOMS OS v2.4.1</span>
         <span class="footer-links">
-          <span (click)="navigate('/')"        class="footer-link">HOME</span>
-          <span (click)="navigate('/library')" class="footer-link">BIBLIOTECA</span>
-          <span (click)="navigate('/pricing')" class="footer-link">PLANOS</span>
+          <span (click)="navigate('/')"        class="footer-link">home</span>
+          <span (click)="navigate('/library')" class="footer-link">biblioteca</span>
+          <span (click)="navigate('/pricing')" class="footer-link">planos</span>
         </span>
-        <span>© 2026 ARCHV_SYSTEMS</span>
+        <span>© 2026 archv.rooms</span>
       </footer>
 
     </div>
@@ -158,4 +168,3 @@
   <div class="crt-overlay"></div>
   <div class="scanlines"></div>
 </div>
-

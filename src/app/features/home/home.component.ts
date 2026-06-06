@@ -13,6 +13,12 @@ interface Game {
   image: string;
 }
 
+interface Platform {
+  name: string;
+  count: number;
+  pct: number;
+}
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -25,25 +31,22 @@ export class HomeComponent implements OnInit {
   isLoggedIn = false;
   userName = '';
 
+  // ── GAMES ────────────────────────────────────────────
   games: Game[] = [];
   loadingGames = false;
   gamesError = '';
 
-  platforms = [
-    { name: 'SNES',       count: '3.241', pct: 92 },
-    { name: 'PS1',        count: '2.887', pct: 82 },
-    { name: 'N64',        count: '1.654', pct: 47 },
-    { name: 'MEGA DRIVE', count: '2.103', pct: 60 },
-    { name: 'GAME BOY',   count: '1.820', pct: 52 },
-    { name: 'GBA',        count: '1.440', pct: 41 },
-    { name: 'NES',        count: '987',   pct: 28 },
-    { name: 'SATURN',     count: '700',   pct: 20 },
-  ];
+  // ── CARROSSEL ────────────────────────────────────────
+  carouselIndex = 0;
+  readonly carouselVisible = 4; // quantos cards aparecem por vez
+
+  // ── PLATAFORMAS — preenchido dinamicamente ────────────
+  platforms: Platform[] = [];
 
   constructor(
     private router: Router,
     private http: HttpClient,
-    private authService: AuthService   // ← injetado corretamente
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -53,7 +56,6 @@ export class HomeComponent implements OnInit {
   // ── AUTH ─────────────────────────────────────────────
 
   private checkAuth(): void {
-    // Usa o AuthService — chaves corretas: @archv:token / @archv:user
     this.isLoggedIn = this.authService.isAuthenticated();
 
     if (this.isLoggedIn) {
@@ -64,10 +66,11 @@ export class HomeComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.logout(); // já limpa o localStorage e redireciona para /login
+    this.authService.logout();
     this.isLoggedIn = false;
     this.userName = '';
     this.games = [];
+    this.platforms = [];
   }
 
   // ── GAMES ────────────────────────────────────────────
@@ -76,21 +79,17 @@ export class HomeComponent implements OnInit {
     this.loadingGames = true;
     this.gamesError = '';
 
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
     this.http.get<{
       success: boolean;
       data: { games: Game[] };
       message: string;
-    }>(
-      `${environment.apiUrl}/library`,
-      { headers }
-    ).subscribe({
+    }>(`${environment.apiUrl}/library`, { headers }).subscribe({
       next: (res) => {
         if (res.success) {
           this.games = res.data.games;
+          this.buildPlatforms();
         } else {
           this.gamesError = res.message;
         }
@@ -98,28 +97,71 @@ export class HomeComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.gamesError = 'FALHA AO CARREGAR ACERVO. VERIFIQUE O SINAL.';
+        this.gamesError = 'Falha ao carregar acervo.';
         this.loadingGames = false;
       }
     });
   }
 
-  // ── NAVIGATION ───────────────────────────────────────
+  // ── PLATAFORMAS — contagem real dos jogos ─────────────
+
+  private buildPlatforms(): void {
+    const counts: Record<string, number> = {};
+
+    for (const game of this.games) {
+      const key = game.console.toUpperCase();
+      counts[key] = (counts[key] ?? 0) + 1;
+    }
+
+    const max = Math.max(...Object.values(counts), 1);
+
+    this.platforms = Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([name, count]) => ({
+        name,
+        count,
+        pct: Math.round((count / max) * 100)
+      }));
+  }
+
+  // ── CARROSSEL ────────────────────────────────────────
+
+  get carouselGames(): Game[] {
+    return this.games.slice(
+      this.carouselIndex,
+      this.carouselIndex + this.carouselVisible
+    );
+  }
+
+  carouselPrev(): void {
+    this.carouselIndex = Math.max(0, this.carouselIndex - this.carouselVisible);
+  }
+
+  carouselNext(): void {
+    const max = this.games.length - this.carouselVisible;
+    this.carouselIndex = Math.min(max, this.carouselIndex + this.carouselVisible);
+  }
+
+  get carouselHasPrev(): boolean {
+    return this.carouselIndex > 0;
+  }
+
+  get carouselHasNext(): boolean {
+    return this.carouselIndex + this.carouselVisible < this.games.length;
+  }
+
+  // ── NAVEGAÇÃO ────────────────────────────────────────
 
   navigate(path: string): void {
     this.router.navigate([path]);
   }
 
   onInitializeLink(): void {
-    if (this.isLoggedIn) {
-      this.router.navigate(['/library']);
-    } else {
-      this.router.navigate(['/register']);
-    }
+    this.router.navigate([this.isLoggedIn ? '/library' : '/register']);
   }
 
   onGameClick(game: Game): void {
-    this.router.navigate(['/library']);
+    this.router.navigate(['/rooms', game.id]);
   }
 
   onImgError(event: Event): void {

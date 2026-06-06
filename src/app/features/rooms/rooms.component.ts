@@ -102,11 +102,20 @@ downloadRom(): void {
     alert('Arquivo não disponível.');
     return;
   }
-  const a = document.createElement('a');
-  a.href = this.game.fileUrl;
-  a.download = this.game.title;
-  a.target = '_blank';
-  a.click();
+
+  fetch(this.game.fileUrl)
+    .then(res => res.blob())
+    .then(blob => {
+      const ext = this.game!.fileUrl!.split('.').pop()?.split('?')[0] ?? 'zip';
+      const fileName = `${this.game!.title}.${ext}`;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+    })
+    .catch(() => alert('Erro ao baixar o arquivo.'));
 }
 
   getRegion(console: string): string {
