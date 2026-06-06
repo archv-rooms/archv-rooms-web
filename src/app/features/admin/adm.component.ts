@@ -34,6 +34,8 @@ export class AdmComponent implements OnInit {
   showGameModal = false;
   editingGame = false;
   gameForm: any = { title: '', platform: 'NES', coverUrl: '', accessLevel: 1, planId: null };
+  selectedImage: File | null = null;
+  selectedRoom: File | null = null;
 
   // USERS
   users: any[] = [];
@@ -134,14 +136,26 @@ export class AdmComponent implements OnInit {
     });
   }
 
-  openGameModal(game?: any): void {
-    this.showGameModal = true;
-    this.editingGame = !!game;
-    this.gameForm = game
-      ? { ...game, platform: game.console }
-      : { title: '', platform: 'NES', coverUrl: '', accessLevel: 1, planId: null };
-    this.cdr.detectChanges();
-  }
+openGameModal(game?: any): void {
+  this.showGameModal = true;
+  this.editingGame = !!game;
+  this.gameForm = game
+    ? { ...game, platform: game.console }
+    : { title: '', platform: 'NES', coverUrl: '', accessLevel: 1, planId: null };
+  this.selectedImage = null;   // ← adicionar
+  this.selectedRoom  = null;   // ← adicionar
+  this.cdr.detectChanges();
+}
+
+onImageSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  this.selectedImage = input.files?.[0] ?? null;
+}
+
+onRoomSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  this.selectedRoom = input.files?.[0] ?? null;
+}
 
   closeGameModal(): void {
     this.showGameModal = false;
@@ -153,19 +167,52 @@ export class AdmComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  saveGame(): void {
-    if (this.editingGame) {
-      this.gameService.updateGame(this.gameForm.id, this.gameForm).subscribe({
-        next: () => { this.loadGames(); this.closeGameModal(); },
-        error: () => alert('Erro ao atualizar jogo')
-      });
-    } else {
-      this.gameService.createGame(this.gameForm).subscribe({
-        next: () => { this.loadGames(); this.closeGameModal(); },
-        error: () => alert('Erro ao criar jogo')
-      });
-    }
+saveGame(): void {
+  if (this.editingGame) {
+    // edição: atualiza dados textuais e faz upload separado se tiver arquivo novo
+    this.gameService.updateGame(this.gameForm.id, this.gameForm).subscribe({
+      next: (res) => {
+        const id = res.data?.id ?? this.gameForm.id;
+        this.uploadGameFiles(id, () => { this.loadGames(); this.closeGameModal(); });
+      },
+      error: () => alert('Erro ao atualizar jogo')
+    });
+  } else {
+    // criação: cria primeiro, depois faz uploads
+    this.gameService.createGame(this.gameForm).subscribe({
+      next: (res) => {
+        const id = res.data?.id;
+        if (!id) { this.loadGames(); this.closeGameModal(); return; }
+        this.uploadGameFiles(id, () => { this.loadGames(); this.closeGameModal(); });
+      },
+      error: () => alert('Erro ao criar jogo')
+    });
   }
+}
+
+private uploadGameFiles(gameId: number, onDone: () => void): void {
+  const uploads: Promise<void>[] = [];
+
+  if (this.selectedImage) {
+    const fd = new FormData();
+    fd.append('image', this.selectedImage);
+    uploads.push(
+      this.http.patch(`${this.api}/games/${gameId}/image`, fd, { headers: { Authorization: `Bearer ${this.authService.getToken()}` } }).toPromise().then(() => {})
+    );
+  }
+
+  if (this.selectedRoom) {
+    const fd = new FormData();
+    fd.append('file', this.selectedRoom);
+    uploads.push(
+      this.http.patch(`${this.api}/games/${gameId}/file`, fd, { headers: { Authorization: `Bearer ${this.authService.getToken()}` } }).toPromise().then(() => {})
+    );
+  }
+
+  Promise.all(uploads)
+    .then(onDone)
+    .catch(() => { alert('Jogo salvo, mas erro no upload dos arquivos.'); onDone(); });
+}
 
   deleteGame(id: number): void {
     if (!confirm('Excluir este jogo?')) return;
@@ -452,3 +499,4 @@ export class AdmComponent implements OnInit {
     });
   }
 }
+
