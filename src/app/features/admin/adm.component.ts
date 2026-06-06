@@ -197,7 +197,7 @@ private uploadGameFiles(gameId: number, onDone: () => void): void {
     const fd = new FormData();
     fd.append('image', this.selectedImage);
     uploads.push(
-      this.http.patch(`${this.api}/api/games/${gameId}/image`, fd, {
+      this.http.patch(`${this.api}/games/${gameId}/image`, fd, {
         headers: { Authorization: `Bearer ${this.authService.getToken()}` }
       }).toPromise().then(() => {})
     );
@@ -207,7 +207,7 @@ private uploadGameFiles(gameId: number, onDone: () => void): void {
     const fd = new FormData();
     fd.append('file', this.selectedRoom);
     uploads.push(
-      this.http.patch(`${this.api}/api/games/${gameId}/file`, fd, {
+      this.http.patch(`${this.api}/games/${gameId}/file`, fd, {
         headers: { Authorization: `Bearer ${this.authService.getToken()}` }
       }).toPromise().then(() => {})
     );

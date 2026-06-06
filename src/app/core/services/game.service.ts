@@ -19,14 +19,14 @@ export class GameService {
   }
 
   // GET /api/games — público
-  getGames(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/api/games`);
-  }
+getGames(): Observable<any> {
+  return this.http.get<any>(`${this.apiUrl}/games`);
+}
 
   // GET /api/games/:id — público
-  getGameById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/api/games/${id}`);
-  }
+getGameById(id: number): Observable<any> {
+  return this.http.get<any>(`${this.apiUrl}/games/${id}`);
+}
 
   // POST /admin/games — requer admin
   createGame(data: any): Observable<any> {
