@@ -1,4 +1,4 @@
 export const environment = {
-  production: true,
-  apiUrl: 'https://archv-rooms.onrender.com'
+  production: false,
+  apiUrl: 'https://archv-rooms.onrender.com/api'
 };
