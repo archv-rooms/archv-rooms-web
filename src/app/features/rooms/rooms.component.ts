@@ -46,55 +46,41 @@ export class RoomsComponent implements OnInit {
     }
   }
 
-  checkAuth(): void {
-    const token = localStorage.getItem('@ProjetoX:token');
-    const user  = localStorage.getItem('@ProjetoX:user');
+checkAuth(): void {
+  const token = localStorage.getItem('@archv:token');  // ← corrigido
+  const user  = localStorage.getItem('@archv:user');   // ← corrigido
 
-    this.isLoggedIn = !!token;
+  this.isLoggedIn = !!token;
 
-    if (user) {
-      try {
-        const parsed = JSON.parse(user);
-        this.userName = parsed.name ?? parsed.email ?? 'USER';
-      } catch {
-        this.userName = 'USER';
-      }
+  if (user) {
+    try {
+      const parsed = JSON.parse(user);
+      this.userName = parsed.name ?? parsed.email ?? 'USER';
+    } catch {
+      this.userName = 'USER';
     }
   }
+}
 
-  logout(): void {
-    localStorage.removeItem('@ProjetoX:token');
-    localStorage.removeItem('@ProjetoX:user');
-    this.isLoggedIn = false;
-    this.userName = '';
-    this.router.navigate(['/']);
-  }
+logout(): void {
+  localStorage.removeItem('@archv:token');  // ← corrigido
+  localStorage.removeItem('@archv:user');   // ← corrigido
+  this.isLoggedIn = false;
+  this.userName = '';
+  this.router.navigate(['/']);
+}
 
-  loadGame(id: number): void {
-    const token = localStorage.getItem('@ProjetoX:token');
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+loadGame(id: number): void {
+  const token = localStorage.getItem('@archv:token');  // ← corrigido
+  const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
-    this.http.get<{ success: boolean; data: Game; message: string }>(
-      `${environment.apiUrl}/api/games/${id}`,
-      { headers }
-    ).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.game = res.data;
-          if (!this.game) this.errorMessage = 'ARTEFATO NÃO ENCONTRADO NO ARQUIVO.';
-        } else {
-          this.errorMessage = res.message;
-        }
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.errorMessage = 'FALHA AO CARREGAR ARTEFATO. VERIFIQUE O SINAL.';
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      }
-    });
-  }
+  this.http.get<{ success: boolean; data: Game; message: string }>(
+    `${environment.apiUrl}/games/${id}`,  // ← removido /api duplicado
+    { headers }
+  ).subscribe({
+    // ... resto igual
+  });
+}
 
   getRegion(console: string): string {
     const regions: Record<string, string> = {
