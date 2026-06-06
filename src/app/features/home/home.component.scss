@@ -834,3 +834,60 @@ $red-alert: #fb7185;
   }
 }
 
+// ─────────────────────────────────────────────────────
+// CARROSSEL
+// ─────────────────────────────────────────────────────
+.carousel-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.carousel-btn {
+  flex-shrink: 0;
+
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: transparent;
+  border: 1px solid $border-glow;
+  border-radius: 4px;
+
+  color: $text-muted;
+  font-size: 18px;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    border-color: $purple-bright;
+    color: $purple-bright;
+    background: rgba($purple, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+  }
+}
+
+// dentro do carrossel o grid ocupa o espaço restante
+.carousel-wrap .games-grid {
+  flex: 1;
+  // sobrescreve o auto-fill para sempre mostrar 4 colunas fixas
+  grid-template-columns: repeat(4, 1fr);
+}
+
+// ─────────────────────────────────────────────────────
+// HINT (não logado)
+// ─────────────────────────────────────────────────────
+.section-hint {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: $text-dim;
+  padding: 20px 0;
+}
