@@ -71,14 +71,28 @@ logout(): void {
 }
 
 loadGame(id: number): void {
-  const token = localStorage.getItem('@archv:token');  // ← corrigido
+  const token = localStorage.getItem('@archv:token');
   const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
   this.http.get<{ success: boolean; data: Game; message: string }>(
-    `${environment.apiUrl}/games/${id}`,  // ← removido /api duplicado
+    `${environment.apiUrl}/games/${id}`,
     { headers }
   ).subscribe({
-    // ... resto igual
+    next: (res) => {
+      if (res.success) {
+        this.game = res.data;
+        if (!this.game) this.errorMessage = 'ARTEFATO NÃO ENCONTRADO NO ARQUIVO.';
+      } else {
+        this.errorMessage = res.message;
+      }
+      this.isLoading = false;
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.errorMessage = 'FALHA AO CARREGAR ARTEFATO. VERIFIQUE O SINAL.';
+      this.isLoading = false;
+      this.cdr.detectChanges();
+    }
   });
 }
 
