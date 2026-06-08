@@ -20,7 +20,6 @@ export class ProfileComponent implements AfterViewInit {
   private userService = inject(UserService);
   private cdr = inject(ChangeDetectorRef);
 
-  // ✅ Tipagem correta: null quando ainda não carregou
   user: UserProfile | null = null;
   activeSubscription: Subscription | null = null;
 
@@ -28,7 +27,7 @@ export class ProfileComponent implements AfterViewInit {
     gamesInLibrary: 0,
     roomsAccessed:  0,
     daysActive:     0,
-    signalLevel:    'LVL_00',
+    signalLevel:    'NVL_00',
     signalPct:      0,
   };
 
@@ -99,8 +98,8 @@ export class ProfileComponent implements AfterViewInit {
           roomsAccessed:  0,
           daysActive:     this.calcDaysActive(this.user.createdAt),
           signalLevel:    this.activeSubscription
-            ? 'LVL_0' + (this.activeSubscription.plan.accessLevel || 1)
-            : 'LVL_00',
+            ? 'NVL_0' + (this.activeSubscription.plan.accessLevel || 1)
+            : 'NVL_00',
           signalPct: this.activeSubscription
             ? Math.min(this.activeSubscription.plan.accessLevel * 20, 100)
             : 5,
@@ -121,7 +120,6 @@ export class ProfileComponent implements AfterViewInit {
     });
   }
 
-  // ✅ Usando environment em vez de localhost hardcoded
   getAvatarUrl(): string {
     if (!this.user?.avatar) return '';
     if (this.user.avatar.startsWith('http')) return this.user.avatar;
@@ -204,8 +202,8 @@ export class ProfileComponent implements AfterViewInit {
 
   loadMockSessions(): void {
     this.activeSessions = [
-      { id: 'sess_001', device: 'CHROMIUM_131 / WINDOWS', location: 'São Paulo, BR',       lastSeen: 'AGORA',     isCurrent: true  },
-      { id: 'sess_002', device: 'FIREFOX_124 / ANDROID',  location: 'Rio de Janeiro, BR',  lastSeen: 'HÁ 2 DIAS', isCurrent: false },
+      { id: 'sess_001', device: 'CHROMIUM_131 / WINDOWS', location: 'São Paulo, BR',       lastSeen: 'AGORA',       isCurrent: true  },
+      { id: 'sess_002', device: 'FIREFOX_124 / ANDROID',  location: 'Rio de Janeiro, BR',  lastSeen: 'HÁ 2 DIAS',   isCurrent: false },
     ];
   }
 
@@ -215,7 +213,7 @@ export class ProfileComponent implements AfterViewInit {
   }
 
   getPlanName(): string {
-    return this.activeSubscription?.plan?.name || 'FREE';
+    return this.activeSubscription?.plan?.name || 'GRATUITO';
   }
 
   getPlanDesc(): string {
@@ -268,7 +266,7 @@ export class ProfileComponent implements AfterViewInit {
 
   changePassword(): void {
     if (this.pwForm.new !== this.pwForm.confirm) {
-      alert('Senhas não conferem');
+      alert('As senhas não coincidem');
       return;
     }
   }
@@ -278,7 +276,7 @@ export class ProfileComponent implements AfterViewInit {
   }
 
   confirmDeleteAccount(): void {
-    if (confirm('ATENÇÃO: Esta ação é irreversível. Confirma exclusão da conta?')) {
+    if (confirm('ATENÇÃO: Esta ação é irreversível. Confirma a exclusão da sua conta?')) {
       // TODO: this.userService.deleteAccount().subscribe(...)
     }
   }
