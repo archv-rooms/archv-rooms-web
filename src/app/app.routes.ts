@@ -45,6 +45,12 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent)
   },
+
+  {
+  path: 'banned',
+  loadComponent: () => import('./features/banned/banned.component').then(m => m.BannedComponent)
+  },
+
   {
     path: 'error',
     loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent)
