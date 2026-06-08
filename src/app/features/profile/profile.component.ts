@@ -202,8 +202,8 @@ export class ProfileComponent implements AfterViewInit {
 
   loadMockSessions(): void {
     this.activeSessions = [
-      { id: 'sess_001', device: 'CHROMIUM_131 / WINDOWS', location: 'São Paulo, BR',       lastSeen: 'AGORA',       isCurrent: true  },
-      { id: 'sess_002', device: 'FIREFOX_124 / ANDROID',  location: 'Rio de Janeiro, BR',  lastSeen: 'HÁ 2 DIAS',   isCurrent: false },
+      { id: 'sess_001', device: 'CHROMIUM 131 / WINDOWS', location: 'São Paulo, BR',       lastSeen: 'AGORA',       isCurrent: true  },
+      { id: 'sess_002', device: 'FIREFOX 124 / ANDROID',  location: 'Rio de Janeiro, BR',  lastSeen: 'HÁ 2 DIAS',   isCurrent: false },
     ];
   }
 

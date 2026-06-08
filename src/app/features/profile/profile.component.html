@@ -36,7 +36,7 @@
   <main class="main-content">
 
     <header class="topbar">
-      <span class="topbar-brand">▣ ARCHV.ROOMS // PERFIL_DO_USUÁRIO</span>
+      <span class="topbar-brand">▣ ARCHV.ROOMS // PERFIL DO USUÁRIO</span>
       <div class="topbar-right">
         <span class="topbar-user">{{ user?.name || 'ANON' }}</span>
         <button class="btn btn-ghost btn-sm" (click)="logout()">SAIR</button>
@@ -86,7 +86,7 @@
 
             <div class="profile-info">
               <div class="profile-meta-top">
-                <span class="profile-tag">// USR_{{ user?.id?.toString()?.padStart(5,'0') }}</span>
+                <span class="profile-tag">// USR {{ user?.id?.toString()?.padStart(5,'0') }}</span>
                 <span class="profile-plan-badge" [ngClass]="'plan-' + (activeSubscription ? 'basic' : 'free')">
                   {{ getPlanName() | uppercase }}_TIER
                 </span>
@@ -147,11 +147,11 @@
                   <span class="panel-dot green"></span>
                 </div>
                 <div class="terminal-lines">
-                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">STATUS_AUTENTICAÇÃO</span><span class="t-val green">VERIFICADO</span></div>
-                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">NÍVEL_PLANO</span><span class="t-val purple">{{ getPlanName() | uppercase }}</span></div>
-                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">MEMBRO_DESDE</span><span class="t-val">{{ user?.createdAt | date:'dd/MM/yyyy' }}</span></div>
-                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">ID_DO_NÓ</span><span class="t-val">#{{ user?.id?.toString()?.padStart(6,'0') }}</span></div>
-                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">NÓ_DE_SINAL</span><span class="t-val amber">{{ userStats?.signalLevel || 'NVL_00' }}</span></div>
+                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">STATUS AUTENTICAÇÃO</span><span class="t-val green">VERIFICADO</span></div>
+                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">NÍVEL PLANO</span><span class="t-val purple">{{ getPlanName() | uppercase }}</span></div>
+                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">MEMBRO DESDE</span><span class="t-val">{{ user?.createdAt | date:'dd/MM/yyyy' }}</span></div>
+                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">ID DO NÓ</span><span class="t-val">#{{ user?.id?.toString()?.padStart(6,'0') }}</span></div>
+                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">NÓ DE SINAL</span><span class="t-val amber">{{ userStats?.signalLevel || 'NVL_00' }}</span></div>
                 </div>
               </div>
               <div class="panel plan-panel" [ngClass]="activeSubscription ? 'plan-bg-basic' : 'plan-bg-free'">
@@ -224,7 +224,7 @@
         <!-- BIBLIOTECA -->
         <div class="tab-panel" *ngIf="activeTab === 'library'">
           <div class="section-header">
-            <span class="section-label">MEUS_ARTEFATOS</span>
+            <span class="section-label">MEUS ARTEFATOS</span>
             <span class="section-meta">{{ userLibrary?.length || 0 }} ARTEFATOS NO ACERVO</span>
             <div class="lib-filters">
               <button class="filter-btn" [class.active]="libFilter === 'all'"  (click)="libFilter = 'all'">TODOS</button>
@@ -384,7 +384,7 @@
               <div class="prefs-grid">
                 <div class="pref-item">
                   <div class="pref-info">
-                    <span class="pref-name">NOTIFICAÇÕES_EMAIL</span>
+                    <span class="pref-name">NOTIFICAÇÕES EMAIL</span>
                     <span class="pref-desc">Receber alertas de novos artefatos</span>
                   </div>
                   <div class="toggle" [class.on]="prefs.emailNotif" (click)="prefs.emailNotif = !prefs.emailNotif">
@@ -393,7 +393,7 @@
                 </div>
                 <div class="pref-item">
                   <div class="pref-info">
-                    <span class="pref-name">PERFIL_PÚBLICO</span>
+                    <span class="pref-name">PERFIL PÚBLICO</span>
                     <span class="pref-desc">Permitir que outros vejam seu perfil</span>
                   </div>
                   <div class="toggle" [class.on]="prefs.publicProfile" (click)="prefs.publicProfile = !prefs.publicProfile">
@@ -402,7 +402,7 @@
                 </div>
                 <div class="pref-item">
                   <div class="pref-info">
-                    <span class="pref-name">BOLETIM_INFORMATIVO</span>
+                    <span class="pref-name">BOLETIM INFORMATIVO</span>
                     <span class="pref-desc">Atualizações mensais do arquivo</span>
                   </div>
                   <div class="toggle" [class.on]="prefs.newsletter" (click)="prefs.newsletter = !prefs.newsletter">
@@ -411,10 +411,10 @@
                 </div>
                 <div class="pref-item danger-zone">
                   <div class="pref-info">
-                    <span class="pref-name">ZONA_DE_PERIGO</span>
+                    <span class="pref-name">ZONA DE PERIGO</span>
                     <span class="pref-desc">Excluir conta permanentemente</span>
                   </div>
-                  <button class="btn btn-danger btn-sm" (click)="confirmDeleteAccount()">EXCLUIR_CONTA</button>
+                  <button class="btn btn-danger btn-sm" (click)="confirmDeleteAccount()">EXCLUIR CONTA</button>
                 </div>
               </div>
             </div>
