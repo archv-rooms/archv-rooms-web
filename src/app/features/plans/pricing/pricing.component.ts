@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { PlanService, Plan } from '../../../core/services/plan.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 interface PlanVisuals {
   icon: string;
@@ -21,6 +22,7 @@ export class PricingComponent implements OnInit {
   private router = inject(Router);
   private planService = inject(PlanService);
   private cdr = inject(ChangeDetectorRef);
+  private authService = inject(AuthService);
 
   isLoggedIn = false;
   userName = '';
@@ -90,22 +92,19 @@ export class PricingComponent implements OnInit {
     this.loadPlans();
   }
 
-  private checkAuth(): void {
-    const token = localStorage.getItem('@ProjetoX:token');
-    const userStr = localStorage.getItem('@ProjetoX:user');
-    if (token) {
-      this.isLoggedIn = true;
-      this.userName = userStr ? JSON.parse(userStr).name : 'USER';
-    }
+private checkAuth(): void {
+  this.isLoggedIn = this.authService.isAuthenticated();
+  if (this.isLoggedIn) {
+    this.userName = this.authService.getUserName();
   }
+}
 
-  logout(): void {
-    localStorage.removeItem('@ProjetoX:token');
-    localStorage.removeItem('@ProjetoX:user');
-    this.isLoggedIn = false;
-    this.userName = '';
-    this.router.navigate(['/login']);
-  }
+logout(): void {
+  this.authService.logout();
+  this.isLoggedIn = false;
+  this.userName = '';
+  this.router.navigate(['/login']);
+}
 
   loadPlans(): void {
     this.planService.getPlans().subscribe({
