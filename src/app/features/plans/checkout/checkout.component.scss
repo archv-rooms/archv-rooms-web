@@ -180,3 +180,69 @@ $red-alert:    #fb7185;
 .action-row { display: flex; gap: 12px; margin-top: 4px; .btn { flex: 1; justify-content: center; } }
 
 @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.9; } }
+
+.pix-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 8px 0;
+}
+
+.pix-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.pix-key {
+  letter-spacing: 1px;
+  font-size: 13px;
+}
+
+.qr-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.qr-placeholder {
+  width: 160px;
+  height: 160px;
+  border: 1px solid $border-glow;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba($purple, 0.05);
+}
+
+.qr-icon {
+  font-size: 48px;
+  color: $purple-dim;
+}
+
+.qr-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: $text-muted;
+}
+
+.qr-sub {
+  font-size: 10px;
+  color: $text-dim;
+}
+
+.pix-notice {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px;
+  border: 1px solid $amber;
+  border-radius: 4px;
+  background: rgba($amber, 0.05);
+
+  p { color: $text-muted; font-size: 12px; line-height: 1.6; }
+  strong { color: $amber; }
+}

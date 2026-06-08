@@ -114,21 +114,48 @@
                 </div>
               </div>
 
-              <div class="divider"><span>── NOTICE ──────────────────────────────────</span></div>
+              <div class="divider"><span>── PIX_PAYMENT ─────────────────────────────</span></div>
 
-              <div class="notice-block">
-                <span class="notice-icon">⚠</span>
-                <p>Ao confirmar, sua assinatura atual (se houver) será substituída e o novo acesso será liberado imediatamente.</p>
+              <div class="pix-block">
+                <div class="pix-row">
+                  <span class="field-label">MÉTODO</span>
+                  <span class="field-value accent">PIX</span>
+                </div>
+                <div class="pix-row">
+                  <span class="field-label">BENEFICIÁRIO</span>
+                  <span class="field-value">ARCHV SYSTEMS LTDA</span>
+                </div>
+                <div class="pix-row">
+                  <span class="field-label">CHAVE_PIX</span>
+                  <span class="field-value green pix-key">pagamentos@archv.rooms</span>
+                </div>
+                <div class="pix-row">
+                  <span class="field-label">VALOR</span>
+                  <span class="field-value accent">R$ {{ selectedPlan.price | number:'1.2-2' }}</span>
+                </div>
+
+                <div class="qr-wrapper">
+                  <div class="qr-placeholder">
+                    <span class="qr-icon">▣</span>
+                    <span class="qr-label">QR CODE PIX</span>
+                    <span class="qr-sub">// em breve</span>
+                  </div>
+                </div>
+
+                <div class="pix-notice">
+                  <span class="notice-icon">⚠</span>
+                  <p>Após o pagamento, envie o comprovante para <strong>pagamentos@archv.rooms</strong>. O acesso será liberado em até 24h.</p>
+                </div>
               </div>
 
               <div class="divider"><span>── EXECUTE ─────────────────────────────────</span></div>
 
               <div class="action-row">
-                <button class="btn btn-ghost" (click)="navigate('/pricing')" [disabled]="isSubscribing">
+                <button class="btn btn-ghost" (click)="navigate('/pricing')">
                   ← ABORT
                 </button>
-                <button class="btn btn-outline" (click)="confirmSubscription()" [disabled]="isSubscribing">
-                  ▶ {{ isSubscribing ? 'PROCESSING...' : 'CONFIRM_&_PAY' }}
+                <button class="btn btn-outline" (click)="copyPixKey()">
+                  {{ pixCopied ? '✓ CHAVE_COPIADA' : '▶ COPIAR_CHAVE_PIX' }}
                 </button>
               </div>
 

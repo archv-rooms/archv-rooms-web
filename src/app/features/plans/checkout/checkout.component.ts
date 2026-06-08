@@ -1,9 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PlanService, Plan } from '../../../core/services/plan.service';
-import { environment } from '../../../../environments/environments';
 
 @Component({
   selector: 'app-checkout',
@@ -16,19 +14,19 @@ export class CheckoutComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private planService = inject(PlanService);
-  private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
 
   planId: number | null = null;
   selectedPlan: Plan | null = null;
 
   isLoadingPlan = true;
-  isSubscribing = false;
   errorMessage = '';
-  successMessage = '';
 
   isLoggedIn = false;
   userName = '';
+
+  pixCopied = false;
+  readonly pixKey = 'pagamentos@archv.rooms';
 
   ngOnInit(): void {
     this.checkAuth();
@@ -44,8 +42,8 @@ export class CheckoutComponent implements OnInit {
   }
 
   checkAuth(): void {
-    const token = localStorage.getItem('@ProjetoX:token');
-    const user  = localStorage.getItem('@ProjetoX:user');
+    const token = localStorage.getItem('@archv:token');
+    const user  = localStorage.getItem('@archv:user');
     this.isLoggedIn = !!token;
     if (user) {
       try { this.userName = JSON.parse(user).name ?? 'USER'; }
@@ -54,8 +52,8 @@ export class CheckoutComponent implements OnInit {
   }
 
   logout(): void {
-    localStorage.removeItem('@ProjetoX:token');
-    localStorage.removeItem('@ProjetoX:user');
+    localStorage.removeItem('@archv:token');
+    localStorage.removeItem('@archv:user');
     this.isLoggedIn = false;
     this.userName = '';
     this.router.navigate(['/']);
@@ -77,34 +75,10 @@ export class CheckoutComponent implements OnInit {
     });
   }
 
-  confirmSubscription(): void {
-    if (!this.planId) return;
-
-    this.isSubscribing = true;
-    this.errorMessage = '';
-
-    const token = localStorage.getItem('@ProjetoX:token');
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-
-    this.http.post(
-      `${environment.apiUrl}/plans/subscribe`,
-      { planId: this.planId },
-      { headers }
-    ).subscribe({
-      next: (res: any) => {
-        this.isSubscribing = false;
-        if (res.success) {
-          this.router.navigate(['/library']);
-        } else {
-          this.errorMessage = res.message;
-          this.cdr.detectChanges();
-        }
-      },
-      error: (err) => {
-        this.isSubscribing = false;
-        this.errorMessage = err.error?.message || 'Erro ao processar a assinatura.';
-        this.cdr.detectChanges();
-      }
+  copyPixKey(): void {
+    navigator.clipboard.writeText(this.pixKey).then(() => {
+      this.pixCopied = true;
+      setTimeout(() => this.pixCopied = false, 3000);
     });
   }
 
