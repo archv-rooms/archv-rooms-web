@@ -94,28 +94,35 @@ logout(): void {
 }
 
   loadPlans(): void {
-    this.planService.getPlans().subscribe({
-      next: (response) => {
-        console.log('RESPONSE:', response);
-        this.plans = response.data.plans.map(plan => ({
+  this.planService.getPlans().subscribe({
+    next: (response) => {
+      console.log('RESPONSE:', response);
+      const tierIcons   = ['▣', '◈', '⬢'];
+      const tierButtons = ['INITIALIZE BASIC', 'INITIALIZE PRO', 'INITIALIZE ULTIMATE'];
+
+      this.plans = response.data.plans.map((plan, index) => {
+        const visual = this.visualMap[plan.name];
+        return {
           ...plan,
-          ...(this.visualMap[plan.name] ?? {
-            icon: '❓',
+          ...(visual ?? {
+            icon: tierIcons[index] ?? '⬢',
             benefits: ['Benefícios padrão'],
-            buttonText: 'SELECT',
+            buttonText: tierButtons[index] ?? 'SELECT',
           }),
-        }));
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.log('ERROR:', err);
-        this.errorMessage = 'FALHA AO CARREGAR PLANOS. VERIFIQUE O SINAL.';
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
-    });
-  }
+        };
+      });
+
+      this.isLoading = false;
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.log('ERROR:', err);
+      this.errorMessage = 'FALHA AO CARREGAR PLANOS. VERIFIQUE O SINAL.';
+      this.isLoading = false;
+      this.cdr.detectChanges();
+    },
+  });
+}
 
   onSelectPlan(plan: Plan & PlanVisuals): void {
     if (this.isLoggedIn) {
