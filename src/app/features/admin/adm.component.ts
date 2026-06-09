@@ -185,12 +185,8 @@ saveGame(): void {
       title: this.gameForm.title,
       platform: this.gameForm.platform,
       accessLevel: this.gameForm.accessLevel,
+      coverUrl: this.gameForm.coverUrl || undefined,
     };
-
-    // só manda coverUrl se o usuário digitou uma URL nova
-    if (this.gameForm.coverUrl && this.gameForm.coverUrl !== this.gameForm.image) {
-      payload.coverUrl = this.gameForm.coverUrl;
-    }
 
     this.gameService.updateGame(this.gameForm.id, payload).subscribe({
       next: (res) => {
