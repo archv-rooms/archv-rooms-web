@@ -2,34 +2,29 @@
 
   <aside class="sidebar">
     <nav class="sidebar-nav">
-
       <button class="nav-btn" title="Home" (click)="navigate('/')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
           <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
         </svg>
       </button>
-
       <button class="nav-btn" title="Biblioteca" (click)="navigate('/library')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
         </svg>
       </button>
-
       <button class="nav-btn active" title="Planos" (click)="navigate('/pricing')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="12" r="3"/>
           <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
         </svg>
       </button>
-
       <button class="nav-btn" title="Perfil" *ngIf="isLoggedIn" (click)="navigate('/profile')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="8" r="4"/>
           <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
         </svg>
       </button>
-
     </nav>
   </aside>
 
@@ -50,120 +45,85 @@
     </header>
 
     <div class="scroll-body">
-
       <div class="checkout-wrapper">
 
-        <div class="terminal-card">
+        <!-- LOADING -->
+        <div class="state-screen" *ngIf="isLoadingPlan">
+          <span class="blink-text">▓▓▓░░ CARREGANDO...</span>
+        </div>
 
-          <div class="terminal-header">
-            <span class="dot dot-red"></span>
-            <span class="dot dot-yellow"></span>
-            <span class="dot dot-green"></span>
-            <span class="terminal-label">PAYMENT_GATEWAY.exe</span>
+        <!-- ERRO -->
+        <div class="state-screen" *ngIf="errorMessage">
+          <span class="err-label">ERRO</span>
+          <p class="err-msg">{{ errorMessage }}</p>
+          <button class="btn btn-ghost btn-sm" (click)="navigate('/pricing')">← VOLTAR</button>
+        </div>
+
+        <!-- CONTEÚDO -->
+        <div class="checkout-card" *ngIf="!isLoadingPlan && selectedPlan">
+
+          <!-- PLANO -->
+          <div class="card-section">
+            <span class="section-eye">PLANO SELECIONADO</span>
+            <div class="plan-name">{{ selectedPlan.name | uppercase }}</div>
+            <p class="plan-desc">{{ selectedPlan.description }}</p>
           </div>
 
-          <div class="terminal-body">
+          <div class="sep"></div>
 
-            <div class="boot-line">
-              <span class="prompt">SYS &gt;</span>
-              <span class="boot-text">INITIALIZING SECURE CHECKOUT...</span>
-            </div>
-
-            <div *ngIf="isLoadingPlan" class="state-block">
-              <p class="blink-text">▓▓▓▓▓▓░░░░ FETCHING PLAN DATA...</p>
-            </div>
-
-            <div *ngIf="errorMessage" class="state-block error-block">
-              <div class="error-header">
-                <span class="prompt err">ERR &gt;</span>
-                <span>SYSTEM_FAULT_DETECTED</span>
-              </div>
-              <p class="error-msg">{{ errorMessage }}</p>
-              <button class="btn btn-ghost btn-sm" (click)="navigate('/pricing')">← BACK_TO_PLANS</button>
-            </div>
-
-            <div *ngIf="!isLoadingPlan && selectedPlan" class="checkout-content">
-
-              <div class="divider"><span>── PLAN_SUMMARY ──────────────────────────</span></div>
-
-              <div class="plan-block">
-                <div class="plan-row">
-                  <span class="field-label">PLAN_ID</span>
-                  <span class="field-value accent">{{ selectedPlan.name | uppercase }}_TIER</span>
-                </div>
-                <div class="plan-row">
-                  <span class="field-label">DESCRIPTION</span>
-                  <span class="field-value muted">{{ selectedPlan.description }}</span>
-                </div>
-                <div class="plan-row">
-                  <span class="field-label">STATUS</span>
-                  <span class="field-value green">[ AVAILABLE ]</span>
-                </div>
-              </div>
-
-              <div class="divider"><span>── BILLING ────────────────────────────────</span></div>
-
-              <div class="price-block">
-                <div class="price-row">
-                  <span class="field-label">TOTAL_DUE</span>
-                  <span class="price-value">R$ {{ selectedPlan.price | number:'1.2-2' }}<span class="price-unit">/MÊS</span></span>
-                </div>
-                <div class="price-row">
-                  <span class="field-label">BILLING_CYCLE</span>
-                  <span class="field-value muted">MONTHLY_RECURRING</span>
-                </div>
-              </div>
-
-              <div class="divider"><span>── PIX_PAYMENT ─────────────────────────────</span></div>
-
-              <div class="pix-block">
-                <div class="pix-row">
-                  <span class="field-label">MÉTODO</span>
-                  <span class="field-value accent">PIX</span>
-                </div>
-                <div class="pix-row">
-                  <span class="field-label">BENEFICIÁRIO</span>
-                  <span class="field-value">ARCHV SYSTEMS LTDA</span>
-                </div>
-                <div class="pix-row">
-                  <span class="field-label">CHAVE_PIX</span>
-                  <span class="field-value green pix-key">pagamentos@archv.rooms</span>
-                </div>
-                <div class="pix-row">
-                  <span class="field-label">VALOR</span>
-                  <span class="field-value accent">R$ {{ selectedPlan.price | number:'1.2-2' }}</span>
-                </div>
-
-                <div class="qr-wrapper">
-                  <div class="qr-placeholder">
-                    <span class="qr-icon">▣</span>
-                    <span class="qr-label">QR CODE PIX</span>
-                    <span class="qr-sub">// em breve</span>
-                  </div>
-                </div>
-
-                <div class="pix-notice">
-                  <span class="notice-icon">⚠</span>
-                  <p>Após o pagamento, envie o comprovante para <strong>pagamentos@archv.rooms</strong>. O acesso será liberado em até 24h.</p>
-                </div>
-              </div>
-
-              <div class="divider"><span>── EXECUTE ─────────────────────────────────</span></div>
-
-              <div class="action-row">
-                <button class="btn btn-ghost" (click)="navigate('/pricing')">
-                  ← ABORT
-                </button>
-                <button class="btn btn-outline" (click)="copyPixKey()">
-                  {{ pixCopied ? '✓ CHAVE_COPIADA' : '▶ COPIAR_CHAVE_PIX' }}
-                </button>
-              </div>
-
+          <!-- PREÇO -->
+          <div class="card-section price-section">
+            <span class="section-eye">COBRANÇA MENSAL</span>
+            <div class="price-display">
+              <span class="price-currency">R$</span>
+              <span class="price-amount">{{ selectedPlan.price | number:'1.2-2' }}</span>
+              <span class="price-period">/mês</span>
             </div>
           </div>
+
+          <div class="sep"></div>
+
+          <!-- PIX -->
+          <div class="card-section">
+            <span class="section-eye">PAGAMENTO VIA PIX</span>
+
+            <div class="pix-row">
+              <span class="pix-label">BENEFICIÁRIO</span>
+              <span class="pix-value">ARCHV SYSTEMS LTDA</span>
+            </div>
+            <div class="pix-row">
+              <span class="pix-label">CHAVE</span>
+              <span class="pix-value pix-key">{{ pixKey }}</span>
+            </div>
+            <div class="pix-row">
+              <span class="pix-label">VALOR</span>
+              <span class="pix-value highlight">R$ {{ selectedPlan.price | number:'1.2-2' }}</span>
+            </div>
+
+            <div class="qr-block">
+              <span class="qr-icon">▣</span>
+              <span class="qr-label">QR CODE</span>
+              <span class="qr-sub">em breve</span>
+            </div>
+
+            <div class="pix-notice">
+              <span class="notice-dot">⚠</span>
+              <p>Envie o comprovante para <strong>{{ pixKey }}</strong>. Acesso liberado em até 24h.</p>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <!-- AÇÕES -->
+          <div class="card-actions">
+            <button class="btn btn-ghost" (click)="navigate('/pricing')">← VOLTAR</button>
+            <button class="btn btn-outline" (click)="copyPixKey()">
+              {{ pixCopied ? '✓ COPIADO' : '▶ COPIAR CHAVE' }}
+            </button>
+          </div>
+
         </div>
       </div>
-
     </div>
   </main>
 
