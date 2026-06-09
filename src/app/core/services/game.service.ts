@@ -30,7 +30,7 @@ getGameById(id: number): Observable<any> {
 
   // POST /admin/games — requer admin
   createGame(data: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/admin/games`, data, {
+    return this.http.post<any>(`${this.apiUrl}/games`, data, {
       headers: this.getAuthHeaders()
     });
   }
