@@ -176,16 +176,16 @@ openGameModal(game?: any): void {
     this.cdr.detectChanges();
   }
 
- saveGame(): void {
+saveGame(): void {
   if (this.editingGame) {
     const payload: any = {
       title: this.gameForm.title,
       platform: this.gameForm.platform,
       accessLevel: this.gameForm.accessLevel,
     };
-    
-    // só manda coverUrl se tiver preenchido
-    if (this.gameForm.coverUrl) {
+
+    // só manda coverUrl se o usuário digitou uma URL nova
+    if (this.gameForm.coverUrl && this.gameForm.coverUrl !== this.gameForm.image) {
       payload.coverUrl = this.gameForm.coverUrl;
     }
 
