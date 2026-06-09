@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -36,12 +36,27 @@ export class HomeComponent implements OnInit {
   loadingGames = false;
   gamesError = '';
 
-  // ── CARROSSEL ────────────────────────────────────────
+  // ── CARROSSEL DE JOGOS ───────────────────────────────
   carouselIndex = 0;
-  readonly carouselVisible = 4; // quantos cards aparecem por vez
+  readonly carouselVisible = 4;
 
-  // ── PLATAFORMAS — preenchido dinamicamente ────────────
+  // ── PLATAFORMAS ──────────────────────────────────────
   platforms: Platform[] = [];
+
+  // ── CONTADOR GERAL ───────────────────────────────────
+  get totalGames(): number {
+    return this.games.length;
+  }
+
+  // ── CARROSSEL DE PLATAFORMAS — estado ────────────────
+  carouselPaused = false;
+  isDragging = false;
+
+  private dragStartX = 0;
+  private dragScrollLeft = 0;
+  private touchStartX = 0;
+
+  @ViewChild('carouselTrackRef') carouselTrackRef!: ElementRef<HTMLElement>;
 
   constructor(
     private router: Router,
@@ -103,7 +118,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  // ── PLATAFORMAS — contagem real dos jogos ─────────────
+  // ── PLATAFORMAS ──────────────────────────────────────
 
   private buildPlatforms(): void {
     const counts: Record<string, number> = {};
@@ -124,7 +139,7 @@ export class HomeComponent implements OnInit {
       }));
   }
 
-  // ── CARROSSEL ────────────────────────────────────────
+  // ── CARROSSEL DE JOGOS ───────────────────────────────
 
   get carouselGames(): Game[] {
     return this.games.slice(
@@ -148,6 +163,67 @@ export class HomeComponent implements OnInit {
 
   get carouselHasNext(): boolean {
     return this.carouselIndex + this.carouselVisible < this.games.length;
+  }
+
+  // ── CARROSSEL DE PLATAFORMAS — controles ─────────────
+
+  pauseCarousel(): void {
+    this.carouselPaused = true;
+  }
+
+  resumeCarousel(): void {
+    if (!this.isDragging) {
+      this.carouselPaused = false;
+    }
+  }
+
+  // Drag com mouse
+  onDragStart(event: MouseEvent): void {
+    const el = this.carouselTrackRef?.nativeElement;
+    if (!el) return;
+
+    this.isDragging = true;
+    this.carouselPaused = true;
+    this.dragStartX = event.pageX - el.offsetLeft;
+    this.dragScrollLeft = el.scrollLeft;
+  }
+
+  onDragMove(event: MouseEvent): void {
+    if (!this.isDragging) return;
+    event.preventDefault();
+
+    const el = this.carouselTrackRef?.nativeElement;
+    if (!el) return;
+
+    const x = event.pageX - el.offsetLeft;
+    const walk = (x - this.dragStartX) * 1.4;
+    el.scrollLeft = this.dragScrollLeft - walk;
+  }
+
+  onDragEnd(): void {
+    this.isDragging = false;
+    this.carouselPaused = false;
+  }
+
+  // Drag com touch
+  onTouchStart(event: TouchEvent): void {
+    const el = this.carouselTrackRef?.nativeElement;
+    if (!el) return;
+
+    this.isDragging = true;
+    this.carouselPaused = true;
+    this.touchStartX = event.touches[0].pageX;
+    this.dragScrollLeft = el.scrollLeft;
+  }
+
+  onTouchMove(event: TouchEvent): void {
+    if (!this.isDragging) return;
+
+    const el = this.carouselTrackRef?.nativeElement;
+    if (!el) return;
+
+    const walk = (this.touchStartX - event.touches[0].pageX) * 1.2;
+    el.scrollLeft = this.dragScrollLeft + walk;
   }
 
   // ── NAVEGAÇÃO ────────────────────────────────────────

@@ -117,23 +117,89 @@
       </section>
 
       <!-- PLATAFORMAS --------------------------------------------- -->
-      <section class="section" *ngIf="platforms.length > 0">
+      <section class="section platforms-section" *ngIf="platforms.length > 0">
+
+        <!-- Cabeçalho com contador geral (bônus) -->
         <div class="section-header">
           <span class="section-label">plataformas</span>
           <span class="section-meta">{{ platforms.length }} disponíveis</span>
           <span class="section-link" (click)="navigate('/library')">ver biblioteca ›</span>
         </div>
-        <div class="platforms-grid">
-          <div class="platform-card" *ngFor="let p of platforms" (click)="navigate('/library')">
-            <div class="platform-info">
-              <span class="platform-name">{{ p.name }}</span>
-              <span class="platform-count">{{ p.count }} títulos</span>
-            </div>
-            <div class="platform-bar">
-              <div class="platform-bar-fill" [style.width.%]="p.pct"></div>
-            </div>
+
+        <!-- Contador geral da biblioteca -->
+        <div class="library-stats">
+          <div class="stat-item">
+            <span class="stat-value">{{ totalGames.toLocaleString('pt-BR') }}</span>
+            <span class="stat-label">jogos</span>
+          </div>
+          <div class="stat-sep">//</div>
+          <div class="stat-item">
+            <span class="stat-value">{{ platforms.length }}</span>
+            <span class="stat-label">plataformas</span>
+          </div>
+          <div class="stat-sep">//</div>
+          <div class="stat-item">
+            <span class="stat-value stat-live">
+              <span class="live-dot"></span>live
+            </span>
+            <span class="stat-label">atualizado</span>
           </div>
         </div>
+
+        <!-- Carrossel infinito -->
+        <div
+          class="platforms-carousel"
+          (mouseenter)="pauseCarousel()"
+          (mouseleave)="resumeCarousel()"
+          (mousedown)="onDragStart($event)"
+          (mousemove)="onDragMove($event)"
+          (mouseup)="onDragEnd()"
+          (mouseleave)="onDragEnd()"
+          (touchstart)="onTouchStart($event)"
+          (touchmove)="onTouchMove($event)"
+          (touchend)="onDragEnd()"
+          #carouselTrackRef
+        >
+          <div class="platforms-track" [class.paused]="carouselPaused" [class.dragging]="isDragging">
+
+            <!-- Track principal -->
+            <div
+              class="platform-card"
+              *ngFor="let p of platforms"
+              (click)="navigate('/library')"
+            >
+              <div class="platform-info">
+                <span class="platform-name">{{ p.name }}</span>
+                <span class="platform-count">{{ p.count }} títulos</span>
+              </div>
+              <div class="platform-bar">
+                <div class="platform-bar-fill" [style.width.%]="p.pct"></div>
+              </div>
+            </div>
+
+            <!-- Track duplicado para loop infinito -->
+            <div
+              class="platform-card"
+              *ngFor="let p of platforms"
+              (click)="navigate('/library')"
+              aria-hidden="true"
+            >
+              <div class="platform-info">
+                <span class="platform-name">{{ p.name }}</span>
+                <span class="platform-count">{{ p.count }} títulos</span>
+              </div>
+              <div class="platform-bar">
+                <div class="platform-bar-fill" [style.width.%]="p.pct"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Fade nas bordas -->
+          <div class="carousel-fade carousel-fade-left"></div>
+          <div class="carousel-fade carousel-fade-right"></div>
+        </div>
+
       </section>
 
       <!-- SOBRE --------------------------------------------------- -->
