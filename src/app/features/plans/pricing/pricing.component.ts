@@ -66,9 +66,9 @@ private visualMap: Record<string, PlanVisuals> = {
     icon: '⬢',
     benefits: [
       'Acesso total ao arquivo',
-      'Multiplayer online',
-      'Early access releases',
-      'Transmissão premium ilimitada',
+      'Seu nome em algum easter egg do site!',
+      'Acesso antecipado',
+      'Downloads ilimitados',
     ],
     buttonText: 'INITIALIZE ULTIMATE',
   },

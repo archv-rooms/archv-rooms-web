@@ -20,6 +20,7 @@ $text-bright:  #f2f4ff;
 $green-ok:     #4ade80;
 $amber:        #fbbf24;
 $red-alert:    #fb7185;
+$orange:       #ff6a00
 
 // ─────────────────────────────────────────────────────
 // RESET
@@ -409,20 +410,20 @@ $red-alert:    #fb7185;
 
   // ── Tier 3 — Ultra (laranja)
   &[data-tier="2"] {
-    border-color: rgba(#ff6a00, 0.45);
-    box-shadow: 0 0 24px rgba(#ff6a00, 0.07);
+    border-color: rgba($orange, 0.45);
+    box-shadow: 0 0 24px rgba($orange, 0.07);
 
-    .card-label  { color: #ff6a00; }
-    .plan-name   { color: #ff6a00; text-shadow: 0 0 12px rgba(#ff6a00, 0.3); }
-    .bullet      { color: #ff6a00; }
+    .card-label  { color: $orange; }
+    .plan-name   { color: $orange; text-shadow: 0 0 12px rgba($orange, 0.3); }
+    .bullet      { color: $orange; }
 
     .btn-plan {
-      border-color: rgba(#ff6a00, 0.55);
-      color: #ff6a00;
+      border-color: rgba($orange, 0.55);
+      color: $orange;
 
       &:hover {
-        background: rgba(#ff6a00, 0.12);
-        box-shadow: 0 0 14px rgba(#ff6a00, 0.18);
+        background: rgba($orange, 0.12);
+        box-shadow: 0 0 14px rgba($orange, 0.18);
       }
     }
   }
