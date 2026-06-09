@@ -488,9 +488,16 @@ $orange:       #ff6a00;
 }
 
 // ─── price ───────────────────────────────────────────
-.price-block,
+.price-block {
+  padding: 0 20px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .benefits-block {
   padding: 0 20px 22px;
+  flex: 1;
 }
 
 .divider-line {
@@ -498,11 +505,13 @@ $orange:       #ff6a00;
   font-size: 10px;
   letter-spacing: 2px;
   color: rgba($text-dim, 0.6);
+  display: none;
 }
 
 .price-display {
   display: flex;
   align-items: baseline;
+  justify-content: center;
   gap: 5px;
 }
 
