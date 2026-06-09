@@ -31,61 +31,48 @@ export class PricingComponent implements OnInit {
   isLoading = true;
   errorMessage = '';
 
-  private visualMap: Record<string, PlanVisuals> = {
-    'Basic': {
-      icon: '▣',
-      benefits: [
-        'Acesso ao acervo 8-bit',
-        '1 dispositivo simultâneo',
-        'Download padrão',
-        'Atualizações mensais',
-      ],
-      buttonText: 'INITIALIZE BASIC',
-    },
-    'Pro': {
-      icon: '◈',
-      benefits: [
-        'Acesso completo 16-bit',
-        'Save states em nuvem',
-        'Prioridade de sinal',
-        '3 dispositivos simultâneos',
-      ],
-      buttonText: 'INITIALIZE PRO',
-    },
-
-    'Premium': {
-      icon: '◈',
-      benefits: [
-        'Acesso completo 16-bit',
-        'Save states em nuvem',
-        'Prioridade de sinal',
-        '3 dispositivos simultâneos',
-      ],
-      buttonText: 'INITIALIZE PRO',
-    },
-
-    'Ultimate': {
-      icon: '⬢',
-      benefits: [
-        'Acesso total ao arquivo',
-        'Multiplayer online',
-        'Early access releases',
-        'Transmissão premium ilimitada',
-      ],
-      buttonText: 'INITIALIZE ULTIMATE',
-    },
-    
-    'Ultra Gamer': {
-      icon: '⬢',
-      benefits: [
-        'Acesso total ao arquivo',
-        'Multiplayer online',
-        'Early access releases',
-        'Transmissão premium ilimitada',
-      ],
-      buttonText: 'INITIALIZE ULTIMATE',
-    },
-  };
+private visualMap: Record<string, PlanVisuals> = {
+  'Basic': {
+    icon: '▣',
+    benefits: [
+      'Acesso ao acervo 8-bit',
+      '1 dispositivo simultâneo',
+      'Download padrão',
+      'Atualizações mensais',
+    ],
+    buttonText: 'INITIALIZE BASIC',
+  },
+  'Pro': {
+    icon: '◈',
+    benefits: [
+      'Acesso completo 16-bit',
+      'Save states em nuvem',
+      'Prioridade de sinal',
+      '3 dispositivos simultâneos',
+    ],
+    buttonText: 'INITIALIZE PRO',
+  },
+  'Premium': {
+    icon: '◈',
+    benefits: [
+      'Acesso completo 16-bit',
+      'Save states em nuvem',
+      'Prioridade de sinal',
+      '3 dispositivos simultâneos',
+    ],
+    buttonText: 'INITIALIZE PRO',
+  },
+  'Ultra': {
+    icon: '⬢',
+    benefits: [
+      'Acesso total ao arquivo',
+      'Multiplayer online',
+      'Early access releases',
+      'Transmissão premium ilimitada',
+    ],
+    buttonText: 'INITIALIZE ULTIMATE',
+  },
+};
 
   ngOnInit(): void {
     this.checkAuth();
