@@ -370,7 +370,24 @@ $red-alert:    #fb7185;
       0 0 48px rgba($purple, 0.06);
   }
 
-  // Plano premium (índice 1 = Pro)
+  // ── Tier 1 — Basic (branco/padrão)
+  &[data-tier="0"] {
+    .card-label  { color: rgba(255, 255, 255, 0.5); }
+    .plan-name   { color: #ffffff; }
+    .bullet      { color: #ffffff; }
+
+    .btn-plan {
+      border-color: rgba(255, 255, 255, 0.35);
+      color: #ffffff;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 14px rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  // ── Tier 2 — Premium 
   &[data-tier="1"] {
     border-color: rgba($amber, 0.45);
     box-shadow: 0 0 24px rgba($amber, 0.07);
@@ -386,6 +403,26 @@ $red-alert:    #fb7185;
       &:hover {
         background: rgba($amber, 0.12);
         box-shadow: 0 0 14px rgba($amber, 0.18);
+      }
+    }
+  }
+
+  // ── Tier 3 — Ultra (laranja)
+  &[data-tier="2"] {
+    border-color: rgba(#ff6a00, 0.45);
+    box-shadow: 0 0 24px rgba(#ff6a00, 0.07);
+
+    .card-label  { color: #ff6a00; }
+    .plan-name   { color: #ff6a00; text-shadow: 0 0 12px rgba(#ff6a00, 0.3); }
+    .bullet      { color: #ff6a00; }
+
+    .btn-plan {
+      border-color: rgba(#ff6a00, 0.55);
+      color: #ff6a00;
+
+      &:hover {
+        background: rgba(#ff6a00, 0.12);
+        box-shadow: 0 0 14px rgba(#ff6a00, 0.18);
       }
     }
   }
