@@ -50,7 +50,8 @@ export class AdmComponent implements OnInit {
   // PLANS
   plans: any[] = [];
   showPlanModal = false;
-  planForm: any = { id: null, name: '', description: '', price: 0, accessLevel: 0 };
+  editingPlan = false;
+  planForm: any = { id: null, name: '', description: '', price: 0, accessLevel: 1 };
 
   // CATEGORIES
   categories: any[] = [];
@@ -77,7 +78,6 @@ export class AdmComponent implements OnInit {
     reason: ''
   };
 
-  // Presets de duração exibidos como atalhos no modal
   readonly banDurationPresets = [
     { label: '1H',   hours: 1   },
     { label: '6H',   hours: 6   },
@@ -88,7 +88,6 @@ export class AdmComponent implements OnInit {
     { label: '30D',  hours: 720 },
   ];
 
-  // Presets de motivo para agilizar o preenchimento
   readonly banReasonPresets = [
     'Spam',
     'Conteúdo impróprio',
@@ -139,23 +138,33 @@ export class AdmComponent implements OnInit {
 openGameModal(game?: any): void {
   this.showGameModal = true;
   this.editingGame = !!game;
-  this.gameForm = game
-    ? { ...game, platform: game.console }
-    : { title: '', platform: 'NES', coverUrl: '', accessLevel: 1, planId: null };
-  this.selectedImage = null;   // ← adicionar
-  this.selectedRoom  = null;   // ← adicionar
+
+  if (game) {
+    // mapeia valores antigos para os novos
+    const platformMap: Record<string, string> = {
+      'MD': 'MEGA DRIVE',
+      'GB': 'GAME BOY',
+    };
+    const platform = platformMap[game.console] ?? game.console;
+    this.gameForm = { ...game, platform };
+  } else {
+    this.gameForm = { title: '', platform: 'NES', coverUrl: '', accessLevel: 1, planId: null };
+  }
+
+  this.selectedImage = null;
+  this.selectedRoom = null;
   this.cdr.detectChanges();
 }
 
-onImageSelected(event: Event): void {
-  const input = event.target as HTMLInputElement;
-  this.selectedImage = input.files?.[0] ?? null;
-}
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.selectedImage = input.files?.[0] ?? null;
+  }
 
-onRoomSelected(event: Event): void {
-  const input = event.target as HTMLInputElement;
-  this.selectedRoom = input.files?.[0] ?? null;
-}
+  onRoomSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.selectedRoom = input.files?.[0] ?? null;
+  }
 
   closeGameModal(): void {
     this.showGameModal = false;
@@ -169,8 +178,18 @@ onRoomSelected(event: Event): void {
 
 saveGame(): void {
   if (this.editingGame) {
-    // edição: atualiza dados textuais e faz upload separado se tiver arquivo novo
-    this.gameService.updateGame(this.gameForm.id, this.gameForm).subscribe({
+    const payload: any = {
+      title: this.gameForm.title,
+      platform: this.gameForm.platform,
+      accessLevel: this.gameForm.accessLevel,
+    };
+
+    // só manda coverUrl se o usuário digitou uma URL nova
+    if (this.gameForm.coverUrl && this.gameForm.coverUrl !== this.gameForm.image) {
+      payload.coverUrl = this.gameForm.coverUrl;
+    }
+
+    this.gameService.updateGame(this.gameForm.id, payload).subscribe({
       next: (res) => {
         const id = res.data?.id ?? this.gameForm.id;
         this.uploadGameFiles(id, () => { this.loadGames(); this.closeGameModal(); });
@@ -178,7 +197,6 @@ saveGame(): void {
       error: () => alert('Erro ao atualizar jogo')
     });
   } else {
-    // criação: cria primeiro, depois faz uploads
     this.gameService.createGame(this.gameForm).subscribe({
       next: (res) => {
         const id = res.data?.id;
@@ -189,42 +207,41 @@ saveGame(): void {
     });
   }
 }
+  private uploadGameFiles(gameId: number, onDone: () => void): void {
+    const uploads: Promise<void>[] = [];
 
-private uploadGameFiles(gameId: number, onDone: () => void): void {
-  const uploads: Promise<void>[] = [];
+    if (this.selectedImage) {
+      const fd = new FormData();
+      fd.append('image', this.selectedImage);
+      uploads.push(
+        this.http.patch(`${this.api}/games/${gameId}/image`, fd, {
+          headers: { Authorization: `Bearer ${this.authService.getToken()}` }
+        }).toPromise().then(() => {})
+      );
+    }
 
-  if (this.selectedImage) {
-    const fd = new FormData();
-    fd.append('image', this.selectedImage);
-    uploads.push(
-      this.http.patch(`${this.api}/games/${gameId}/image`, fd, {
-        headers: { Authorization: `Bearer ${this.authService.getToken()}` }
-      }).toPromise().then(() => {})
-    );
+    if (this.selectedRoom) {
+      const fd = new FormData();
+      fd.append('file', this.selectedRoom);
+      uploads.push(
+        this.http.patch(`${this.api}/games/${gameId}/file`, fd, {
+          headers: { Authorization: `Bearer ${this.authService.getToken()}` }
+        }).toPromise().then(() => {})
+      );
+    }
+
+    Promise.all(uploads)
+      .then(onDone)
+      .catch(() => { alert('Jogo salvo, mas erro no upload dos arquivos.'); onDone(); });
   }
 
-  if (this.selectedRoom) {
-    const fd = new FormData();
-    fd.append('file', this.selectedRoom);
-    uploads.push(
-      this.http.patch(`${this.api}/games/${gameId}/file`, fd, {
-        headers: { Authorization: `Bearer ${this.authService.getToken()}` }
-      }).toPromise().then(() => {})
-    );
+  deleteGame(id: number): void {
+    if (!confirm('Excluir este jogo?')) return;
+    this.gameService.deleteGame(id).subscribe({
+      next: () => { this.loadGames(); this.cdr.detectChanges(); },
+      error: () => alert('Erro ao excluir jogo')
+    });
   }
-
-  Promise.all(uploads)
-    .then(onDone)
-    .catch(() => { alert('Jogo salvo, mas erro no upload dos arquivos.'); onDone(); });
-}
-
-deleteGame(id: number): void {
-  if (!confirm('Excluir este jogo?')) return;
-  this.gameService.deleteGame(id).subscribe({
-    next: () => { this.loadGames(); this.cdr.detectChanges(); },
-    error: () => alert('Erro ao excluir jogo')
-  });
-}
 
   // ── USERS ─────────────────────────────────────────────────
   loadUsers(): void {
@@ -250,10 +267,6 @@ deleteGame(id: number): void {
     );
   }
 
-  /**
-   * Promove um usuário comum para admin.
-   * BACKEND LINK: PATCH /admin/users/:id/role  body: { role: 'admin' }
-   */
   promoteToAdmin(user: any): void {
     if (!confirm(`Promover "${user.name}" a administrador?`)) return;
     this.http.patch(`${this.api}/admin/users/${user.id}/role`, { role: 'admin' }, { headers: this.authHeaders }).subscribe({
@@ -262,10 +275,6 @@ deleteGame(id: number): void {
     });
   }
 
-  /**
-   * Revogar admin, rebaixando para usuário comum.
-   *  BACKEND LINK: PATCH /admin/users/:id/role  body: { role: 'user' }
-   */
   demoteFromAdmin(user: any): void {
     if (!confirm(`Revogar cargo de admin de "${user.name}"? Ele voltará a ser um usuário comum.`)) return;
     this.http.patch(`${this.api}/admin/users/${user.id}/role`, { role: 'user' }, { headers: this.authHeaders }).subscribe({
@@ -280,12 +289,6 @@ deleteGame(id: number): void {
   grantPlanId: number | null = null;
   grantDurationDays = 30;
 
-  /**
-   * Abre o modal de assinatura para o usuário alvo.
-   * O objeto `user.subscription` deve vir preenchido pelo backend em loadUsers().
-   *   BACKEND LINK: certifique-se que GET /admin/users retorna o campo
-   *   subscription: { plan, status, createdAt } | null  para cada usuário.
-   */
   openSubscriptionModal(user: any): void {
     this.subscriptionTarget = user;
     this.grantPlanId = null;
@@ -300,19 +303,11 @@ deleteGame(id: number): void {
     this.cdr.detectChanges();
   }
 
-  /**
-   * Concede um plano gratuitamente ao usuário.
-   *   BACKEND LINK: POST /admin/users/:id/grant-plan
-   *   Body: { planId: number, durationDays: number }
-   *   durationDays = 0 significa acesso permanente.
-   *   O backend deve criar a assinatura com status 'active' e price = 0.
-   */
   grantPlan(): void {
     if (!this.grantPlanId || !this.subscriptionTarget) return;
     const payload = { planId: this.grantPlanId, durationDays: this.grantDurationDays };
     this.http.post(`${this.api}/admin/users/${this.subscriptionTarget.id}/grant-plan`, payload, { headers: this.authHeaders }).subscribe({
       next: (res: any) => {
-        // Atualiza localmente o objeto de assinatura do usuário
         const plan = this.plans.find(p => p.id === this.grantPlanId);
         this.subscriptionTarget.subscription = {
           plan,
@@ -328,8 +323,6 @@ deleteGame(id: number): void {
   }
 
   // ── BAN ───────────────────────────────────────────────────
-
-  /** Abre o modal de ban pré-preenchendo os dados do usuário alvo */
   openBanModal(user: any): void {
     this.banForm = {
       userId:        user.id,
@@ -357,18 +350,14 @@ deleteGame(id: number): void {
       ...(this.banForm.type === 'temporary' && { durationHours: this.banForm.durationHours })
     };
 
-    //  BACKEND LINK: troque o bloco abaixo pela chamada HTTP real
     this.http
       .post(`${this.api}/admin/users/${this.banForm.userId}/ban`, payload, { headers: this.authHeaders })
       .subscribe({
         next: () => {
-          // Atualiza localmente o role para refletir na tabela imediatamente
           const target = this.users.find(u => u.id === this.banForm.userId);
           if (target) target.role = 'banned';
-
-          this.filteredUsers = [...this.filteredUsers]; // força detecção de mudança
+          this.filteredUsers = [...this.filteredUsers];
           this.userStats.banned = this.users.filter(u => u.role === 'banned').length;
-
           this.closeBanModal();
           this.cdr.detectChanges();
         },
@@ -376,17 +365,8 @@ deleteGame(id: number): void {
       });
   }
 
-  /**
-   * Removendo o ban de um usuário.
-   *
-   *   BACKEND LINK:
-   *   Endpoint esperado: POST /admin/users/:id/unban
-   *   Deve restaurar o role para 'user' e limpar bannedUntil.
-   */
   unbanUser(user: any): void {
     if (!confirm(`Remover ban de ${user.name}?`)) return;
-
-    //  BACKEND LINK: trocar pelo endpoint real
     this.http
       .post(`${this.api}/admin/users/${user.id}/unban`, {}, { headers: this.authHeaders })
       .subscribe({
@@ -432,9 +412,12 @@ deleteGame(id: number): void {
     });
   }
 
-  openPlanModal(plan: any): void {
+  openPlanModal(plan?: any): void {
     this.showPlanModal = true;
-    this.planForm = { ...plan };
+    this.editingPlan = !!plan;
+    this.planForm = plan
+      ? { ...plan }
+      : { id: null, name: '', description: '', price: 0, accessLevel: 1 };
     this.cdr.detectChanges();
   }
 
@@ -444,14 +427,27 @@ deleteGame(id: number): void {
   }
 
   savePlan(): void {
-    this.http.put(`${this.api}/admin/plans/${this.planForm.id}`, {
-      name:        this.planForm.name,
-      price:       Number(this.planForm.price),
-      description: this.planForm.description
-    }, { headers: this.authHeaders }).subscribe({
-      next: () => { this.loadPlans(); this.closePlanModal(); },
-      error: () => alert('Erro ao salvar plano')
-    });
+    if (this.editingPlan) {
+      this.http.put(`${this.api}/admin/plans/${this.planForm.id}`, {
+        name:        this.planForm.name,
+        price:       Number(this.planForm.price),
+        description: this.planForm.description,
+        accessLevel: Number(this.planForm.accessLevel)
+      }, { headers: this.authHeaders }).subscribe({
+        next: () => { this.loadPlans(); this.closePlanModal(); },
+        error: () => alert('Erro ao salvar plano')
+      });
+    } else {
+      this.http.post(`${this.api}/admin/plans`, {
+        name:        this.planForm.name,
+        price:       Number(this.planForm.price),
+        description: this.planForm.description,
+        accessLevel: Number(this.planForm.accessLevel)
+      }, { headers: this.authHeaders }).subscribe({
+        next: () => { this.loadPlans(); this.closePlanModal(); },
+        error: (err) => alert(err.error?.message || 'Erro ao criar plano')
+      });
+    }
   }
 
   deletePlan(id: number): void {
@@ -503,4 +499,3 @@ deleteGame(id: number): void {
     });
   }
 }
-

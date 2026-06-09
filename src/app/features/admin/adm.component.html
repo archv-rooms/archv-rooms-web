@@ -239,6 +239,7 @@
       <section class="section" [class.hidden]="currentSection !== 'plans'">
         <div class="section-header">
           <span class="section-tag">▣</span> PLANOS
+          <button class="btn btn--primary" (click)="openPlanModal()">+ INSERIR_PLANO</button>
         </div>
         <div class="data-table-wrap">
           <table class="data-table">
@@ -523,8 +524,8 @@
             <option value="GBA">GBA</option>
             <option value="PS1">PS1</option>
             <option value="N64">N64</option>
-            <option value="MD">MEGA DRIVE</option>
-            <option value="GB">GAME BOY</option>
+            <option value="MEGA DRIVE">MEGA DRIVE</option>
+            <option value="GAME BOY">GAME BOY</option>
           </select>
         </div>
         <div>
@@ -577,7 +578,7 @@
 <div class="modal-backdrop" *ngIf="showPlanModal">
   <div class="modal modal--sm">
     <div class="modal__header">
-      <span>EDITAR_PLANO</span>
+      <span>{{ editingPlan ? 'EDITAR_PLANO' : 'INSERIR_PLANO' }}</span>
       <button class="modal__close" (click)="closePlanModal()">✕</button>
     </div>
     <div class="modal__body">

@@ -20,6 +20,7 @@ $text-bright:  #f2f4ff;
 $green-ok:     #4ade80;
 $amber:        #fbbf24;
 $red-alert:    #fb7185;
+$orange:       #ff6a00;
 
 // ─────────────────────────────────────────────────────
 // RESET
@@ -370,7 +371,24 @@ $red-alert:    #fb7185;
       0 0 48px rgba($purple, 0.06);
   }
 
-  // Plano premium (índice 1 = Pro)
+  // ── Tier 1 — Basic (branco/padrão)
+  &[data-tier="0"] {
+    .card-label  { color: rgba(255, 255, 255, 0.5); }
+    .plan-name   { color: #ffffff; }
+    .bullet      { color: #ffffff; }
+
+    .btn-plan {
+      border-color: rgba(255, 255, 255, 0.35);
+      color: #ffffff;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 14px rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  // ── Tier 2 — Premium 
   &[data-tier="1"] {
     border-color: rgba($amber, 0.45);
     box-shadow: 0 0 24px rgba($amber, 0.07);
@@ -386,6 +404,26 @@ $red-alert:    #fb7185;
       &:hover {
         background: rgba($amber, 0.12);
         box-shadow: 0 0 14px rgba($amber, 0.18);
+      }
+    }
+  }
+
+  // ── Tier 3 — Ultra (laranja)
+  &[data-tier="2"] {
+    border-color: rgba($orange, 0.45);
+    box-shadow: 0 0 24px rgba($orange, 0.07);
+
+    .card-label  { color: $orange; }
+    .plan-name   { color: $orange; text-shadow: 0 0 12px rgba($orange, 0.3); }
+    .bullet      { color: $orange; }
+
+    .btn-plan {
+      border-color: rgba($orange, 0.55);
+      color: $orange;
+
+      &:hover {
+        background: rgba($orange, 0.12);
+        box-shadow: 0 0 14px rgba($orange, 0.18);
       }
     }
   }
@@ -450,9 +488,16 @@ $red-alert:    #fb7185;
 }
 
 // ─── price ───────────────────────────────────────────
-.price-block,
+.price-block {
+  padding: 0 20px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .benefits-block {
   padding: 0 20px 22px;
+  flex: 1;
 }
 
 .divider-line {
@@ -460,11 +505,13 @@ $red-alert:    #fb7185;
   font-size: 10px;
   letter-spacing: 2px;
   color: rgba($text-dim, 0.6);
+  display: none;
 }
 
 .price-display {
   display: flex;
   align-items: baseline;
+  justify-content: center;
   gap: 5px;
 }
 
