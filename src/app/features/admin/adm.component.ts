@@ -166,27 +166,37 @@ export class AdmComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  saveGame(): void {
-    if (this.editingGame) {
-      this.gameService.updateGame(this.gameForm.id, this.gameForm).subscribe({
-        next: (res) => {
-          const id = res.data?.id ?? this.gameForm.id;
-          this.uploadGameFiles(id, () => { this.loadGames(); this.closeGameModal(); });
-        },
-        error: () => alert('Erro ao atualizar jogo')
-      });
-    } else {
-      this.gameService.createGame(this.gameForm).subscribe({
-        next: (res) => {
-          const id = res.data?.id;
-          if (!id) { this.loadGames(); this.closeGameModal(); return; }
-          this.uploadGameFiles(id, () => { this.loadGames(); this.closeGameModal(); });
-        },
-        error: () => alert('Erro ao criar jogo')
-      });
+ saveGame(): void {
+  if (this.editingGame) {
+    const payload: any = {
+      title: this.gameForm.title,
+      platform: this.gameForm.platform,
+      accessLevel: this.gameForm.accessLevel,
+    };
+    
+    // só manda coverUrl se tiver preenchido
+    if (this.gameForm.coverUrl) {
+      payload.coverUrl = this.gameForm.coverUrl;
     }
-  }
 
+    this.gameService.updateGame(this.gameForm.id, payload).subscribe({
+      next: (res) => {
+        const id = res.data?.id ?? this.gameForm.id;
+        this.uploadGameFiles(id, () => { this.loadGames(); this.closeGameModal(); });
+      },
+      error: () => alert('Erro ao atualizar jogo')
+    });
+  } else {
+    this.gameService.createGame(this.gameForm).subscribe({
+      next: (res) => {
+        const id = res.data?.id;
+        if (!id) { this.loadGames(); this.closeGameModal(); return; }
+        this.uploadGameFiles(id, () => { this.loadGames(); this.closeGameModal(); });
+      },
+      error: () => alert('Erro ao criar jogo')
+    });
+  }
+}
   private uploadGameFiles(gameId: number, onDone: () => void): void {
     const uploads: Promise<void>[] = [];
 
