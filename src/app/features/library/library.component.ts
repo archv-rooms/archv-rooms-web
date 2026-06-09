@@ -44,8 +44,8 @@ export class LibraryComponent implements OnInit {
     { label: 'GBA',   value: 'gba' },
     { label: 'PS1',   value: 'ps1' },
     { label: 'N64',   value: 'n64' },
-    { label: 'MEGA DRIVE', value: 'mega drive' },
-    { label: 'GAME BOY',   value: 'game boy'  },
+    { label: 'MEGA DRIVE', value: 'md' },
+    { label: 'GAME BOY',   value: 'gb'  },
   ];
 
   constructor(
