@@ -19,6 +19,15 @@ interface Platform {
   pct: number;
 }
 
+interface PlatformsResponse {
+  success: boolean;
+  data: {
+    platforms: Platform[];
+    totalGames: number;
+    totalPlatforms: number;
+  };
+}
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -42,11 +51,7 @@ export class HomeComponent implements OnInit {
 
   // ── PLATAFORMAS ──────────────────────────────────────
   platforms: Platform[] = [];
-
-  // ── CONTADOR GERAL ───────────────────────────────────
-  get totalGames(): number {
-    return this.games.length;
-  }
+  totalGames = 0;
 
   // ── CARROSSEL DE PLATAFORMAS — estado ────────────────
   carouselPaused = false;
@@ -65,6 +70,10 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Plataformas são públicas — carrega sempre
+    this.loadPlatforms();
+
+    // Jogos só carregam se estiver logado
     this.checkAuth();
   }
 
@@ -85,10 +94,25 @@ export class HomeComponent implements OnInit {
     this.isLoggedIn = false;
     this.userName = '';
     this.games = [];
-    this.platforms = [];
   }
 
-  // ── GAMES ────────────────────────────────────────────
+  // ── PLATAFORMAS (público) ─────────────────────────────
+
+  private loadPlatforms(): void {
+    this.http.get<PlatformsResponse>(`${environment.apiUrl}/platforms`).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.platforms = res.data.platforms;
+          this.totalGames = res.data.totalGames;
+        }
+      },
+      error: (err) => {
+        console.error('[home] erro ao carregar plataformas:', err);
+      }
+    });
+  }
+
+  // ── GAMES (requer login) ──────────────────────────────
 
   private loadGames(token: string): void {
     this.loadingGames = true;
@@ -104,7 +128,6 @@ export class HomeComponent implements OnInit {
       next: (res) => {
         if (res.success) {
           this.games = res.data.games;
-          this.buildPlatforms();
         } else {
           this.gamesError = res.message;
         }
@@ -116,27 +139,6 @@ export class HomeComponent implements OnInit {
         this.loadingGames = false;
       }
     });
-  }
-
-  // ── PLATAFORMAS ──────────────────────────────────────
-
-  private buildPlatforms(): void {
-    const counts: Record<string, number> = {};
-
-    for (const game of this.games) {
-      const key = game.console.toUpperCase();
-      counts[key] = (counts[key] ?? 0) + 1;
-    }
-
-    const max = Math.max(...Object.values(counts), 1);
-
-    this.platforms = Object.entries(counts)
-      .sort((a, b) => b[1] - a[1])
-      .map(([name, count]) => ({
-        name,
-        count,
-        pct: Math.round((count / max) * 100)
-      }));
   }
 
   // ── CARROSSEL DE JOGOS ───────────────────────────────
@@ -177,7 +179,6 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  // Drag com mouse
   onDragStart(event: MouseEvent): void {
     const el = this.carouselTrackRef?.nativeElement;
     if (!el) return;
@@ -205,7 +206,6 @@ export class HomeComponent implements OnInit {
     this.carouselPaused = false;
   }
 
-  // Drag com touch
   onTouchStart(event: TouchEvent): void {
     const el = this.carouselTrackRef?.nativeElement;
     if (!el) return;
