@@ -140,13 +140,16 @@ openGameModal(game?: any): void {
   this.editingGame = !!game;
 
   if (game) {
-    // mapeia valores antigos para os novos
     const platformMap: Record<string, string> = {
       'MD': 'MEGA DRIVE',
       'GB': 'GAME BOY',
     };
     const platform = platformMap[game.console] ?? game.console;
-    this.gameForm = { ...game, platform };
+    this.gameForm = { 
+      ...game, 
+      platform,
+      coverUrl: game.image ?? ''  // ← popula com a imagem atual
+    };
   } else {
     this.gameForm = { title: '', platform: 'NES', coverUrl: '', accessLevel: 1, planId: null };
   }
