@@ -44,8 +44,8 @@ export class LibraryComponent implements OnInit {
     { label: 'GBA',   value: 'gba' },
     { label: 'PS1',   value: 'ps1' },
     { label: 'N64',   value: 'n64' },
-    { label: 'MEGA DRIVE', value: 'md' },
-    { label: 'GAME BOY',   value: 'gb'  },
+    { label: 'MEGA DRIVE', value: 'mega drive' },
+    { label: 'GAME BOY',   value: 'game boy'  },
   ];
 
   constructor(
@@ -96,22 +96,31 @@ export class LibraryComponent implements OnInit {
     });
   }
 
-  applyFilters(): void {
-    const query = this.searchQuery.toLowerCase().trim();
+applyFilters(): void {
+  const query = this.searchQuery.toLowerCase().trim();
 
-    this.filteredGames = this.games.filter(game => {
-      const matchesFilter =
-        this.activeFilter === 'all' ||
-        game.console.toLowerCase() === this.activeFilter;
+  const filterMap: Record<string, string[]> = {
+    'mega drive': ['md', 'mega drive', 'genesis'],
+    'game boy':   ['gb', 'game boy', 'gbc', 'gameboy'],
+  };
 
-      const matchesSearch =
-        !query ||
-        game.title.toLowerCase().includes(query) ||
-        game.console.toLowerCase().includes(query);
+  this.filteredGames = this.games.filter(game => {
+    const consoleLC = game.console.toLowerCase();
+    const filterLC = this.activeFilter.toLowerCase();
 
-      return matchesFilter && matchesSearch;
-    });
-  }
+    const matchesFilter =
+      this.activeFilter === 'all' ||
+      consoleLC === filterLC ||
+      (filterMap[filterLC]?.includes(consoleLC) ?? false);
+
+    const matchesSearch =
+      !query ||
+      game.title.toLowerCase().includes(query) ||
+      consoleLC.includes(query);
+
+    return matchesFilter && matchesSearch;
+  });
+}
 
   setFilter(value: string): void {
     this.activeFilter = value;
