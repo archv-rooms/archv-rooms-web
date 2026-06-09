@@ -135,16 +135,26 @@ export class AdmComponent implements OnInit {
     });
   }
 
-  openGameModal(game?: any): void {
-    this.showGameModal = true;
-    this.editingGame = !!game;
-    this.gameForm = game
-      ? { ...game, platform: game.console }
-      : { title: '', platform: 'NES', coverUrl: '', accessLevel: 1, planId: null };
-    this.selectedImage = null;
-    this.selectedRoom  = null;
-    this.cdr.detectChanges();
+openGameModal(game?: any): void {
+  this.showGameModal = true;
+  this.editingGame = !!game;
+
+  if (game) {
+    // mapeia valores antigos para os novos
+    const platformMap: Record<string, string> = {
+      'MD': 'MEGA DRIVE',
+      'GB': 'GAME BOY',
+    };
+    const platform = platformMap[game.console] ?? game.console;
+    this.gameForm = { ...game, platform };
+  } else {
+    this.gameForm = { title: '', platform: 'NES', coverUrl: '', accessLevel: 1, planId: null };
   }
+
+  this.selectedImage = null;
+  this.selectedRoom = null;
+  this.cdr.detectChanges();
+}
 
   onImageSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
