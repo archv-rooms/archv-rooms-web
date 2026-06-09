@@ -516,15 +516,134 @@ $red-alert: #fb7185;
 }
 
 // ─────────────────────────────────────────────────────
-// PLATFORMS
+// PLATFORMS SECTION — wrapper
 // ─────────────────────────────────────────────────────
-.platforms-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 12px;
+.platforms-section {
+  // sobrescreve o padding lateral do .section para o carrossel
+  // sangrar até as bordas sem afetar o header
+  padding-left: 0;
+  padding-right: 0;
+
+  .section-header {
+    padding: 0 20px;
+  }
 }
 
+// ─────────────────────────────────────────────────────
+// LIBRARY STATS (contador geral)
+// ─────────────────────────────────────────────────────
+.library-stats {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  padding: 0 20px 20px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-value {
+  font-family: 'VT323', monospace;
+  font-size: 28px;
+  line-height: 1;
+  color: $text-bright;
+  letter-spacing: 2px;
+}
+
+.stat-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: $text-dim;
+  text-transform: uppercase;
+}
+
+.stat-sep {
+  font-size: 18px;
+  color: rgba($purple-dim, 0.4);
+  margin-top: -4px;
+  user-select: none;
+}
+
+// indicador "live"
+.stat-live {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: $green-ok;
+}
+
+.live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: $green-ok;
+  animation: livePulse 1.8s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1;   box-shadow: 0 0 0 0 rgba($green-ok, 0.6); }
+  50%       { opacity: 0.6; box-shadow: 0 0 0 4px rgba($green-ok, 0); }
+}
+
+// ─────────────────────────────────────────────────────
+// PLATFORMS CAROUSEL
+// ─────────────────────────────────────────────────────
+.platforms-carousel {
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+
+  &:active,
+  &.dragging {
+    cursor: grabbing;
+  }
+}
+
+.platforms-track {
+  display: flex;
+  gap: 12px;
+
+  // A largura de um card * (2× o número de cards) define o loop
+  // A animação move exatamente 50% (track original), reiniciando sem salto
+  width: max-content;
+
+  animation: scrollLeft 30s linear infinite;
+
+  &.paused {
+    animation-play-state: paused;
+  }
+
+  &.dragging {
+    animation-play-state: paused;
+  }
+
+  // respeita preferência de movimento reduzido
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0 20px;
+  }
+}
+
+@keyframes scrollLeft {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+// ─────────────────────────────────────────────────────
+// PLATFORM CARD
+// ─────────────────────────────────────────────────────
 .platform-card {
+  // largura fixa para o loop ser preciso
+  flex-shrink: 0;
+  width: 200px;
+
   background: $bg-card;
 
   border: 1px solid $border;
@@ -537,10 +656,11 @@ $red-alert: #fb7185;
   gap: 8px;
 
   cursor: pointer;
-  transition: 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 
   &:hover {
     border-color: $border-glow;
+    box-shadow: 0 0 12px rgba($purple, 0.18);
 
     .platform-bar-fill {
       background: $purple-bright;
@@ -581,7 +701,29 @@ $red-alert: #fb7185;
 
   background: $purple-dim;
 
-  transition: 0.2s;
+  transition: background 0.2s;
+}
+
+// ─────────────────────────────────────────────────────
+// FADE NAS BORDAS DO CARROSSEL
+// ─────────────────────────────────────────────────────
+.carousel-fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.carousel-fade-left {
+  left: 0;
+  background: linear-gradient(to right, $bg 0%, transparent 100%);
+}
+
+.carousel-fade-right {
+  right: 0;
+  background: linear-gradient(to left, $bg 0%, transparent 100%);
 }
 
 // ─────────────────────────────────────────────────────
@@ -639,7 +781,7 @@ $red-alert: #fb7185;
   font-weight: 1.8;
   line-height: inherit;
   letter-spacing: normal;
-  
+
   color: $text-bright;
 
   text-shadow: 0 0 20px rgba($purple-bright, 0.25);
@@ -835,7 +977,7 @@ $red-alert: #fb7185;
 }
 
 // ─────────────────────────────────────────────────────
-// CARROSSEL
+// CARROSSEL DE JOGOS
 // ─────────────────────────────────────────────────────
 .carousel-wrap {
   display: flex;
@@ -878,7 +1020,6 @@ $red-alert: #fb7185;
 // dentro do carrossel o grid ocupa o espaço restante
 .carousel-wrap .games-grid {
   flex: 1;
-  // sobrescreve o auto-fill para sempre mostrar 4 colunas fixas
   grid-template-columns: repeat(4, 1fr);
 }
 
@@ -890,4 +1031,86 @@ $red-alert: #fb7185;
   letter-spacing: 1px;
   color: $text-dim;
   padding: 20px 0;
+}
+
+// ─────────────────────────────────────────────────────
+// RESPONSIVO
+// ─────────────────────────────────────────────────────
+
+// Tablet
+@media (max-width: 768px) {
+  .sidebar {
+    width: 60px;
+  }
+
+  .nav-btn {
+    width: 44px;
+    height: 44px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .platform-card {
+    width: 160px;
+  }
+
+  .library-stats {
+    gap: 14px;
+  }
+
+  .stat-value {
+    font-size: 22px;
+  }
+
+  .carousel-wrap .games-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// Mobile
+@media (max-width: 480px) {
+  .sidebar {
+    display: none;
+  }
+
+  .hero {
+    padding: 60px 16px 40px;
+  }
+
+  .hero-title {
+    font-size: clamp(52px, 14vw, 80px);
+  }
+
+  .hero-sub {
+    font-size: 13px;
+  }
+
+  .platform-card {
+    width: 140px;
+  }
+
+  .carousel-fade {
+    width: 40px;
+  }
+
+  .library-stats {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .stat-sep {
+    display: none;
+  }
+
+  .carousel-wrap .games-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .topbar-brand {
+    font-size: 11px;
+    letter-spacing: 2px;
+  }
 }
