@@ -148,16 +148,17 @@ export class RoomsComponent implements OnInit {
   // EmulatorJS
   // =========================
 
-  playGame(): void {
-    if (!this.game?.fileUrl) {
-      alert('Arquivo não disponível.');
-      return;
-    }
+playGame(): void {
+  if (!this.game?.fileUrl) {
+    alert('Arquivo não disponível.');
+    return;
+  }
 
-    this.showEmulator = true;
-    this.cdr.detectChanges();
+  this.showEmulator = true;
+  this.cdr.detectChanges();
 
-    setTimeout(() => {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
       (window as any).EJS_player = '#game-container';
       (window as any).EJS_core = this.getEmulatorCore();
       (window as any).EJS_gameUrl = this.game!.fileUrl;
@@ -165,11 +166,12 @@ export class RoomsComponent implements OnInit {
       (window as any).EJS_startOnLoaded = true;
 
       const script = document.createElement('script');
-      script.id = 'emulatorjs-script'; // ID para localizar na hora de destruir
-      script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+      script.id = 'emulatorjs-script';
+      script.src = `https://cdn.emulatorjs.org/stable/data/loader.js?t=${Date.now()}`;
       document.body.appendChild(script);
-    }, 100);
-  }
+    });
+  });
+}
 
   closeEmulator(): void {
     const ejs = (window as any).EJS_emulator;
