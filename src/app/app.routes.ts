@@ -51,6 +51,10 @@ export const routes: Routes = [
   loadComponent: () => import('./features/banned/banned.component').then(m => m.BannedComponent)
   },
 
+  { path: 'donate', loadComponent: () => import('./features/donate/donate.component').then(m => m.DonateComponent) 
+
+  },
+
   {
     path: 'error',
     loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent)

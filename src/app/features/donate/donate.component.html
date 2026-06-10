@@ -1,0 +1,115 @@
+<div class="home-wrapper">
+
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <button class="nav-btn" title="Home" (click)="navigate('/')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
+      </button>
+      <button class="nav-btn" title="Biblioteca" (click)="navigate('/library')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
+        </svg>
+      </button>
+      <button class="nav-btn" title="Planos" (click)="navigate('/pricing')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+      <button class="nav-btn" [class.active]="isActive('/donate')" title="Apoiar" (click)="navigate('/donate')">
+         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+         <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+         <path d="M2 17l10 5 10-5"/>
+         <path d="M2 12l10 5 10-5"/>
+         </svg>
+      </button>
+      <button class="nav-btn" title="Perfil" *ngIf="isLoggedIn" (click)="navigate('/profile')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+      </button>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <span class="topbar-brand">▣ ARCHV.ROOMS</span>
+      <div class="topbar-right">
+        <ng-container *ngIf="isLoggedIn">
+          <span class="topbar-user" (click)="navigate('/profile')" style="cursor:pointer">{{ userName }}</span>
+          <button class="btn btn-ghost btn-sm" (click)="logout()">LOGOUT</button>
+        </ng-container>
+        <ng-container *ngIf="!isLoggedIn">
+          <button class="btn btn-ghost btn-sm" (click)="navigate('/login')">LOGIN</button>
+          <button class="btn btn-outline btn-sm" (click)="navigate('/register')">REGISTER</button>
+        </ng-container>
+      </div>
+    </header>
+
+    <div class="scroll-body">
+      <div class="donate-wrapper">
+        <div class="donate-card">
+
+          <!-- HEADER -->
+          <div class="card-section">
+            <span class="section-eye">APOIAR O PROJETO</span>
+            <div class="donate-title">ARCHV.ROOMS</div>
+            <p class="donate-desc">
+              Este projeto é independente e feito com muito cuidado.<br>
+              Se você curte o que estamos construindo, qualquer apoio faz diferença.
+            </p>
+          </div>
+
+          <div class="sep"></div>
+
+          <!-- PIX -->
+          <div class="card-section">
+            <span class="section-eye">DOAÇÃO VIA PIX</span>
+
+            <div class="pix-row">
+              <span class="pix-label">BENEFICIÁRIO</span>
+              <span class="pix-value">ARCHV SYSTEMS LTDA</span>
+            </div>
+            <div class="pix-row">
+              <span class="pix-label">CHAVE</span>
+              <span class="pix-value pix-key">{{ pixKey }}</span>
+            </div>
+            <div class="pix-row">
+              <span class="pix-label">VALOR</span>
+              <span class="pix-value pix-free">LIVRE</span>
+            </div>
+
+            <div class="qr-block">
+              <img [src]="pixQrCode" alt="QR Code Pix" class="qr-image" />
+              <span class="qr-label">ESCANEIE E APOIE</span>
+            </div>
+
+            <div class="pix-notice">
+              <span class="notice-dot">♥</span>
+              <p>Qualquer valor é bem-vindo. Obrigado por apoiar o <strong>ARCHV.ROOMS</strong>.</p>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <!-- AÇÕES -->
+          <div class="card-actions">
+            <button class="btn btn-ghost" (click)="navigate('/')">← VOLTAR</button>
+            <button class="btn btn-outline" (click)="copyPixKey()">
+              {{ pixCopied ? '✓ COPIADO' : '▶ COPIAR CHAVE' }}
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="crt-overlay"></div>
+  <div class="scanlines"></div>
+</div>
