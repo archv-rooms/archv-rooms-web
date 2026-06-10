@@ -85,4 +85,8 @@ export class CheckoutComponent implements OnInit {
   navigate(path: string): void {
     this.router.navigate([path]);
   }
+
+  isActive(path: string): boolean {
+  return this.router.url === path;
+  }
 }
