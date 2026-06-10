@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -35,7 +35,7 @@ interface PlatformsResponse {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
 
   isLoggedIn = false;
   userName = '';
@@ -63,6 +63,13 @@ export class HomeComponent implements OnInit {
 
   @ViewChild('carouselTrackRef') carouselTrackRef!: ElementRef<HTMLElement>;
 
+  // ── EASTER EGG ────────────────────────────
+  jumpscareActive = false;
+  jumpscareVideoUrl = '/videos/hihi.mp4';
+  private jumpscareTimer: any;
+  private eggClickCount = 0;
+  private eggClickTimer: any;
+
   constructor(
     private router: Router,
     private http: HttpClient,
@@ -70,11 +77,13 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Plataformas são públicas — carrega sempre
     this.loadPlatforms();
-
-    // Jogos só carregam se estiver logado
     this.checkAuth();
+  }
+
+  ngOnDestroy(): void {
+    clearTimeout(this.jumpscareTimer);
+    clearTimeout(this.eggClickTimer);
   }
 
   // ── AUTH ─────────────────────────────────────────────
@@ -244,7 +253,41 @@ export class HomeComponent implements OnInit {
     const img = event.target as HTMLImageElement;
     img.src = 'assets/placeholder-game.png';
   }
+
   isActive(path: string): boolean {
-  return this.router.url === path;
-}
+    return this.router.url === path;
+  }
+
+  // ── EASTER EGG ────────────────────────────
+
+  onHomeIconClick(): void {
+    this.navigate('/');
+
+    this.eggClickCount++;
+    clearTimeout(this.eggClickTimer);
+
+    if (this.eggClickCount >= 3) {
+      this.eggClickCount = 0;
+      this.triggerJumpscare();
+      return;
+    }
+
+    this.eggClickTimer = setTimeout(() => {
+      this.eggClickCount = 0;
+    }, 800);
+  }
+
+  triggerJumpscare(): void {
+    if (this.jumpscareActive) return;
+    this.jumpscareActive = true;
+
+    this.jumpscareTimer = setTimeout(() => {
+      this.dismissJumpscare();
+    }, 24000);
+  }
+
+  dismissJumpscare(): void {
+    this.jumpscareActive = false;
+    clearTimeout(this.jumpscareTimer);
+  }
 }

@@ -240,5 +240,18 @@
 
   <div class="crt-overlay"></div>
   <div class="scanlines"></div>
+
+  <!-- EASTER EGG JUMPSCARE -->
+<div class="jumpscare-overlay" *ngIf="jumpscareActive" (click)="dismissJumpscare()">
+  <video
+    #jumpscareVideo
+    class="jumpscare-video"
+    [src]="jumpscareVideoUrl"
+    autoplay
+    playsinline
+    muted="false"
+  ></video>
+</div>
+
 </div>
 
