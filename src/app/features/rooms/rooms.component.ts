@@ -175,23 +175,24 @@ playGame(): void {
     this.cdr.detectChanges();
   }
 
-  getEmulatorCore(): string {
-    const cores: Record<string, string> = {
-      NES: 'nes',
-      SNES: 'snes9x',
-      SFC: 'snes9x',
-      GBA: 'gba',
-      GB: 'gambatte',
-      GBC: 'gambatte',
-      N64: 'n64',
-      PS1: 'pcsx_rearmed',
-      PSX: 'pcsx_rearmed',
-      MD: 'genesis_plus_gx'
-    };
+getEmulatorCore(): string {
+  const cores: Record<string, string> = {
+    'NES': 'nes',
+    'SNES': 'snes9x',
+    'SFC': 'snes9x',
+    'GBA': 'gba',
+    'GB': 'gambatte',
+    'GBC': 'gambatte',
+    'GAME BOY': 'gambatte',
+    'N64': 'n64',
+    'PS1': 'pcsx_rearmed',
+    'PSX': 'pcsx_rearmed',
+    'MD': 'genesis_plus_gx',
+    'MEGA DRIVE': 'genesis_plus_gx',
+  };
 
-    return cores[this.game?.console?.toUpperCase() ?? ''] ?? 'nes';
-  }
-
+  return cores[this.game?.console?.toUpperCase() ?? ''] ?? 'nes';
+}
   // =========================
   // Utilitários
   // =========================
