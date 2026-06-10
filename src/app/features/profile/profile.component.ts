@@ -42,13 +42,16 @@ export class ProfileComponent implements AfterViewInit {
   pwForm   = { current: '', new: '', confirm: '' };
   prefs    = { emailNotif: true, publicProfile: false, newsletter: false };
 
-  savingProfile  = false;
-  saveSuccess    = false;
+  savingProfile = false;
+  saveSuccess   = false;
+  saveError     = '';
+
   uploadingAvatar = false;
   avatarSuccess   = '';
   avatarError     = '';
-  pwSuccess       = false;
-  pwError         = '';
+
+  pwSuccess = false;
+  pwError   = '';
 
   get pwStrength(): number {
     const p = this.pwForm.new;
@@ -163,6 +166,33 @@ export class ProfileComponent implements AfterViewInit {
     });
   }
 
+  saveProfile(): void {
+    if (!this.editForm.username.trim()) {
+      this.saveError = 'O nome não pode estar vazio.';
+      return;
+    }
+
+    this.savingProfile = true;
+    this.saveSuccess   = false;
+    this.saveError     = '';
+
+    this.userService.updateName(this.editForm.username.trim()).subscribe({
+      next: (res) => {
+        if (this.user) this.user.name = res.data.name;
+        this.editForm.username = res.data.name;
+        this.savingProfile     = false;
+        this.saveSuccess       = true;
+        setTimeout(() => this.saveSuccess = false, 3000);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.savingProfile = false;
+        this.saveError     = err.error?.message || 'Erro ao salvar nome.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   calcDaysActive(createdAt: string): number {
     if (!createdAt) return 0;
     return Math.floor((Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24));
@@ -207,17 +237,6 @@ export class ProfileComponent implements AfterViewInit {
   copyProfileLink(): void {
     const name = this.user?.name || 'user';
     navigator.clipboard.writeText(`${window.location.origin}/u/${name}`);
-  }
-
-  saveProfile(): void {
-    this.savingProfile = true;
-    this.saveSuccess   = false;
-    // TODO: this.userService.updateProfile(this.editForm).subscribe(...)
-    setTimeout(() => {
-      this.savingProfile = false;
-      this.saveSuccess   = true;
-      setTimeout(() => this.saveSuccess = false, 3000);
-    }, 800);
   }
 
   changePassword(): void {
