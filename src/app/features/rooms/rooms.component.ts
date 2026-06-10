@@ -159,6 +159,9 @@ playGame(): void {
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
+      // Patcha o AudioContext para rastrear todas as instâncias criadas pelo EmulatorJS
+      this.patchAudioContext();
+
       (window as any).EJS_player = '#game-container';
       (window as any).EJS_core = this.getEmulatorCore();
       (window as any).EJS_gameUrl = this.game!.fileUrl;
@@ -171,6 +174,29 @@ playGame(): void {
       document.body.appendChild(script);
     });
   });
+}
+
+private patchAudioContext(): void {
+  const w = window as any;
+
+  // Evita patchar múltiplas vezes
+  if (w._audioContextPatched) return;
+
+  w._ejsAudioContexts = [];
+  const OriginalAudioContext = w.AudioContext || w.webkitAudioContext;
+
+  if (!OriginalAudioContext) return;
+
+  const PatchedAudioContext = function(...args: any[]) {
+    const ctx = new OriginalAudioContext(...args);
+    w._ejsAudioContexts.push(ctx);
+    return ctx;
+  };
+
+  PatchedAudioContext.prototype = OriginalAudioContext.prototype;
+  w.AudioContext = PatchedAudioContext;
+  w.webkitAudioContext = PatchedAudioContext;
+  w._audioContextPatched = true;
 }
 
   closeEmulator(): void {
