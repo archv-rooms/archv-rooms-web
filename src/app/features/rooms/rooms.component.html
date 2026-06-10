@@ -149,15 +149,15 @@
   <div class="crt-overlay"></div>
   <div class="scanlines"></div>
 
-  <!-- EMULATOR MODAL -->
-  <div class="emulator-overlay" *ngIf="showEmulator" (click)="closeEmulator()">
-    <div class="emulator-modal" (click)="$event.stopPropagation()">
-      <div class="emulator-header">
-        <span>▣ {{ game?.title | uppercase }}</span>
-        <button class="emulator-close" (click)="closeEmulator()">✕</button>
-      </div>
-      <div id="game-container" style="width:100%;height:100%;"></div>
+<!-- EMULATOR MODAL -->
+<div class="emulator-overlay" [hidden]="!showEmulator" (click)="closeEmulator()">
+  <div class="emulator-modal" (click)="$event.stopPropagation()">
+    <div class="emulator-header">
+      <span>▣ {{ game?.title | uppercase }}</span>
+      <button class="emulator-close" (click)="closeEmulator()">✕</button>
     </div>
+    <div id="game-container" style="width:100%;height:100%;"></div>
   </div>
+</div>
 
 </div>
