@@ -33,6 +33,7 @@ export class ProfileComponent implements AfterViewInit {
 
   isLoading    = true;
   errorMessage = '';
+  isAdmin      = false;
 
   activeTab: 'overview' | 'settings' = 'overview';
 
@@ -106,6 +107,7 @@ export class ProfileComponent implements AfterViewInit {
         ];
 
         this.isLoading = false;
+        this.isAdmin = this.authService.getUserRole() === 'admin';
         this.cdr.detectChanges();
       },
       error: (err) => {
