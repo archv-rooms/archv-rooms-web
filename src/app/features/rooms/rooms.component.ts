@@ -108,8 +108,7 @@ export class RoomsComponent implements OnInit {
           this.cdr.detectChanges();
         },
         error: () => {
-          this.errorMessage =
-            'FALHA AO CARREGAR ARTEFATO. VERIFIQUE O SINAL.';
+          this.errorMessage = 'FALHA AO CARREGAR ARTEFATO. VERIFIQUE O SINAL.';
           this.isLoading = false;
           this.cdr.detectChanges();
         }
@@ -125,11 +124,8 @@ export class RoomsComponent implements OnInit {
     fetch(this.game.fileUrl)
       .then((res) => res.blob())
       .then((blob) => {
-        const ext =
-          this.game!.fileUrl!.split('.').pop()?.split('?')[0] ?? 'zip';
-
+        const ext = this.game!.fileUrl!.split('.').pop()?.split('?')[0] ?? 'zip';
         const fileName = `${this.game!.title}.${ext}`;
-
         const url = URL.createObjectURL(blob);
 
         const a = document.createElement('a');
@@ -148,20 +144,17 @@ export class RoomsComponent implements OnInit {
   // EmulatorJS
   // =========================
 
-playGame(): void {
-  if (!this.game?.fileUrl) {
-    alert('Arquivo não disponível.');
-    return;
-  }
+  playGame(): void {
+    if (!this.game?.fileUrl) {
+      alert('Arquivo não disponível.');
+      return;
+    }
 
-  this.showEmulator = true;
-  this.cdr.detectChanges();
+    this.showEmulator = true;
+    this.cdr.detectChanges();
 
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      // Patcha o AudioContext para rastrear todas as instâncias criadas pelo EmulatorJS
-      this.patchAudioContext();
-
+    // Aguarda o *ngIf renderizar o #game-container no DOM
+    setTimeout(() => {
       (window as any).EJS_player = '#game-container';
       (window as any).EJS_core = this.getEmulatorCore();
       (window as any).EJS_gameUrl = this.game!.fileUrl;
@@ -170,77 +163,34 @@ playGame(): void {
 
       const script = document.createElement('script');
       script.id = 'emulatorjs-script';
+      // Cache-bust garante que o browser re-executa o loader a cada abertura
       script.src = `https://cdn.emulatorjs.org/stable/data/loader.js?t=${Date.now()}`;
       document.body.appendChild(script);
-    });
-  });
-}
-
-private patchAudioContext(): void {
-  const w = window as any;
-
-  // Evita patchar múltiplas vezes
-  if (w._audioContextPatched) return;
-
-  w._ejsAudioContexts = [];
-  const OriginalAudioContext = w.AudioContext || w.webkitAudioContext;
-
-  if (!OriginalAudioContext) return;
-
-  const PatchedAudioContext = function(...args: any[]) {
-    const ctx = new OriginalAudioContext(...args);
-    w._ejsAudioContexts.push(ctx);
-    return ctx;
-  };
-
-  PatchedAudioContext.prototype = OriginalAudioContext.prototype;
-  w.AudioContext = PatchedAudioContext;
-  w.webkitAudioContext = PatchedAudioContext;
-  w._audioContextPatched = true;
-}
+    }, 300);
+  }
 
   closeEmulator(): void {
     const ejs = (window as any).EJS_emulator;
 
     if (ejs) {
-      // Para o loop de emulação
       try { ejs.pause(); } catch {}
-
-      // Fecha o AudioContext da Web Audio API — causa raiz do áudio persistente
       try {
         const ctx = ejs.gameManager?.audioContext;
-        if (ctx && ctx.state !== 'closed') {
-          ctx.close();
-        }
+        if (ctx && ctx.state !== 'closed') ctx.close();
       } catch {}
     }
 
-    // Remove o script do EmulatorJS do DOM
-    const script = document.getElementById('emulatorjs-script');
-    if (script) script.remove();
+    // Remove todos os scripts do EmulatorJS injetados
+    document.querySelectorAll('script[src*="emulatorjs.org"]')
+      .forEach(s => s.remove());
 
-    // Limpa todas as variáveis globais deixadas pelo EmulatorJS
-    const globals = [
-      'EJS_emulator',
-      'EJS_player',
-      'EJS_core',
-      'EJS_gameUrl',
-      'EJS_pathtodata',
-      'EJS_startOnLoaded',
-      'EJS_GameManager',
-      'EJS_Buttons',
-      'EJS_VirtualGamepad'
-    ];
-    globals.forEach(key => {
-      try { delete (window as any)[key]; } catch {}
-    });
-
-    // Limpa o container para não deixar canvas/elementos órfãos
-    const container = document.getElementById('game-container');
-    if (container) container.innerHTML = '';
+    // Limpa variáveis globais do EmulatorJS
+    ['EJS_emulator', 'EJS_player', 'EJS_core', 'EJS_gameUrl',
+     'EJS_pathtodata', 'EJS_startOnLoaded', 'EJS_GameManager',
+     'EJS_Buttons', 'EJS_VirtualGamepad'
+    ].forEach(key => { try { delete (window as any)[key]; } catch {} });
 
     this.showEmulator = false;
-    this.emulatorUrl = null;
     this.cdr.detectChanges();
   }
 
