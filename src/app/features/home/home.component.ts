@@ -39,6 +39,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   isLoggedIn = false;
   userName = '';
+  isAdmin = false;
 
   // ── GAMES ────────────────────────────────────────────
   games: Game[] = [];
@@ -90,6 +91,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private checkAuth(): void {
     this.isLoggedIn = this.authService.isAuthenticated();
+    this.isAdmin = this.authService.getUserRole() === 'admin';
 
     if (this.isLoggedIn) {
       this.userName = this.authService.getUserName();
