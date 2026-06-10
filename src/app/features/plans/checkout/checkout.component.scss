@@ -160,16 +160,17 @@ $red-alert:    #fb7185;
 
 .qr-block {
   display: flex; flex-direction: column; align-items: center;
-  justify-content: center; gap: 6px;
-  width: 140px; height: 140px; margin: 8px auto;
+  justify-content: center; gap: 8px;
+  width: 160px; margin: 8px auto;
+}
+.qr-image {
+  width: 160px; height: 160px; object-fit: contain;
   border: 1px solid rgba($border-glow, 0.4);
   border-radius: 4px;
-  background: rgba($purple, 0.04);
+  background: #fff; // fundo branco pra leitura do QR
+  padding: 6px;
 }
-.qr-icon { font-size: 40px; color: $purple-dim; }
 .qr-label { font-size: 10px; letter-spacing: 2px; color: $text-muted; }
-.qr-sub { font-size: 10px; color: $text-dim; }
-
 .pix-notice {
   display: flex; gap: 10px; align-items: flex-start;
   padding: 12px 14px; border-radius: 4px;

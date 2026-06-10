@@ -26,8 +26,8 @@ export class CheckoutComponent implements OnInit {
   userName = '';
 
   pixCopied = false;
-  readonly pixKey = 'pagamentos@archv.rooms';
-
+  readonly pixKey = 'contatoarchvrooms@gmail.com';
+  readonly pixQrCode = 'images/qr-code-pix.png';
   ngOnInit(): void {
     this.checkAuth();
 
