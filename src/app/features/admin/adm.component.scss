@@ -382,14 +382,13 @@ html, body {
     text-shadow: 1px 0 $yellow;
   }
 
-  &:hover {
-    background: rgba($red, 0.1);
-    border-color: $red;
-    box-shadow: 0 0 10px rgba($red, 0.3), inset 0 0 8px rgba($red, 0.05);
-    animation: glitch-flicker 0.3s steps(2) infinite;
+&:hover {
+  background: rgba($red, 0.1);
+  border-color: $red;
+  box-shadow: 0 0 10px rgba($red, 0.3), inset 0 0 8px rgba($red, 0.05);
 
-    &::before { opacity: 0.4; }
-  }
+  &::before { opacity: 0.4; }
+}
 
   // Variante maior usada dentro do modal de confirmação
   &--lg {
