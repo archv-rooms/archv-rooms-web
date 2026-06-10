@@ -148,51 +148,93 @@ export class RoomsComponent implements OnInit {
   // EmulatorJS
   // =========================
 
-playGame(): void {
-  if (!this.game?.fileUrl) {
-    alert('Arquivo não disponível.');
-    return;
+  playGame(): void {
+    if (!this.game?.fileUrl) {
+      alert('Arquivo não disponível.');
+      return;
+    }
+
+    this.showEmulator = true;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      (window as any).EJS_player = '#game-container';
+      (window as any).EJS_core = this.getEmulatorCore();
+      (window as any).EJS_gameUrl = this.game!.fileUrl;
+      (window as any).EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+      (window as any).EJS_startOnLoaded = true;
+
+      const script = document.createElement('script');
+      script.id = 'emulatorjs-script'; // ID para localizar na hora de destruir
+      script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+      document.body.appendChild(script);
+    }, 100);
   }
-  this.showEmulator = true;
-  this.cdr.detectChanges();
-
-  setTimeout(() => {
-    (window as any).EJS_player = '#game-container';
-    (window as any).EJS_core = this.getEmulatorCore();
-    (window as any).EJS_gameUrl = this.game!.fileUrl;
-    (window as any).EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
-    (window as any).EJS_startOnLoaded = true;
-
-    const script = document.createElement('script');
-    script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
-    document.body.appendChild(script);
-  }, 100);
-}
 
   closeEmulator(): void {
+    const ejs = (window as any).EJS_emulator;
+
+    if (ejs) {
+      // Para o loop de emulação
+      try { ejs.pause(); } catch {}
+
+      // Fecha o AudioContext da Web Audio API — causa raiz do áudio persistente
+      try {
+        const ctx = ejs.gameManager?.audioContext;
+        if (ctx && ctx.state !== 'closed') {
+          ctx.close();
+        }
+      } catch {}
+    }
+
+    // Remove o script do EmulatorJS do DOM
+    const script = document.getElementById('emulatorjs-script');
+    if (script) script.remove();
+
+    // Limpa todas as variáveis globais deixadas pelo EmulatorJS
+    const globals = [
+      'EJS_emulator',
+      'EJS_player',
+      'EJS_core',
+      'EJS_gameUrl',
+      'EJS_pathtodata',
+      'EJS_startOnLoaded',
+      'EJS_GameManager',
+      'EJS_Buttons',
+      'EJS_VirtualGamepad'
+    ];
+    globals.forEach(key => {
+      try { delete (window as any)[key]; } catch {}
+    });
+
+    // Limpa o container para não deixar canvas/elementos órfãos
+    const container = document.getElementById('game-container');
+    if (container) container.innerHTML = '';
+
     this.showEmulator = false;
     this.emulatorUrl = null;
     this.cdr.detectChanges();
   }
 
-getEmulatorCore(): string {
-  const cores: Record<string, string> = {
-    'NES': 'nes',
-    'SNES': 'snes9x',
-    'SFC': 'snes9x',
-    'GBA': 'gba',
-    'GB': 'gambatte',
-    'GBC': 'gambatte',
-    'GAME BOY': 'gambatte',
-    'N64': 'n64',
-    'PS1': 'pcsx_rearmed',
-    'PSX': 'pcsx_rearmed',
-    'MD': 'genesis_plus_gx',
-    'MEGA DRIVE': 'genesis_plus_gx',
-  };
+  getEmulatorCore(): string {
+    const cores: Record<string, string> = {
+      'NES': 'nes',
+      'SNES': 'snes9x',
+      'SFC': 'snes9x',
+      'GBA': 'gba',
+      'GB': 'gambatte',
+      'GBC': 'gambatte',
+      'GAME BOY': 'gambatte',
+      'N64': 'n64',
+      'PS1': 'pcsx_rearmed',
+      'PSX': 'pcsx_rearmed',
+      'MD': 'genesis_plus_gx',
+      'MEGA DRIVE': 'genesis_plus_gx',
+    };
 
-  return cores[this.game?.console?.toUpperCase() ?? ''] ?? 'nes';
-}
+    return cores[this.game?.console?.toUpperCase() ?? ''] ?? 'nes';
+  }
+
   // =========================
   // Utilitários
   // =========================
