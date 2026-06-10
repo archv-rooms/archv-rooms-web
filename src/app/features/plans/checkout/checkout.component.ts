@@ -26,8 +26,16 @@ export class CheckoutComponent implements OnInit {
   userName = '';
 
   pixCopied = false;
-  readonly pixKey = 'contatoarchvrooms@gmail.com';
-  readonly pixQrCode = 'images/qr-code-pix.png';
+ readonly pixKey = 'contatoarchvrooms@gmail.com';
+
+get pixQrCode(): string {
+  const qrMap: Record<number, string> = {
+    1: 'images/qr-basic.png',
+    2: 'images/qr-premium.png',
+    10: 'images/qr-ultra.png',
+  };
+  return qrMap[this.planId ?? 0] ?? 'assets/images/qr-basic.png';
+}
   ngOnInit(): void {
     this.checkAuth();
 
