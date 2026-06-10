@@ -244,4 +244,7 @@ export class HomeComponent implements OnInit {
     const img = event.target as HTMLImageElement;
     img.src = 'assets/placeholder-game.png';
   }
+  isActive(path: string): boolean {
+  return this.router.url === path;
+}
 }
