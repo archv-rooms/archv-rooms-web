@@ -31,30 +31,24 @@ export class ProfileComponent implements AfterViewInit {
     signalPct:      0,
   };
 
-  isLoading = true;
+  isLoading    = true;
   errorMessage = '';
 
-  activeTab: 'overview' | 'library' | 'activity' | 'settings' = 'overview';
+  activeTab: 'overview' | 'settings' = 'overview';
 
-  recentGames:   any[] = [];
-  activityLog:   any[] = [];
-  userLibrary:   any[] = [];
-  libFilter      = 'all';
-  loadingLibrary = false;
+  activityLog: any[] = [];
 
-  activityHeatmap: { date: string; count: number; level: number }[] = [];
-  fullActivityLog: any[] = [];
-
-  editForm = { username: '', email: '', bio: '', location: '', avatarUrl: '' };
+  editForm = { username: '', email: '', bio: '', avatarUrl: '' };
   pwForm   = { current: '', new: '', confirm: '' };
   prefs    = { emailNotif: true, publicProfile: false, newsletter: false };
-  activeSessions: any[] = [];
+
   savingProfile  = false;
   saveSuccess    = false;
-
   uploadingAvatar = false;
   avatarSuccess   = '';
   avatarError     = '';
+  pwSuccess       = false;
+  pwError         = '';
 
   get pwStrength(): number {
     const p = this.pwForm.new;
@@ -68,31 +62,28 @@ export class ProfileComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.loadProfile();
-      this.buildHeatmap();
-      this.loadMockActivity();
-      this.loadMockSessions();
-    }, 0);
+    setTimeout(() => this.loadProfile(), 0);
   }
 
   loadProfile(): void {
-    this.isLoading = true;
+    this.isLoading    = true;
     this.errorMessage = '';
 
     this.userService.getProfile().subscribe({
       next: (response) => {
         this.user = response.data.user;
+
         if (this.user.subscriptions?.length > 0) {
           this.activeSubscription = this.user.subscriptions[0];
         }
+
         this.editForm = {
           username:  this.user.name  || '',
           email:     this.user.email || '',
           bio:       '',
-          location:  '',
           avatarUrl: '',
         };
+
         this.userStats = {
           gamesInLibrary: 0,
           roomsAccessed:  0,
@@ -104,16 +95,18 @@ export class ProfileComponent implements AfterViewInit {
             ? Math.min(this.activeSubscription.plan.accessLevel * 20, 100)
             : 5,
         };
+
         this.activityLog = [
           { type: 'sync', icon: '◈', text: 'Login registrado com sucesso',  time: 'AGORA' },
           { type: 'data', icon: '▸', text: 'Perfil carregado',              time: 'AGORA' },
           { type: 'info', icon: '▹', text: 'Sessão iniciada — ARCHV.ROOMS', time: 'AGORA' },
         ];
+
         this.isLoading = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        this.isLoading = false;
+        this.isLoading    = false;
         this.errorMessage = err.error?.message || 'Erro ao carregar perfil.';
         this.cdr.detectChanges();
       }
@@ -172,39 +165,7 @@ export class ProfileComponent implements AfterViewInit {
 
   calcDaysActive(createdAt: string): number {
     if (!createdAt) return 0;
-    const diff = Date.now() - new Date(createdAt).getTime();
-    return Math.floor(diff / (1000 * 60 * 60 * 24));
-  }
-
-  buildHeatmap(): void {
-    const today = new Date();
-    this.activityHeatmap = Array.from({ length: 30 }, (_, i) => {
-      const d = new Date(today);
-      d.setDate(d.getDate() - (29 - i));
-      const count = Math.floor(Math.random() * 8);
-      return {
-        date:  d.toLocaleDateString('pt-BR'),
-        count,
-        level: count === 0 ? 0 : count <= 2 ? 1 : count <= 4 ? 2 : count <= 6 ? 3 : 4,
-      };
-    });
-  }
-
-  loadMockActivity(): void {
-    this.fullActivityLog = [
-      { timestamp: '10/05 17:52', type: 'sync', message: 'Sincronização de acervo concluída' },
-      { timestamp: '10/05 15:20', type: 'info', message: 'Login registrado — Chromium / São Paulo, BR' },
-      { timestamp: '09/05 22:11', type: 'warn', message: 'Tentativa de login de IP não reconhecido' },
-      { timestamp: '09/05 18:05', type: 'data', message: 'Download: Super Mario World [SNES]' },
-      { timestamp: '08/05 12:30', type: 'sync', message: 'Perfil atualizado com sucesso' },
-    ];
-  }
-
-  loadMockSessions(): void {
-    this.activeSessions = [
-      { id: 'sess_001', device: 'CHROMIUM 131 / WINDOWS', location: 'São Paulo, BR',       lastSeen: 'AGORA',       isCurrent: true  },
-      { id: 'sess_002', device: 'FIREFOX 124 / ANDROID',  location: 'Rio de Janeiro, BR',  lastSeen: 'HÁ 2 DIAS',   isCurrent: false },
-    ];
+    return Math.floor((Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24));
   }
 
   getInitials(): string {
@@ -238,11 +199,6 @@ export class ProfileComponent implements AfterViewInit {
     return ['FRACA', 'RAZOÁVEL', 'BOA', 'FORTE', 'EXCELENTE'][this.pwStrength] || '';
   }
 
-  getFilteredLibrary(): any[] {
-    if (this.libFilter === 'all') return this.userLibrary;
-    return this.userLibrary.filter(g => g.console?.toLowerCase() === this.libFilter);
-  }
-
   setTab(tab: typeof this.activeTab): void { this.activeTab = tab; }
   navigate(path: string): void { this.router.navigate([path]); }
   logout(): void { this.authService.logout(); }
@@ -250,13 +206,13 @@ export class ProfileComponent implements AfterViewInit {
 
   copyProfileLink(): void {
     const name = this.user?.name || 'user';
-    const url = `${window.location.origin}/u/${name}`;
-    navigator.clipboard.writeText(url);
+    navigator.clipboard.writeText(`${window.location.origin}/u/${name}`);
   }
 
   saveProfile(): void {
     this.savingProfile = true;
     this.saveSuccess   = false;
+    // TODO: this.userService.updateProfile(this.editForm).subscribe(...)
     setTimeout(() => {
       this.savingProfile = false;
       this.saveSuccess   = true;
@@ -265,14 +221,24 @@ export class ProfileComponent implements AfterViewInit {
   }
 
   changePassword(): void {
-    if (this.pwForm.new !== this.pwForm.confirm) {
-      alert('As senhas não coincidem');
+    this.pwError   = '';
+    this.pwSuccess = false;
+    if (!this.pwForm.current || !this.pwForm.new || !this.pwForm.confirm) {
+      this.pwError = 'Preencha todos os campos.';
       return;
     }
-  }
-
-  revokeSession(id: string): void {
-    this.activeSessions = this.activeSessions.filter(s => s.id !== id);
+    if (this.pwForm.new !== this.pwForm.confirm) {
+      this.pwError = 'As senhas não coincidem.';
+      return;
+    }
+    if (this.pwStrength < 2) {
+      this.pwError = 'Senha muito fraca.';
+      return;
+    }
+    // TODO: this.userService.changePassword(this.pwForm).subscribe(...)
+    this.pwSuccess = true;
+    this.pwForm    = { current: '', new: '', confirm: '' };
+    setTimeout(() => this.pwSuccess = false, 3000);
   }
 
   confirmDeleteAccount(): void {
@@ -280,8 +246,6 @@ export class ProfileComponent implements AfterViewInit {
       // TODO: this.userService.deleteAccount().subscribe(...)
     }
   }
-
-  onGameClick(game: any): void {}
 
   onImgError(event: Event): void {
     (event.target as HTMLImageElement).src = 'assets/img/no-thumb.png';
