@@ -153,7 +153,6 @@ export class RoomsComponent implements OnInit {
     this.showEmulator = true;
     this.cdr.detectChanges();
 
-    // Aguarda o *ngIf renderizar o #game-container no DOM
     setTimeout(() => {
       (window as any).EJS_player = '#game-container';
       (window as any).EJS_core = this.getEmulatorCore();
@@ -162,11 +161,9 @@ export class RoomsComponent implements OnInit {
       (window as any).EJS_startOnLoaded = true;
 
       const script = document.createElement('script');
-      script.id = 'emulatorjs-script';
-      // Cache-bust garante que o browser re-executa o loader a cada abertura
-      script.src = `https://cdn.emulatorjs.org/stable/data/loader.js?t=${Date.now()}`;
+      script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
       document.body.appendChild(script);
-    }, 300);
+    }, 100);
   }
 
   closeEmulator(): void {
@@ -180,17 +177,8 @@ export class RoomsComponent implements OnInit {
       } catch {}
     }
 
-    // Remove todos os scripts do EmulatorJS injetados
-    document.querySelectorAll('script[src*="emulatorjs.org"]')
-      .forEach(s => s.remove());
-
-    // Limpa variáveis globais do EmulatorJS
-    ['EJS_emulator', 'EJS_player', 'EJS_core', 'EJS_gameUrl',
-     'EJS_pathtodata', 'EJS_startOnLoaded', 'EJS_GameManager',
-     'EJS_Buttons', 'EJS_VirtualGamepad'
-    ].forEach(key => { try { delete (window as any)[key]; } catch {} });
-
     this.showEmulator = false;
+    this.emulatorUrl = null;
     this.cdr.detectChanges();
   }
 
