@@ -41,6 +41,12 @@ interface AvatarResponse {
   message: string;
 }
 
+interface UpdateNameResponse {
+  success: boolean;
+  data: { name: string };
+  message: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private http = inject(HttpClient);
@@ -48,12 +54,17 @@ export class UserService {
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('@archv:token');
+    return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+  }
+
+  private getJsonHeaders(): HttpHeaders {
+    const token = localStorage.getItem('@archv:token');
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     });
   }
 
-  // ── PROFILE ──────────────────────────────────────────────
   // GET /user/profile
   getProfile(): Observable<ProfileResponse> {
     return this.http.get<ProfileResponse>(
@@ -62,24 +73,25 @@ export class UserService {
     );
   }
 
-  // ── AVATAR (URL externa) ──────────────────────────────────
+  // PATCH /user/name
+  updateName(name: string): Observable<UpdateNameResponse> {
+    return this.http.patch<UpdateNameResponse>(
+      `${this.apiUrl}/user/name`,
+      { name },
+      { headers: this.getJsonHeaders() }
+    );
+  }
+
   // PATCH /user/avatar-url
   updateAvatarUrl(avatarUrl: string): Observable<AvatarResponse> {
     return this.http.patch<AvatarResponse>(
       `${this.apiUrl}/user/avatar-url`,
       { avatarUrl },
-      {
-        headers: new HttpHeaders({
-          'Authorization': `Bearer ${localStorage.getItem('@archv:token')}`,
-          'Content-Type': 'application/json'
-        })
-      }
+      { headers: this.getJsonHeaders() }
     );
   }
 
-  // ── AVATAR (upload de arquivo) ────────────────────────────
   // PATCH /user/avatar-file
-  // Nota: não enviar Content-Type manualmente — o browser define o boundary do multipart automaticamente
   updateAvatarFile(file: File): Observable<AvatarResponse> {
     const formData = new FormData();
     formData.append('avatar', file);
@@ -90,7 +102,6 @@ export class UserService {
     );
   }
 
-  // ── ADMIN — USERS ─────────────────────────────────────────
   // GET /admin/users
   getAllUsers(): Observable<any> {
     return this.http.get<any>(
@@ -104,12 +115,7 @@ export class UserService {
     return this.http.patch(
       `${this.apiUrl}/admin/users/${id}/role`,
       { role },
-      {
-        headers: new HttpHeaders({
-          'Authorization': `Bearer ${localStorage.getItem('@archv:token')}`,
-          'Content-Type': 'application/json'
-        })
-      }
+      { headers: this.getJsonHeaders() }
     );
   }
 
@@ -118,12 +124,7 @@ export class UserService {
     return this.http.patch(
       `${this.apiUrl}/admin/users/${id}/status`,
       { status },
-      {
-        headers: new HttpHeaders({
-          'Authorization': `Bearer ${localStorage.getItem('@archv:token')}`,
-          'Content-Type': 'application/json'
-        })
-      }
+      { headers: this.getJsonHeaders() }
     );
   }
 }
