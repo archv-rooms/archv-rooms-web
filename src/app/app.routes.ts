@@ -56,6 +56,16 @@ export const routes: Routes = [
   },
 
   {
+  path: 'payment-success',
+  loadComponent: () => import('./features/plans/payment-success/payment-success.component').then(m => m.PaymentSuccessComponent)
+  },
+
+  {
+  path: 'donate-thanks',
+  loadComponent: () => import('./features/donate/donate-thanks/donate-thanks.component').then(m => m.DonateThanksComponent)
+  },
+  
+  {
     path: 'error',
     loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent)
   },

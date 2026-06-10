@@ -65,15 +65,31 @@ $pink:         #f472b6;
 .btn {
   font-family: 'Share Tech Mono', monospace; font-size: 13px; letter-spacing: 2px;
   padding: 10px 22px; text-transform: uppercase; border-radius: 4px; cursor: pointer; transition: all 0.2s ease;
-  &-outline {
-    background: transparent; border: 1px solid $pink; color: $pink;
-    box-shadow: 0 0 8px rgba($pink,0.2), inset 0 0 8px rgba($pink,0.04);
-    &:hover { background: rgba($pink,0.12); box-shadow: 0 0 16px rgba($pink,0.4); }
+&-outline {
+  background: transparent; 
+  border: 1px solid $pink; 
+  color: $pink;
+  box-shadow: 0 0 8px rgba($pink, 0.4), 0 0 20px rgba($pink, 0.2), inset 0 0 8px rgba($pink, 0.05);
+  text-shadow: 0 0 8px rgba($pink, 0.8);
+  &:hover { 
+    background: rgba($pink, 0.12); 
+    box-shadow: 0 0 16px rgba($pink, 0.6), 0 0 30px rgba($pink, 0.3); 
+    text-shadow: 0 0 12px rgba($pink, 1);
   }
-  &-ghost {
-    background: transparent; border: 1px solid $border-glow; color: $text-muted;
-    &:hover { border-color: $text-muted; color: $text-bright; }
+}
+&-ghost {
+  background: transparent; 
+  border: 1px solid $border-glow; 
+  color: $text-bright;
+  box-shadow: 0 0 12px rgba($border-glow, 0.6), 0 0 20px rgba($border-glow, 0.2), inset 0 0 8px rgba($border-glow, 0.05);
+  text-shadow: 0 0 8px rgba($border-glow, 0.6);
+  &:hover { 
+    border-color: $purple; 
+    color: $text-bright; 
+    box-shadow: 0 0 16px rgba($purple, 0.7), 0 0 30px rgba($purple, 0.3);
+    text-shadow: 0 0 12px rgba($purple, 1);
   }
+}
   &-sm { font-size: 11px; padding: 6px 14px; }
 }
 

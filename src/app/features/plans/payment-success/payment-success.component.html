@@ -1,0 +1,18 @@
+<div class="success-wrapper">
+  <div class="success-card">
+    <div class="icon">✓</div>
+    <span class="eye">PAGAMENTO_ENVIADO</span>
+    <h1 class="title">Recebemos seu pedido!</h1>
+    <p class="desc">
+      Seu pagamento via PIX está sendo verificado.<br>
+      Em breve um administrador liberará seu acesso.<br>
+      Fique de olho no seu perfil.
+    </p>
+    <div class="actions">
+      <button class="btn btn-outline" (click)="navigate('/profile')">VER PERFIL</button>
+      <button class="btn btn-outline" (click)="navigate('/')">VOLTAR</button>
+    </div>
+  </div>
+  <div class="crt-overlay"></div>
+  <div class="scanlines"></div>
+</div>

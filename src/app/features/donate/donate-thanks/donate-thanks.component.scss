@@ -1,0 +1,73 @@
+$bg: #11131a;
+$pink: #f472b6;
+$purple: #8b5cf6;
+$text-bright: #f2f4ff;
+$text-muted: #9aa3c7;
+$border-glow: #6d4ed8;
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:host { display: block; width: 100%; height: 100vh; background: $bg; font-family: 'Share Tech Mono', monospace; }
+
+.thanks-wrapper {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100vh; background: $bg; position: relative;
+}
+
+.thanks-card {
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  text-align: center; padding: 48px 40px;
+  border: 1px solid rgba($pink, 0.3); border-radius: 6px;
+  background: rgba(#202433, 0.98);
+  box-shadow: 0 0 40px rgba($pink, 0.08);
+  max-width: 440px; width: 90%;
+}
+
+.heart-icon {
+  svg {
+    width: 56px; height: 56px;
+    filter: drop-shadow(0 0 16px rgba($pink, 0.8));
+    animation: pulse 2s ease-in-out infinite;
+  }
+}
+
+.eye { font-size: 10px; letter-spacing: 3px; color: rgba($text-muted, 0.6); }
+
+.title { font-family: 'VT323', monospace; font-size: 36px; color: $text-bright; letter-spacing: 2px; }
+
+.desc { font-size: 13px; color: $text-muted; line-height: 1.8;
+  strong { color: $pink; }
+}
+
+.actions { display: flex; gap: 12px; margin-top: 8px; }
+
+.btn {
+  font-family: 'Share Tech Mono', monospace; font-size: 12px;
+  letter-spacing: 2px; padding: 10px 20px; text-transform: uppercase;
+  border-radius: 4px; cursor: pointer; transition: all 0.2s ease;
+&-outline {
+  background: transparent; border: 1px solid $pink; color: $pink;
+  box-shadow: 0 0 8px rgba($pink, 0.3), inset 0 0 8px rgba($pink, 0.05);
+  &:hover { background: rgba($pink, 0.12); box-shadow: 0 0 16px rgba($pink, 0.5); }
+}
+  &-ghost {
+    background: transparent; border: 1px solid $border-glow; color: $text-muted;
+    &:hover { color: $text-bright; }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba($pink, 0.5)); transform: scale(1); }
+  50%       { filter: drop-shadow(0 0 20px rgba($pink, 1)); transform: scale(1.1); }
+}
+
+.crt-overlay {
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.55) 100%);
+  pointer-events: none; z-index: 100;
+}
+.scanlines {
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+  pointer-events: none; z-index: 99;
+}

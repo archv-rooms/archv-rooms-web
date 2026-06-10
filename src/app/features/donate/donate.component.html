@@ -102,9 +102,10 @@
           <!-- AÇÕES -->
           <div class="card-actions">
             <button class="btn btn-ghost" (click)="navigate('/')">← VOLTAR</button>
-            <button class="btn btn-outline" (click)="copyPixKey()">
+            <button class="btn btn-ghost" (click)="copyPixKey()">
               {{ pixCopied ? '✓ COPIADO' : '▶ COPIAR CHAVE' }}
             </button>
+            <button class="btn btn-outline" (click)="navigate('/donate-thanks')">♥ FIZ A DOAÇÃO</button>
           </div>
 
         </div>
