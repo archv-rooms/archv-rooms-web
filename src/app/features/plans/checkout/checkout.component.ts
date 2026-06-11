@@ -98,10 +98,10 @@ get pixQrCode(): string {
   return this.router.url === path;
   }
 
-  sendProof(): void {
+sendProof(): void {
   const subject = encodeURIComponent('Comprovante de pagamento - ARCHV.ROOMS');
   const body = encodeURIComponent(`Olá, segue o comprovante de pagamento do plano ${this.selectedPlan?.name}.`);
-  window.open(`mailto:contatoarchvrooms@gmail.com?subject=${subject}&body=${body}`); 
-  }
+  window.open(`https://mail.google.com/mail/?view=cm&to=contatoarchvrooms@gmail.com&su=${subject}&body=${body}`, '_blank');
+}
 
 }
