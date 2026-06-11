@@ -97,4 +97,11 @@ get pixQrCode(): string {
   isActive(path: string): boolean {
   return this.router.url === path;
   }
+
+  sendProof(): void {
+  const subject = encodeURIComponent('Comprovante de pagamento - ARCHV.ROOMS');
+  const body = encodeURIComponent(`Olá, segue o comprovante de pagamento do plano ${this.selectedPlan?.name}.`);
+  window.open(`mailto:contatoarchvrooms@gmail.com?subject=${subject}&body=${body}`); 
+  }
+
 }
