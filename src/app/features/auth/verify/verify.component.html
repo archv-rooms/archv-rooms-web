@@ -1,0 +1,49 @@
+<div class="auth-wrapper">
+  <div class="bg-grid"></div>
+  <div class="scanlines"></div>
+
+  <div class="auth-terminal">
+
+    <div class="terminal-header">
+      <button class="back-btn" routerLink="/login">
+        <span class="back-arrow">←</span>
+        <span class="back-text">LOGIN</span>
+      </button>
+      <span class="terminal-status">● SECURE</span>
+    </div>
+
+    <div class="auth-body">
+
+      <div class="auth-header">
+        <div class="auth-icon">✉</div>
+        <div>
+          <h1 class="auth-title">VERIFICAR</h1>
+          <p class="auth-subtitle">confirmando seu e-mail</p>
+        </div>
+      </div>
+
+      <div class="server-success" *ngIf="successMessage">
+        <span class="success-tag">[OK]</span>
+        {{ successMessage }}
+        <p class="redirect-msg">Redirecionando para o login...</p>
+      </div>
+
+      <div class="server-error" *ngIf="errorMessage">
+        <span class="error-tag">[DENIED]</span>
+        {{ errorMessage }}
+      </div>
+
+      <div class="loading" *ngIf="isLoading">
+        <span class="loading-text">VERIFICANDO <span class="dots">...</span></span>
+      </div>
+
+      <div class="auth-footer">
+        <a routerLink="/login" class="footer-link">
+          <span class="link-arrow">→</span>
+          <span class="link-text">VOLTAR AO LOGIN</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
