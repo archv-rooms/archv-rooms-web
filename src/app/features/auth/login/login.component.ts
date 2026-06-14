@@ -44,9 +44,13 @@ export class LoginComponent {
     }
 },
       error: (err) => {
-        this.isLoading = false;
-        this.errorMessage = err.error?.message || 'Erro ao conectar ao servidor.';
-      }
+      this.isLoading = false;
+      if (err.status === 429) {
+      this.errorMessage = err.error?.message || 'Conta bloqueada temporariamente.';
+      } else {
+      this.errorMessage = err.error?.message || 'Erro ao conectar ao servidor.';
+       }
+      }   
     });
   }
 }
