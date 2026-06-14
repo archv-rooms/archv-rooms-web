@@ -1,0 +1,88 @@
+<div class="auth-wrapper">
+  <div class="bg-grid"></div>
+  <div class="scanlines"></div>
+
+  <div class="auth-terminal">
+
+    <div class="terminal-header">
+      <button class="back-btn" routerLink="/login">
+        <span class="back-arrow">←</span>
+        <span class="back-text">LOGIN</span>
+      </button>
+      <span class="terminal-status">● SECURE</span>
+    </div>
+
+    <div class="auth-body">
+
+      <div class="auth-header">
+        <div class="auth-icon">▶</div>
+        <div>
+          <h1 class="auth-title">NOVA SENHA</h1>
+          <p class="auth-subtitle">defina sua nova senha</p>
+        </div>
+      </div>
+
+      <form [formGroup]="resetForm" (ngSubmit)="onSubmit()" class="auth-form" autocomplete="off">
+
+        <div class="field-group">
+          <div class="field-wrapper" [class.field-error]="resetForm.get('password')?.invalid && resetForm.get('password')?.touched">
+            <span class="field-icon">▒</span>
+            <input
+              type="password"
+              formControlName="password"
+              class="field-input"
+              placeholder="nova senha"
+              autocomplete="new-password"
+            >
+          </div>
+          <span class="error-msg" *ngIf="resetForm.get('password')?.invalid && resetForm.get('password')?.touched">
+            ⚠ mínimo 6 caracteres
+          </span>
+        </div>
+
+        <div class="field-group">
+          <div class="field-wrapper" [class.field-error]="resetForm.get('confirmPassword')?.invalid && resetForm.get('confirmPassword')?.touched">
+            <span class="field-icon">▒</span>
+            <input
+              type="password"
+              formControlName="confirmPassword"
+              class="field-input"
+              placeholder="confirmar senha"
+              autocomplete="new-password"
+            >
+          </div>
+          <span class="error-msg" *ngIf="resetForm.get('confirmPassword')?.invalid && resetForm.get('confirmPassword')?.touched">
+            ⚠ confirme sua senha
+          </span>
+        </div>
+
+        <div class="server-success" *ngIf="successMessage">
+          <span class="success-tag">[OK]</span>
+          {{ successMessage }}
+        </div>
+
+        <div class="server-error" *ngIf="errorMessage">
+          <span class="error-tag">[DENIED]</span>
+          {{ errorMessage }}
+        </div>
+
+        <button type="submit" class="btn-submit" [disabled]="isLoading">
+          <span *ngIf="!isLoading">REDEFINIR SENHA ▶</span>
+          <span *ngIf="isLoading" class="loading-text">
+            SALVANDO <span class="dots">...</span>
+          </span>
+        </button>
+
+      </form>
+
+      <div class="auth-footer">
+        <p class="footer-text">lembrou a senha?</p>
+        <a routerLink="/login" class="footer-link">
+          <span class="link-arrow">→</span>
+          <span class="link-text">VOLTAR AO LOGIN</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>

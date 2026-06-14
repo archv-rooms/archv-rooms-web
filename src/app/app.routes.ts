@@ -66,6 +66,16 @@ export const routes: Routes = [
   },
   
   {
+  path: 'forgot',
+  loadComponent: () => import('./features/auth/forgot/forgot.component').then(m => m.ForgotComponent)
+  },
+  
+  {
+  path: 'reset-password',
+  loadComponent: () => import('./features/auth/reset/reset.component').then(m => m.ResetComponent)
+  },
+
+  {
     path: 'error',
     loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent)
   },

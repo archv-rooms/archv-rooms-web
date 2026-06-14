@@ -1,0 +1,72 @@
+<div class="auth-wrapper">
+  <div class="bg-grid"></div>
+  <div class="scanlines"></div>
+
+  <div class="auth-terminal">
+
+    <div class="terminal-header">
+      <button class="back-btn" routerLink="/login">
+        <span class="back-arrow">←</span>
+        <span class="back-text">LOGIN</span>
+      </button>
+      <span class="terminal-status">● SECURE</span>
+    </div>
+
+    <div class="auth-body">
+
+      <div class="auth-header">
+        <div class="auth-icon">⚠</div>
+        <div>
+          <h1 class="auth-title">RECUPERAR</h1>
+          <p class="auth-subtitle">informe seu e-mail cadastrado</p>
+        </div>
+      </div>
+
+      <form [formGroup]="forgotForm" (ngSubmit)="onSubmit()" class="auth-form" autocomplete="off">
+
+        <div class="field-group">
+          <div class="field-wrapper" [class.field-error]="forgotForm.get('email')?.invalid && forgotForm.get('email')?.touched">
+            <span class="field-icon">@</span>
+            <input
+              type="email"
+              formControlName="email"
+              class="field-input"
+              placeholder="e-mail"
+              autocomplete="off"
+            >
+          </div>
+          <span class="error-msg" *ngIf="forgotForm.get('email')?.invalid && forgotForm.get('email')?.touched">
+            ⚠ e-mail inválido
+          </span>
+        </div>
+
+        <div class="server-success" *ngIf="successMessage">
+          <span class="success-tag">[OK]</span>
+          {{ successMessage }}
+        </div>
+
+        <div class="server-error" *ngIf="errorMessage">
+          <span class="error-tag">[DENIED]</span>
+          {{ errorMessage }}
+        </div>
+
+        <button type="submit" class="btn-submit" [disabled]="isLoading">
+          <span *ngIf="!isLoading">ENVIAR LINK ▶</span>
+          <span *ngIf="isLoading" class="loading-text">
+            ENVIANDO <span class="dots">...</span>
+          </span>
+        </button>
+
+      </form>
+
+      <div class="auth-footer">
+        <p class="footer-text">lembrou a senha?</p>
+        <a routerLink="/login" class="footer-link">
+          <span class="link-arrow">→</span>
+          <span class="link-text">VOLTAR AO LOGIN</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
