@@ -19,6 +19,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         authService.logout();
         router.navigate(['/banned']);
       }
+
+      if (err.status === 401) {
+        authService.logout();
+        router.navigate(['/login']);
+      }
       return throwError(() => err);
     })
   );
