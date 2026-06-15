@@ -19,12 +19,11 @@
           <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
         </svg>
       </button>
-      <!-- Apoiar -->
- <button class="nav-btn" title="Apoiar" (click)="navigate('/donate')">
-  <svg class="heart-glow" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
-    <path d="M12 21C12 21 3 14.5 3 8.5a4.5 4.5 0 0 1 9-0.5 4.5 4.5 0 0 1 9 .5c0 6-9 12.5-9 12.5z"/>
-  </svg>
-</button>
+      <button class="nav-btn" title="Apoiar" (click)="navigate('/donate')">
+        <svg class="heart-glow" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
+          <path d="M12 21C12 21 3 14.5 3 8.5a4.5 4.5 0 0 1 9-0.5 4.5 4.5 0 0 1 9 .5c0 6-9 12.5-9 12.5z"/>
+        </svg>
+      </button>
       <button class="nav-btn" title="Perfil" *ngIf="isLoggedIn" (click)="navigate('/profile')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="8" r="4"/>
@@ -59,14 +58,14 @@
         </div>
 
         <!-- ERRO -->
-        <div class="state-screen" *ngIf="errorMessage">
+        <div class="state-screen" *ngIf="!isLoadingPlan && errorMessage">
           <span class="err-label">ERRO</span>
           <p class="err-msg">{{ errorMessage }}</p>
           <button class="btn btn-ghost btn-sm" (click)="navigate('/pricing')">← VOLTAR</button>
         </div>
 
         <!-- CONTEÚDO -->
-        <div class="checkout-card" *ngIf="!isLoadingPlan && selectedPlan">
+        <div class="checkout-card" *ngIf="!isLoadingPlan && selectedPlan && !errorMessage">
 
           <!-- PLANO -->
           <div class="card-section">
@@ -89,31 +88,26 @@
 
           <div class="sep"></div>
 
-          <!-- PIX -->
+          <!-- PAGAMENTO -->
           <div class="card-section">
-            <span class="section-eye">PAGAMENTO VIA PIX</span>
+            <span class="section-eye">PAGAMENTO SEGURO VIA PIX</span>
 
-            <div class="pix-row">
-              <span class="pix-label">BENEFICIÁRIO</span>
-              <span class="pix-value">ARCHV SYSTEMS LTDA</span>
+            <div class="pix-notice">
+              <span class="notice-dot">ℹ</span>
+              <p>Você será redirecionado para o <strong>Mercado Pago</strong> para concluir o pagamento via Pix. Após a confirmação, seu acesso será liberado automaticamente.</p>
             </div>
-            <div class="pix-row">
-              <span class="pix-label">CHAVE</span>
-              <span class="pix-value pix-key">{{ pixKey }}</span>
-            </div>
+
             <div class="pix-row">
               <span class="pix-label">VALOR</span>
               <span class="pix-value highlight">R$ {{ selectedPlan.price | number:'1.2-2' }}</span>
             </div>
-
-            <div class="qr-block">
-              <img [src]="pixQrCode" alt="QR Code Pix" class="qr-image" />
-              <span class="qr-label">QR CODE</span>
+            <div class="pix-row">
+              <span class="pix-label">MÉTODO</span>
+              <span class="pix-value">PIX</span>
             </div>
-
-            <div class="pix-notice">
-              <span class="notice-dot">⚠</span>
-              <p>Envie o comprovante para <strong>{{ pixKey }}</strong>. Acesso liberado em até 24h.</p>
+            <div class="pix-row">
+              <span class="pix-label">LIBERAÇÃO</span>
+              <span class="pix-value">AUTOMÁTICA APÓS PAGAMENTO</span>
             </div>
           </div>
 
@@ -121,11 +115,13 @@
 
           <!-- AÇÕES -->
           <div class="card-actions">
-            <button class="btn btn-ghost" (click)="navigate('/pricing')">← VOLTAR</button>
-            <button class="btn btn-outline" (click)="copyPixKey()">
-              {{ pixCopied ? '✓ COPIADO' : '▶ COPIAR CHAVE' }}
+            <button class="btn btn-ghost" (click)="navigate('/pricing')" [disabled]="isProcessing">
+              ← VOLTAR
             </button>
-            <button class="btn btn-outline" (click)="sendProof()">✉ ENVIAR COMPROVANTE</button>
+            <button class="btn btn-outline" (click)="startCheckout()" [disabled]="isProcessing">
+              <span *ngIf="!isProcessing">▶ PAGAR COM PIX</span>
+              <span *ngIf="isProcessing">▓▓░░ AGUARDE...</span>
+            </button>
           </div>
 
         </div>

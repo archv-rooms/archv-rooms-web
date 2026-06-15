@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PlanService, Plan } from '../../../core/services/plan.service';
+import { CheckoutService } from '../../../core/services/checkout.service';
 
 @Component({
   selector: 'app-checkout',
@@ -14,31 +15,21 @@ export class CheckoutComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private planService = inject(PlanService);
+  private checkoutService = inject(CheckoutService);
   private cdr = inject(ChangeDetectorRef);
 
   planId: number | null = null;
   selectedPlan: Plan | null = null;
 
   isLoadingPlan = true;
+  isProcessing = false;
   errorMessage = '';
 
   isLoggedIn = false;
   userName = '';
 
-  pixCopied = false;
- readonly pixKey = 'contatoarchvrooms@gmail.com';
-
-get pixQrCode(): string {
-  const qrMap: Record<number, string> = {
-    1: 'images/qr-basic.png',
-    2: 'images/qr-premium.png',
-    10: 'images/qr-ultra.png',
-  };
-  return qrMap[this.planId ?? 0] ?? 'assets/images/qr-basic.png';
-}
   ngOnInit(): void {
     this.checkAuth();
-
     this.planId = Number(this.route.snapshot.paramMap.get('planId'));
     if (this.planId) {
       this.loadPlanDetails();
@@ -51,7 +42,7 @@ get pixQrCode(): string {
 
   checkAuth(): void {
     const token = localStorage.getItem('@archv:token');
-    const user  = localStorage.getItem('@archv:user');
+    const user = localStorage.getItem('@archv:user');
     this.isLoggedIn = !!token;
     if (user) {
       try { this.userName = JSON.parse(user).name ?? 'USER'; }
@@ -83,10 +74,34 @@ get pixQrCode(): string {
     });
   }
 
-  copyPixKey(): void {
-    navigator.clipboard.writeText(this.pixKey).then(() => {
-      this.pixCopied = true;
-      setTimeout(() => this.pixCopied = false, 3000);
+  startCheckout(): void {
+    if (!this.planId || this.isProcessing) return;
+
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.isProcessing = true;
+    this.errorMessage = '';
+    this.cdr.detectChanges();
+
+    this.checkoutService.createCheckout(this.planId).subscribe({
+      next: (response) => {
+        if (response.success && response.data.initPoint) {
+          // Redireciona para o Mercado Pago
+          window.location.href = response.data.initPoint;
+        } else {
+          this.errorMessage = 'Erro ao iniciar pagamento. Tente novamente.';
+          this.isProcessing = false;
+          this.cdr.detectChanges();
+        }
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.message || 'Erro ao iniciar pagamento. Tente novamente.';
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -95,14 +110,6 @@ get pixQrCode(): string {
   }
 
   isActive(path: string): boolean {
-  return this.router.url === path;
+    return this.router.url === path;
   }
-
-sendProof(): void {
-  const subject = encodeURIComponent('Comprovante de pagamento - ARCHV.ROOMS');
-  const body = encodeURIComponent(`Olá, segue o comprovante de pagamento do plano ${this.selectedPlan?.name}.`);
-  const url = `https://mail.google.com/mail/?view=cm&to=contatoarchvrooms@gmail.com&su=${subject}&body=${body}`;
-  window.location.href = url;
-}
-
 }
