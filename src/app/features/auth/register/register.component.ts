@@ -39,8 +39,8 @@ export class RegisterComponent {
     this.authService.register(this.registerForm.value).subscribe({
       next: () => {
         this.isLoading = false;
-        // Redireciona para o login após cadastro — sem login automático
-        this.router.navigate(['/login']);
+        this.successMessage = 'Usuário registrado. Verifique seu e-mail para ativar a conta.';
+        this.registerForm.reset();
       },
       error: (err) => {
         this.isLoading = false;

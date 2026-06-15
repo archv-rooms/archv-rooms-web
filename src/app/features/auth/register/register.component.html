@@ -53,6 +53,14 @@
           <span class="error-tag">[DENIED]</span> {{ errorMessage }}
         </div>
 
+        <div class="server-success" *ngIf="successMessage">
+          <span class="success-tag">[OK]</span> {{ successMessage }}
+        </div>
+
+        <div class="server-error" *ngIf="errorMessage">
+          <span class="error-tag">[DENIED]</span> {{ errorMessage }}
+        </div>
+
         <button type="submit" class="btn-submit" [disabled]="isLoading">
           <span *ngIf="!isLoading">CRIAR CONTA </span>
           <span *ngIf="isLoading" class="loading-text">CRIANDO<span class="dots">...</span></span>

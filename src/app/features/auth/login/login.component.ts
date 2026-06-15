@@ -21,7 +21,8 @@ export class LoginComponent {
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
-  errorMessage: string = '';
+errorMessage: string = '';
+  unverifiedEmail: boolean = false;
   isLoading: boolean = false;
 
   onSubmit(): void {
@@ -32,25 +33,29 @@ export class LoginComponent {
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.unverifiedEmail = false;
 
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
-       this.isLoading = false;
-       const role = this.authService.getUserRole();
-       if (role === 'admin') {
-       this.router.navigate(['/admin']);
-       } else {
-       this.router.navigate(['/library']);
-    }
-},
+        this.isLoading = false;
+        const role = this.authService.getUserRole();
+        if (role === 'admin') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/library']);
+        }
+      },
       error: (err) => {
-      this.isLoading = false;
-      if (err.status === 429) {
-      this.errorMessage = err.error?.message || 'Conta bloqueada temporariamente.';
-      } else {
-      this.errorMessage = err.error?.message || 'Erro ao conectar ao servidor.';
-       }
-      }   
+        this.isLoading = false;
+        if (err.status === 429) {
+          this.errorMessage = err.error?.message || 'Conta bloqueada temporariamente.';
+        } else if (err.status === 403) {
+          this.unverifiedEmail = true;
+          this.errorMessage = err.error?.message || 'E-mail não verificado. Verifique sua caixa de entrada.';
+        } else {
+          this.errorMessage = err.error?.message || 'Erro ao conectar ao servidor.';
+        }
+      }
     });
   }
 }

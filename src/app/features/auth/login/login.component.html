@@ -88,9 +88,16 @@
         </div>
 
         <!-- SERVER ERROR -->
-        <div class="server-error" *ngIf="errorMessage">
+        <div class="server-error" *ngIf="errorMessage && !unverifiedEmail">
           <span class="error-tag">[DENIED]</span>
           {{ errorMessage }}
+        </div>
+
+        <!-- EMAIL NÃO VERIFICADO -->
+        <div class="server-warning" *ngIf="unverifiedEmail">
+          <span class="warning-tag">[PENDING]</span>
+          {{ errorMessage }}
+          <p class="warning-hint">✉ Verifique sua caixa de entrada e clique no link que enviamos.</p>
         </div>
 
         <!-- SUBMIT -->

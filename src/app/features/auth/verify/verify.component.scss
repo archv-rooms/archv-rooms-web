@@ -361,6 +361,33 @@
   letter-spacing: 1px;
 }
 
+.server-success {
+  padding: 10px 14px;
+
+  background: rgba(74, 222, 128, 0.08);
+
+  border: 1px solid rgba(74, 222, 128, 0.3);
+
+  color: var(--color-green);
+
+  font-family: var(--font-mono);
+  font-size: 11px;
+
+  letter-spacing: 1px;
+}
+
+.success-tag {
+  font-weight: bold;
+}
+
+.redirect-msg {
+  margin: 6px 0 0;
+
+  font-size: 10px;
+
+  color: var(--color-text-dim);
+}
+
 .error-tag {
   font-weight: bold;
 }
