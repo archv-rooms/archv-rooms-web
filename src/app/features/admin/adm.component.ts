@@ -176,8 +176,22 @@ openGameModal(game?: any): void {
 
   changeSection(section: string): void {
     this.currentSection = section;
+
+    if (section === 'users' && this.users.length === 0) {
+    this.loadUsers();
+    }
+    if (section === 'sales' && this.sales.length === 0) {
+    this.loadSales();
+    }
+    if (section === 'games' && this.games.length === 0) {
+    this.loadGames();
+    }
+    if (section === 'plans' && this.plans.length === 0) {
+    this.loadPlans();
+    }
+
     this.cdr.detectChanges();
-  }
+}
 
 saveGame(): void {
   if (this.editingGame) {
