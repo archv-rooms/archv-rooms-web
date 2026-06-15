@@ -388,7 +388,7 @@ saveGame(): void {
         this.salesStats.active  = res.data.filter((s: any) => s.status === 'active').length;
         this.salesStats.revenue = res.data
           .filter((s: any) => s.status === 'active')
-          .reduce((acc: number, s: any) => acc + (s.plan?.price ?? 0), 0);
+          .reduce((acc: number, s: any) => acc + parseFloat(s.plan?.price ?? 0), 0);
         this.cdr.detectChanges();
       },
       error: () => { this.errorMessage = 'Erro ao carregar vendas'; this.cdr.detectChanges(); }
