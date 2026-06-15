@@ -669,3 +669,24 @@
   font-size: 11px;
   letter-spacing: 1px;
 }
+
+.member-info {
+  flex: 1;
+}
+
+.github-btn {
+  padding: 6px 14px;
+  border: 1px solid #342e55;
+  color: #c084fc;
+  text-decoration: none;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #7c3aed;
+    color: #fff;
+    background: #7c3aed;
+  }
+}
