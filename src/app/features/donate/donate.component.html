@@ -65,35 +65,57 @@
 
           <div class="sep"></div>
 
-          <!-- PIX -->
+          <!-- FORMULÁRIO -->
           <div class="card-section">
-            <span class="section-eye">DOAÇÃO VIA PIX</span>
+            <span class="section-eye">DADOS DA DOAÇÃO</span>
+
+            <!-- VALORES RÁPIDOS -->
+            <div class="quick-amounts">
+              <button class="btn-amount" [class.selected]="donationAmount === 5" (click)="setAmount(5)">R$ 5</button>
+              <button class="btn-amount" [class.selected]="donationAmount === 10" (click)="setAmount(10)">R$ 10</button>
+              <button class="btn-amount" [class.selected]="donationAmount === 20" (click)="setAmount(20)">R$ 20</button>
+              <button class="btn-amount" [class.selected]="donationAmount === 50" (click)="setAmount(50)">R$ 50</button>
+            </div>
 
             <div class="pix-row">
-              <span class="pix-label">BENEFICIÁRIO</span>
-              <span class="pix-value">ARCHV SYSTEMS LTDA</span>
-            </div>
-            <div class="pix-row">
-              <span class="pix-label">CHAVE</span>
-              <span class="pix-value pix-key">{{ pixKey }}</span>
-            </div>
-            <div class="pix-row">
-              <span class="pix-label">VALOR</span>
-              <span class="pix-value pix-free">LIVRE</span>
+              <span class="pix-label">VALOR (R$)</span>
+              <input
+                class="donate-input"
+                type="number"
+                min="1"
+                placeholder="Digite o valor"
+                [(ngModel)]="donationAmount"
+              />
             </div>
 
-            <div class="qr-block">
-              <img [src]="pixQrCode" alt="QR Code Pix" class="qr-image" />
-              <span class="qr-label">ESCANEIE E APOIE</span>
+            <div class="pix-row">
+              <span class="pix-label">NOME</span>
+              <input
+                class="donate-input"
+                type="text"
+                placeholder="Seu nome"
+                [(ngModel)]="donorName"
+              />
+            </div>
+
+            <div class="pix-row">
+              <span class="pix-label">E-MAIL</span>
+              <input
+                class="donate-input"
+                type="email"
+                placeholder="Seu e-mail"
+                [(ngModel)]="donorEmail"
+              />
+            </div>
+
+            <div class="pix-notice" *ngIf="errorMessage">
+              <span class="notice-dot">⚠</span>
+              <p>{{ errorMessage }}</p>
             </div>
 
             <div class="pix-notice">
-              <span class="notice-dot">
-                <svg class="heart-glow" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
-                  <path d="M12 21C12 21 3 14.5 3 8.5a4.5 4.5 0 0 1 9-0.5 4.5 4.5 0 0 1 9 .5c0 6-9 12.5-9 12.5z"/>
-                </svg>
-              </span>
-              <p>Qualquer valor é bem-vindo. Obrigado por apoiar o <strong>ARCHV.ROOMS</strong>.</p>
+              <span class="notice-dot">ℹ</span>
+              <p>Você será redirecionado para o <strong>Mercado Pago</strong> para concluir a doação via Pix. Um e-mail de confirmação será enviado após o pagamento.</p>
             </div>
           </div>
 
@@ -101,11 +123,11 @@
 
           <!-- AÇÕES -->
           <div class="card-actions">
-            <button class="btn btn-ghost" (click)="navigate('/')">← VOLTAR</button>
-            <button class="btn btn-ghost" (click)="copyPixKey()">
-              {{ pixCopied ? '✓ COPIADO' : '▶ COPIAR CHAVE' }}
+            <button class="btn btn-ghost" (click)="navigate('/')" [disabled]="isProcessing">← VOLTAR</button>
+            <button class="btn btn-outline" (click)="startDonation()" [disabled]="isProcessing">
+              <span *ngIf="!isProcessing">♥ DOAR VIA PIX</span>
+              <span *ngIf="isProcessing">▓▓░░ AGUARDE...</span>
             </button>
-            <button class="btn btn-outline" (click)="navigate('/donate-thanks')">♥ FIZ A DOAÇÃO</button>
           </div>
 
         </div>
