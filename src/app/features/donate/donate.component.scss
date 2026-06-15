@@ -212,4 +212,60 @@ $pink:         #f472b6;
     filter: drop-shadow(0 0 8px rgba($pink, 1));
     animation: heartbeat 0.4s ease-in-out;
   }
+
+  // QUICK AMOUNTS
+.quick-amounts {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+
+.btn-amount {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; letter-spacing: 1px;
+  padding: 6px 14px; border-radius: 4px;
+  background: transparent;
+  border: 1px solid $border;
+  color: $text-muted;
+  cursor: pointer; transition: all 0.2s ease;
+  text-transform: uppercase;
+
+  &:hover {
+    border-color: $pink;
+    color: $pink;
+    background: rgba($pink, 0.08);
+  }
+
+  &.selected {
+    border-color: $pink;
+    color: $pink;
+    background: rgba($pink, 0.15);
+    box-shadow: 0 0 8px rgba($pink, 0.3);
+  }
+}
+
+// INPUTS
+.donate-input {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; letter-spacing: 1px;
+  padding: 8px 12px;
+  background: rgba($bg, 0.8);
+  border: 1px solid $border;
+  border-radius: 4px;
+  color: $text-bright;
+  width: 100%; max-width: 220px;
+  transition: all 0.2s ease;
+  outline: none;
+
+  &::placeholder { color: $text-dim; }
+
+  &:focus {
+    border-color: $pink;
+    box-shadow: 0 0 8px rgba($pink, 0.25);
+  }
+
+  &[type="number"] {
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button { -webkit-appearance: none; }
+  }
+}
 }
