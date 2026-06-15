@@ -1,0 +1,68 @@
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+
+  background: #1a1728;
+  border-top: 1px solid #342e55;
+
+  padding: 16px 24px;
+
+  box-shadow: 0 -4px 20px rgba(124, 58, 237, 0.2);
+}
+
+.cookie-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.cookie-text {
+  margin: 0;
+
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+
+  color: #7070a0;
+
+  letter-spacing: 1px;
+}
+
+.cookie-link {
+  color: #c084fc;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.cookie-btn {
+  min-width: 100px;
+
+  padding: 8px 20px;
+
+  background: #7c3aed;
+  border: none;
+
+  color: #fff;
+
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+
+  letter-spacing: 2px;
+
+  cursor: pointer;
+
+  transition: background 0.2s;
+
+  &:hover {
+    background: #9333ea;
+  }
+}
