@@ -32,6 +32,7 @@ export class RoomsComponent implements OnInit {
   game: Game | null = null;
   isLoading = true;
   errorMessage = '';
+  accessDenied = false;
 
   isLoggedIn = false;
   userName = '';
@@ -107,8 +108,15 @@ export class RoomsComponent implements OnInit {
           this.isLoading = false;
           this.cdr.detectChanges();
         },
-        error: () => {
-          this.errorMessage = 'FALHA AO CARREGAR ARTEFATO. VERIFIQUE O SINAL.';
+        error: (err) => {
+          if (err.status === 403) {
+            this.accessDenied = true;
+            this.errorMessage = 'SEU PLANO NÃO PERMITE ACESSO A ESTE JOGO. FAÇA UPGRADE PARA CONTINUAR.';
+          } else if (err.status === 404) {
+            this.errorMessage = 'ARTEFATO NÃO ENCONTRADO NO ARQUIVO.';
+          } else {
+            this.errorMessage = 'FALHA AO CARREGAR ARTEFATO. VERIFIQUE O SINAL.';
+          }
           this.isLoading = false;
           this.cdr.detectChanges();
         }
