@@ -20,10 +20,16 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         router.navigate(['/banned']);
       }
 
-      if (err.status === 401) {
+      if (err.status === 401 && err.error?.message === 'SESSION_CONFLICT') {
+        authService.logout();
+        router.navigate(['/login'], {
+          queryParams: { reason: 'session_conflict' }
+        });
+      } else if (err.status === 401) {
         authService.logout();
         router.navigate(['/login']);
       }
+
       return throwError(() => err);
     })
   );

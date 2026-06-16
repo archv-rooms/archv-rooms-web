@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -11,19 +11,28 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
-errorMessage: string = '';
+  errorMessage: string = '';
   unverifiedEmail: boolean = false;
+  sessionConflict: boolean = false;
   isLoading: boolean = false;
+
+  ngOnInit(): void {
+    const reason = this.route.snapshot.queryParamMap.get('reason');
+    if (reason === 'session_conflict') {
+      this.sessionConflict = true;
+    }
+  }
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
@@ -34,6 +43,7 @@ errorMessage: string = '';
     this.isLoading = true;
     this.errorMessage = '';
     this.unverifiedEmail = false;
+    this.sessionConflict = false;
 
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
@@ -59,4 +69,3 @@ errorMessage: string = '';
     });
   }
 }
-

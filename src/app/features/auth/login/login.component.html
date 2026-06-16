@@ -100,6 +100,14 @@
           <p class="warning-hint">✉ Verifique sua caixa de entrada e clique no link que enviamos.</p>
         </div>
 
+        <!-- SESSÃO ENCERRADA -->
+        <div class="server-warning" *ngIf="sessionConflict">
+          <span class="warning-tag">[SESSION]</span>
+          Sua sessão foi encerrada pois a conta foi acessada em outro dispositivo.
+          <p class="warning-hint">⚠ Se não foi você, troque sua senha imediatamente.</p>
+        </div>
+
+
         <!-- SUBMIT -->
         <button
           type="submit"
