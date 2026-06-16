@@ -77,9 +77,9 @@ export class AuthService {
   }
 
   loginWithGoogle(): void {
-  window.location.href = `${this.apiUrl}/auth/google`;
+    window.location.href = `https://archv-rooms.onrender.com/auth/google`;
 }
-
+ 
   handleGoogleCallback(token: string, name: string, role: string): void {
   localStorage.setItem(this.tokenKey, token);
   localStorage.setItem(this.userKey, JSON.stringify({ name, role }));
