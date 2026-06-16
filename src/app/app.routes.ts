@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { onboardingGuard } from './core/guards/onboarding.guard';
 
 export const routes: Routes = [
   {
@@ -8,10 +9,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent)
   },
   {
+    path: 'onboarding',
+    canActivate: [AuthGuard, onboardingGuard],
+    loadComponent: () => import('./features/onboarding/onboarding-page.component').then(m => m.OnboardingPageComponent)
+  },
+  {
     path: 'admin',
     canActivate: [adminGuard],
-    loadComponent: () =>
-      import('./features/admin/adm.component').then(m => m.AdmComponent)
+    loadComponent: () => import('./features/admin/adm.component').then(m => m.AdmComponent)
   },
   {
     path: 'login',
@@ -45,56 +50,46 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent)
   },
-
   {
-  path: 'banned',
-  loadComponent: () => import('./features/banned/banned.component').then(m => m.BannedComponent)
+    path: 'banned',
+    loadComponent: () => import('./features/banned/banned.component').then(m => m.BannedComponent)
   },
-
-  { path: 'donate', loadComponent: () => import('./features/donate/donate.component').then(m => m.DonateComponent) 
-
-  },
-
   {
-  path: 'payment-success',
-  loadComponent: () => import('./features/plans/payment-success/payment-success.component').then(m => m.PaymentSuccessComponent)
+    path: 'donate',
+    loadComponent: () => import('./features/donate/donate.component').then(m => m.DonateComponent)
   },
-
   {
-  path: 'donate-thanks',
-  loadComponent: () => import('./features/donate/donate-thanks/donate-thanks.component').then(m => m.DonateThanksComponent)
+    path: 'payment-success',
+    loadComponent: () => import('./features/plans/payment-success/payment-success.component').then(m => m.PaymentSuccessComponent)
   },
-  
   {
-  path: 'forgot',
-  loadComponent: () => import('./features/auth/forgot/forgot.component').then(m => m.ForgotComponent)
+    path: 'donate-thanks',
+    loadComponent: () => import('./features/donate/donate-thanks/donate-thanks.component').then(m => m.DonateThanksComponent)
   },
-
   {
-  path: 'reset-password',
-  loadComponent: () => import('./features/auth/reset/reset.component').then(m => m.ResetComponent)
+    path: 'forgot',
+    loadComponent: () => import('./features/auth/forgot/forgot.component').then(m => m.ForgotComponent)
   },
-
   {
-  path: 'verify-email',
-  loadComponent: () => import('./features/auth/verify/verify.component').then(m => m.VerifyComponent)
+    path: 'reset-password',
+    loadComponent: () => import('./features/auth/reset/reset.component').then(m => m.ResetComponent)
   },
-
   {
-  path: 'terms',
-  loadComponent: () => import('./features/terms/terms.component').then(m => m.TermsComponent)
+    path: 'verify-email',
+    loadComponent: () => import('./features/auth/verify/verify.component').then(m => m.VerifyComponent)
   },
-
   {
-  path: 'privacy',
-  loadComponent: () => import('./features/privacy/privacy.component').then(m => m.PrivacyComponent)
+    path: 'terms',
+    loadComponent: () => import('./features/terms/terms.component').then(m => m.TermsComponent)
   },
- 
   {
-  path: 'about',
-  loadComponent: () => import('./features/about/about.component').then(m => m.AboutComponent)
+    path: 'privacy',
+    loadComponent: () => import('./features/privacy/privacy.component').then(m => m.PrivacyComponent)
   },
-
+  {
+    path: 'about',
+    loadComponent: () => import('./features/about/about.component').then(m => m.AboutComponent)
+  },
   {
     path: 'error',
     loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent)

@@ -1,8 +1,8 @@
-import { Component, Output, EventEmitter, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { environment } from '../../../../environments/environments';
+import { environment } from '../../../environments/environments';
 
 interface OnboardingStep {
   icon: string;
@@ -11,15 +11,13 @@ interface OnboardingStep {
 }
 
 @Component({
-  selector: 'app-onboarding',
+  selector: 'app-onboarding-page',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './onboarding.component.html',
-  styleUrls: ['./onboarding.component.scss']
+  templateUrl: './onboarding-page.component.html',
+  styleUrls: ['./onboarding-page.component.scss']
 })
-export class OnboardingComponent {
-  @Output() concluded = new EventEmitter<void>();
-
+export class OnboardingPageComponent {
   private http = inject(HttpClient);
   private router = inject(Router);
 
@@ -73,19 +71,18 @@ export class OnboardingComponent {
   finish(): void {
     const token = localStorage.getItem('@archv:token');
     if (!token) {
-      this.concluded.emit();
+      this.router.navigate(['/library']);
       return;
     }
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     this.http.patch(`${environment.apiUrl}/user/onboarding`, {}, { headers }).subscribe({
-      next: () => this.concluded.emit(),
-      error: () => this.concluded.emit()
+      next: () => this.router.navigate(['/library']),
+      error: () => this.router.navigate(['/library'])
     });
   }
 
   goToPlans(): void {
     this.finish();
-    this.router.navigate(['/plans']);
   }
 }
