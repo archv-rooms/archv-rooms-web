@@ -11,72 +11,120 @@ export const THEMES: Record<string, Theme> = {
     name: 'default',
     label: '👾 Padrão',
     vars: {
-      '--color-bg':        '#0a0015',
-      '--color-primary':   '#00ffff',
-      '--color-secondary': '#ffd700',
-      '--color-text':      '#e0e0e0',
-      '--color-accent':    '#ff00ff',
-      '--color-glow':      '0 0 10px #00ffff',
+      '--color-bg':           '#0a0015',
+      '--color-bg-panel':     '#181b24',
+      '--color-bg-card':      '#202433',
+      '--color-primary':      '#00ffff',
+      '--color-primary-dim':  '#0088aa',
+      '--color-secondary':    '#ffd700',
+      '--color-accent':       '#ff00ff',
+      '--color-text':         '#e0e0e0',
+      '--color-text-muted':   '#9aa3c7',
+      '--color-text-dim':     '#727896',
+      '--color-border':       '#34384a',
+      '--color-border-glow':  '#00ffff',
+      '--color-glow':         '0 0 10px #00ffff',
+      '--color-error':        '#ff003c',
     }
   },
   valentines: {
     name: 'valentines',
     label: '💝 Namorados',
     vars: {
-      '--color-bg':        '#1a0010',
-      '--color-primary':   '#ff6eb4',
-      '--color-secondary': '#ffd700',
-      '--color-text':      '#ffe0ef',
-      '--color-accent':    '#ff1744',
-      '--color-glow':      '0 0 10px #ff6eb4',
+      '--color-bg':           '#1a0010',
+      '--color-bg-panel':     '#2a0820',
+      '--color-bg-card':      '#3a1030',
+      '--color-primary':      '#ff6eb4',
+      '--color-primary-dim':  '#cc3380',
+      '--color-secondary':    '#ffd700',
+      '--color-accent':       '#ff1744',
+      '--color-text':         '#ffe0ef',
+      '--color-text-muted':   '#e8a0c0',
+      '--color-text-dim':     '#b06080',
+      '--color-border':       '#5a2040',
+      '--color-border-glow':  '#ff6eb4',
+      '--color-glow':         '0 0 10px #ff6eb4',
+      '--color-error':        '#ff003c',
     }
   },
   carnival: {
     name: 'carnival',
     label: '🎊 Carnaval',
     vars: {
-      '--color-bg':        '#0d0025',
-      '--color-primary':   '#ffe600',
-      '--color-secondary': '#00e676',
-      '--color-text':      '#fff9e0',
-      '--color-accent':    '#d500f9',
-      '--color-glow':      '0 0 10px #ffe600',
+      '--color-bg':           '#0d0025',
+      '--color-bg-panel':     '#1a0040',
+      '--color-bg-card':      '#250060',
+      '--color-primary':      '#ffe600',
+      '--color-primary-dim':  '#ccb800',
+      '--color-secondary':    '#00e676',
+      '--color-accent':       '#d500f9',
+      '--color-text':         '#fff9e0',
+      '--color-text-muted':   '#d4c870',
+      '--color-text-dim':     '#9a8840',
+      '--color-border':       '#4a3a00',
+      '--color-border-glow':  '#ffe600',
+      '--color-glow':         '0 0 10px #ffe600',
+      '--color-error':        '#ff003c',
     }
   },
   halloween: {
     name: 'halloween',
     label: '👻 Halloween',
     vars: {
-      '--color-bg':        '#0a0005',
-      '--color-primary':   '#ff6d00',
-      '--color-secondary': '#b300ff',
-      '--color-text':      '#f5e6d3',
-      '--color-accent':    '#ff3d00',
-      '--color-glow':      '0 0 10px #ff6d00',
+      '--color-bg':           '#0a0005',
+      '--color-bg-panel':     '#180a00',
+      '--color-bg-card':      '#251000',
+      '--color-primary':      '#ff6d00',
+      '--color-primary-dim':  '#cc4400',
+      '--color-secondary':    '#b300ff',
+      '--color-accent':       '#ff3d00',
+      '--color-text':         '#f5e6d3',
+      '--color-text-muted':   '#c4a882',
+      '--color-text-dim':     '#886644',
+      '--color-border':       '#4a2200',
+      '--color-border-glow':  '#ff6d00',
+      '--color-glow':         '0 0 10px #ff6d00',
+      '--color-error':        '#ff003c',
     }
   },
   christmas: {
     name: 'christmas',
     label: '🎄 Natal',
     vars: {
-      '--color-bg':        '#00100a',
-      '--color-primary':   '#00e676',
-      '--color-secondary': '#ff1744',
-      '--color-text':      '#e0f5e9',
-      '--color-accent':    '#ffd700',
-      '--color-glow':      '0 0 10px #00e676',
+      '--color-bg':           '#00100a',
+      '--color-bg-panel':     '#001a10',
+      '--color-bg-card':      '#002818',
+      '--color-primary':      '#00e676',
+      '--color-primary-dim':  '#00b055',
+      '--color-secondary':    '#ff1744',
+      '--color-accent':       '#ffd700',
+      '--color-text':         '#e0f5e9',
+      '--color-text-muted':   '#90c8a0',
+      '--color-text-dim':     '#507860',
+      '--color-border':       '#004020',
+      '--color-border-glow':  '#00e676',
+      '--color-glow':         '0 0 10px #00e676',
+      '--color-error':        '#ff1744',
     }
   },
   newyear: {
     name: 'newyear',
     label: '🎆 Ano Novo',
     vars: {
-      '--color-bg':        '#05050f',
-      '--color-primary':   '#ffd700',
-      '--color-secondary': '#ffffff',
-      '--color-text':      '#fff8e1',
-      '--color-accent':    '#ff6d00',
-      '--color-glow':      '0 0 10px #ffd700',
+      '--color-bg':           '#05050f',
+      '--color-bg-panel':     '#0d0d20',
+      '--color-bg-card':      '#151530',
+      '--color-primary':      '#ffd700',
+      '--color-primary-dim':  '#ccaa00',
+      '--color-secondary':    '#ffffff',
+      '--color-accent':       '#ff6d00',
+      '--color-text':         '#fff8e1',
+      '--color-text-muted':   '#d4c870',
+      '--color-text-dim':     '#887840',
+      '--color-border':       '#2a2800',
+      '--color-border-glow':  '#ffd700',
+      '--color-glow':         '0 0 10px #ffd700',
+      '--color-error':        '#ff003c',
     }
   }
 }
@@ -86,9 +134,7 @@ export class ThemeService {
 
   private readonly STORAGE_KEY = 'archv_theme_override';
 
-  // Calcula a terça de carnaval para o ano atual
   private getCarnavalTuesday(year: number): Date {
-    // Carnaval = 47 dias antes da Páscoa
     const easter = this.getEaster(year);
     const carnival = new Date(easter);
     carnival.setDate(easter.getDate() - 47);
@@ -109,31 +155,23 @@ export class ThemeService {
   }
 
   private getActiveThemeName(): string {
-    // Override manual do admin
     const override = localStorage.getItem(this.STORAGE_KEY);
     if (override && THEMES[override]) return override;
 
     const now = new Date();
-    const month = now.getMonth() + 1; // 1–12
+    const month = now.getMonth() + 1;
     const day   = now.getDate();
     const year  = now.getFullYear();
 
-    // Ano Novo: 26–31 dez
     if (month === 12 && day >= 26) return 'newyear';
-
-    // Natal: 1–25 dez
     if (month === 12 && day <= 25) return 'christmas';
-
-    // Halloween: todo outubro
     if (month === 10) return 'halloween';
 
-    // Carnaval: sexta-feira até terça-feira gorda
     const carnival = this.getCarnavalTuesday(year);
     const carnivalStart = new Date(carnival);
-    carnivalStart.setDate(carnival.getDate() - 4); // sexta antes
+    carnivalStart.setDate(carnival.getDate() - 4);
     if (now >= carnivalStart && now <= carnival) return 'carnival';
 
-    // Namorados: 1–14 fev
     if (month === 2 && day <= 14) return 'valentines';
 
     return 'default';
