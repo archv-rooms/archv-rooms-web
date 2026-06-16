@@ -4,6 +4,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { environment } from '../../../environments/environments';
+import { SaveService, SaveSlot } from '../../core/services/save.service';
 
 interface Game {
   id: number;
@@ -28,6 +29,7 @@ export class RoomsComponent implements OnInit {
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
   private sanitizer = inject(DomSanitizer);
+  private saveService = inject(SaveService);
 
   game: Game | null = null;
   isLoading = true;
@@ -37,15 +39,20 @@ export class RoomsComponent implements OnInit {
   isLoggedIn = false;
   userName = '';
 
-  // Estado do emulador
+  // Emulador
   showEmulator = false;
   emulatorUrl: SafeResourceUrl | null = null;
+  emulatorReady = false;
+
+  // Save
+  showSavePanel = false;
+  saveSlots: SaveSlot[] = [];
+  saveMessage = '';
+  isSaving = false;
 
   ngOnInit(): void {
     this.checkAuth();
-
     const id = this.route.snapshot.paramMap.get('id');
-
     if (id) {
       this.loadGame(Number(id));
     } else {
@@ -58,9 +65,7 @@ export class RoomsComponent implements OnInit {
   checkAuth(): void {
     const token = localStorage.getItem('@archv:token');
     const user = localStorage.getItem('@archv:user');
-
     this.isLoggedIn = !!token;
-
     if (user) {
       try {
         const parsed = JSON.parse(user);
@@ -74,91 +79,66 @@ export class RoomsComponent implements OnInit {
   logout(): void {
     localStorage.removeItem('@archv:token');
     localStorage.removeItem('@archv:user');
-
     this.isLoggedIn = false;
     this.userName = '';
-
     this.router.navigate(['/']);
   }
 
   loadGame(id: number): void {
     const token = localStorage.getItem('@archv:token');
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-
-    this.http
-      .get<{ success: boolean; data: Game; message: string }>(
-        `${environment.apiUrl}/games/${id}`,
-        { headers }
-      )
-      .subscribe({
-        next: (res) => {
-          if (res.success) {
-            this.game = res.data;
-
-            if (!this.game) {
-              this.errorMessage = 'ARTEFATO NÃO ENCONTRADO NO ARQUIVO.';
-            }
-          } else {
-            this.errorMessage = res.message;
-          }
-
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          if (err.status === 403) {
-            this.accessDenied = true;
-            this.errorMessage = 'SEU PLANO NÃO PERMITE ACESSO A ESTE JOGO. FAÇA UPGRADE PARA CONTINUAR.';
-          } else if (err.status === 404) {
-            this.errorMessage = 'ARTEFATO NÃO ENCONTRADO NO ARQUIVO.';
-          } else {
-            this.errorMessage = 'FALHA AO CARREGAR ARTEFATO. VERIFIQUE O SINAL.';
-          }
-          this.isLoading = false;
-          this.cdr.detectChanges();
+    this.http.get<{ success: boolean; data: Game; message: string }>(
+      `${environment.apiUrl}/games/${id}`,
+      { headers }
+    ).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.game = res.data;
+          if (!this.game) this.errorMessage = 'ARTEFATO NÃO ENCONTRADO NO ARQUIVO.';
+        } else {
+          this.errorMessage = res.message;
         }
-      });
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        if (err.status === 403) {
+          this.accessDenied = true;
+          this.errorMessage = 'SEU PLANO NÃO PERMITE ACESSO A ESTE JOGO. FAÇA UPGRADE PARA CONTINUAR.';
+        } else if (err.status === 404) {
+          this.errorMessage = 'ARTEFATO NÃO ENCONTRADO NO ARQUIVO.';
+        } else {
+          this.errorMessage = 'FALHA AO CARREGAR ARTEFATO. VERIFIQUE O SINAL.';
+        }
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   downloadRom(): void {
-    if (!this.game?.fileUrl) {
-      alert('Arquivo não disponível.');
-      return;
-    }
-
+    if (!this.game?.fileUrl) { alert('Arquivo não disponível.'); return; }
     fetch(this.game.fileUrl)
-      .then((res) => res.blob())
-      .then((blob) => {
+      .then(res => res.blob())
+      .then(blob => {
         const ext = this.game!.fileUrl!.split('.').pop()?.split('?')[0] ?? 'zip';
-        const fileName = `${this.game!.title}.${ext}`;
         const url = URL.createObjectURL(blob);
-
         const a = document.createElement('a');
         a.href = url;
-        a.download = fileName;
+        a.download = `${this.game!.title}.${ext}`;
         a.click();
-
         URL.revokeObjectURL(url);
       })
-      .catch(() => {
-        alert('Erro ao baixar o arquivo.');
-      });
+      .catch(() => alert('Erro ao baixar o arquivo.'));
   }
 
-  // =========================
-  // EmulatorJS
-  // =========================
+  // ─── Emulador ────────────────────────────────────────────
 
   playGame(): void {
-    if (!this.game?.fileUrl) {
-      alert('Arquivo não disponível.');
-      return;
-    }
-
+    if (!this.game?.fileUrl) { alert('Arquivo não disponível.'); return; }
     this.showEmulator = true;
+    this.emulatorReady = false;
     this.cdr.detectChanges();
 
     setTimeout(() => {
@@ -168,6 +148,11 @@ export class RoomsComponent implements OnInit {
       (window as any).EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
       (window as any).EJS_startOnLoaded = true;
 
+      (window as any).EJS_onGameStart = () => {
+        this.emulatorReady = true;
+        this.cdr.detectChanges();
+      };
+
       const script = document.createElement('script');
       script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
       document.body.appendChild(script);
@@ -176,7 +161,6 @@ export class RoomsComponent implements OnInit {
 
   closeEmulator(): void {
     const ejs = (window as any).EJS_emulator;
-
     if (ejs) {
       try { ejs.pause(); } catch {}
       try {
@@ -184,63 +168,128 @@ export class RoomsComponent implements OnInit {
         if (ctx && ctx.state !== 'closed') ctx.close();
       } catch {}
     }
-
     this.showEmulator = false;
+    this.showSavePanel = false;
     this.emulatorUrl = null;
     this.cdr.detectChanges();
   }
 
+  // ─── Save Panel ──────────────────────────────────────────
+
+  async openSavePanel(): Promise<void> {
+    if (!this.game) return;
+    this.showSavePanel = true;
+    this.saveMessage = '';
+
+    // Carrega slots locais primeiro
+    this.saveSlots = await this.saveService.loadAllLocal(this.game.id);
+
+    // Tenta mesclar com nuvem se logado
+    if (this.isLoggedIn) {
+      const cloud = await this.saveService.loadFromCloud(this.game.id);
+      cloud.forEach(cs => {
+        const local = this.saveSlots.find(s => s.slot === cs.slot);
+        const cloudDate = new Date(cs.updatedAt ?? 0).getTime();
+        const localDate = new Date(local?.updatedAt ?? 0).getTime();
+        if (!local || cloudDate > localDate) {
+          const idx = this.saveSlots.findIndex(s => s.slot === cs.slot);
+          if (idx >= 0) this.saveSlots[idx] = cs;
+          else this.saveSlots.push(cs);
+        }
+      });
+      this.saveSlots.sort((a, b) => a.slot - b.slot);
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  closeSavePanel(): void {
+    this.showSavePanel = false;
+    this.cdr.detectChanges();
+  }
+
+  async saveToSlot(slot: number): Promise<void> {
+    if (!this.game || this.isSaving) return;
+    const ejs = (window as any).EJS_emulator;
+    if (!ejs) { this.saveMessage = 'Emulador não pronto.'; return; }
+
+    this.isSaving = true;
+    this.saveMessage = '';
+
+    try {
+      const saveData = ejs.saveState ? await ejs.saveState() : { slot, ts: Date.now() };
+      await this.saveService.save(this.game.id, slot, saveData);
+
+      // Atualiza slot na lista
+      const idx = this.saveSlots.findIndex(s => s.slot === slot);
+      const entry: SaveSlot = { slot, saveData, updatedAt: new Date().toISOString() };
+      if (idx >= 0) this.saveSlots[idx] = entry;
+      else this.saveSlots.push(entry);
+      this.saveSlots.sort((a, b) => a.slot - b.slot);
+
+      this.saveMessage = `✔ Slot ${slot} salvo!`;
+    } catch {
+      this.saveMessage = '✖ Erro ao salvar.';
+    }
+
+    this.isSaving = false;
+    this.cdr.detectChanges();
+  }
+
+  async loadFromSlot(slot: number): Promise<void> {
+    if (!this.game) return;
+    const ejs = (window as any).EJS_emulator;
+    if (!ejs) { this.saveMessage = 'Emulador não pronto.'; return; }
+
+    const entry = this.saveSlots.find(s => s.slot === slot);
+    if (!entry) { this.saveMessage = `Slot ${slot} vazio.`; return; }
+
+    try {
+      if (ejs.loadState) await ejs.loadState(entry.saveData);
+      this.saveMessage = `✔ Slot ${slot} carregado!`;
+      this.showSavePanel = false;
+    } catch {
+      this.saveMessage = '✖ Erro ao carregar save.';
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  slotDate(slot: number): string {
+    const entry = this.saveSlots.find(s => s.slot === slot);
+    if (!entry?.updatedAt) return 'vazio';
+    return new Date(entry.updatedAt).toLocaleString('pt-BR');
+  }
+
+  // ─── Utilitários ─────────────────────────────────────────
+
   getEmulatorCore(): string {
     const cores: Record<string, string> = {
-      'NES': 'nes',
-      'SNES': 'snes9x',
-      'SFC': 'snes9x',
-      'GBA': 'gba',
-      'GB': 'gambatte',
-      'GBC': 'gambatte',
-      'GAME BOY': 'gambatte',
-      'N64': 'n64',
-      'PS1': 'pcsx_rearmed',
-      'PSX': 'pcsx_rearmed',
-      'MD': 'genesis_plus_gx',
-      'MEGA DRIVE': 'genesis_plus_gx',
+      'NES': 'nes', 'SNES': 'snes9x', 'SFC': 'snes9x',
+      'GBA': 'gba', 'GB': 'gambatte', 'GBC': 'gambatte',
+      'GAME BOY': 'gambatte', 'N64': 'n64',
+      'PS1': 'pcsx_rearmed', 'PSX': 'pcsx_rearmed',
+      'MD': 'genesis_plus_gx', 'MEGA DRIVE': 'genesis_plus_gx',
     };
-
     return cores[this.game?.console?.toUpperCase() ?? ''] ?? 'nes';
   }
 
-  // =========================
-  // Utilitários
-  // =========================
-
   getRegion(console: string): string {
     const regions: Record<string, string> = {
-      SNES: 'NTSC-J / PAL',
-      SFC: 'NTSC-J',
-      PS1: 'NTSC-U',
-      PSX: 'NTSC-U',
-      N64: 'NTSC-U / PAL',
-      GBA: 'NTSC-U / PAL',
-      MD: 'NTSC-U / PAL',
-      NES: 'NTSC-U',
-      GB: 'NTSC-J / U'
+      SNES: 'NTSC-J / PAL', SFC: 'NTSC-J', PS1: 'NTSC-U',
+      PSX: 'NTSC-U', N64: 'NTSC-U / PAL', GBA: 'NTSC-U / PAL',
+      MD: 'NTSC-U / PAL', NES: 'NTSC-U', GB: 'NTSC-J / U'
     };
-
     return regions[console?.toUpperCase()] ?? 'MULTI';
   }
 
   getFormat(console: string): string {
     const formats: Record<string, string> = {
-      SNES: 'SFC CART [32MBIT]',
-      SFC: 'SFC CART [32MBIT]',
-      PS1: 'CD-ROM [700MB]',
-      PSX: 'CD-ROM [700MB]',
-      N64: 'N64 CART [64MBIT]',
-      GBA: 'GBA CART [16MBIT]',
-      MD: 'MD CART [16MBIT]',
-      NES: 'NES CART [8MBIT]'
+      SNES: 'SFC CART [32MBIT]', SFC: 'SFC CART [32MBIT]',
+      PS1: 'CD-ROM [700MB]', PSX: 'CD-ROM [700MB]',
+      N64: 'N64 CART [64MBIT]', GBA: 'GBA CART [16MBIT]',
+      MD: 'MD CART [16MBIT]', NES: 'NES CART [8MBIT]'
     };
-
     return formats[console?.toUpperCase()] ?? 'UNKNOWN';
   }
 

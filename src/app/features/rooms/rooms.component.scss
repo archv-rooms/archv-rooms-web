@@ -699,3 +699,146 @@ $red-alert:     #fb7185;
     animation: heartbeat 0.4s ease-in-out;
   }
 }
+
+// ─── Emulator header actions ─────────────────────────────
+.emulator-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.emulator-btn-save {
+  background: transparent;
+  border: 1px solid var(--color-primary, #00ff88);
+  color: var(--color-primary, #00ff88);
+  font-family: inherit;
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: background 0.2s;
+
+  &:hover:not(:disabled) {
+    background: rgba(0, 255, 136, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+// ─── Save Panel ──────────────────────────────────────────
+.save-panel {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: 320px;
+  background: #0a0a0a;
+  border: 1px solid var(--color-primary, #00ff88);
+  border-top: none;
+  z-index: 10;
+  font-family: inherit;
+}
+
+.save-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+  font-size: 0.7rem;
+  color: var(--color-primary, #00ff88);
+  letter-spacing: 0.1em;
+}
+
+.save-panel-close {
+  background: none;
+  border: none;
+  color: var(--color-primary, #00ff88);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.save-slots {
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.save-slot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.save-slot-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.save-slot-label {
+  font-size: 0.65rem;
+  color: var(--color-primary, #00ff88);
+  letter-spacing: 0.08em;
+}
+
+.save-slot-date {
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.save-slot-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-save-action,
+.btn-load-action {
+  font-family: inherit;
+  font-size: 0.6rem;
+  padding: 4px 8px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  border: 1px solid;
+  transition: background 0.2s;
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+.btn-save-action {
+  background: transparent;
+  border-color: var(--color-primary, #00ff88);
+  color: var(--color-primary, #00ff88);
+
+  &:hover:not(:disabled) {
+    background: rgba(0, 255, 136, 0.1);
+  }
+}
+
+.btn-load-action {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.6);
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.save-message {
+  padding: 8px 14px;
+  font-size: 0.65rem;
+  color: var(--color-primary, #00ff88);
+  border-top: 1px solid rgba(0, 255, 136, 0.15);
+  margin: 0;
+  letter-spacing: 0.05em;
+}

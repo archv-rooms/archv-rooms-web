@@ -148,15 +148,46 @@
   <div class="crt-overlay"></div>
   <div class="scanlines"></div>
 
-  <!-- EMULATOR MODAL -->
-  <div class="emulator-overlay" *ngIf="showEmulator" (click)="closeEmulator()">
-    <div class="emulator-modal" (click)="$event.stopPropagation()">
-      <div class="emulator-header">
-        <span>▣ {{ game?.title | uppercase }}</span>
+<!-- EMULATOR MODAL -->
+<div class="emulator-overlay" *ngIf="showEmulator" (click)="closeEmulator()">
+  <div class="emulator-modal" (click)="$event.stopPropagation()">
+
+    <div class="emulator-header">
+      <span>▣ {{ game?.title | uppercase }}</span>
+      <div class="emulator-header-actions">
+        <button class="emulator-btn-save" (click)="openSavePanel()" [disabled]="!emulatorReady" title="Saves">
+          💾 saves
+        </button>
         <button class="emulator-close" (click)="closeEmulator()">✕</button>
       </div>
-      <div id="game-container" style="width:100%;height:100%;"></div>
     </div>
+
+    <div id="game-container" style="width:100%;height:100%;"></div>
+
+    <!-- SAVE PANEL -->
+    <div class="save-panel" *ngIf="showSavePanel" (click)="$event.stopPropagation()">
+      <div class="save-panel-header">
+        <span>💾 SAVE STATES</span>
+        <button class="save-panel-close" (click)="closeSavePanel()">✕</button>
+      </div>
+
+      <div class="save-slots">
+        <div class="save-slot" *ngFor="let n of [1,2,3]">
+          <div class="save-slot-info">
+            <span class="save-slot-label">SLOT {{ n }}</span>
+            <span class="save-slot-date">{{ slotDate(n) }}</span>
+          </div>
+          <div class="save-slot-actions">
+            <button class="btn-save-action" (click)="saveToSlot(n)" [disabled]="isSaving">salvar</button>
+            <button class="btn-load-action" (click)="loadFromSlot(n)" [disabled]="isSaving || slotDate(n) === 'vazio'">carregar</button>
+          </div>
+        </div>
+      </div>
+
+      <p class="save-message" *ngIf="saveMessage">{{ saveMessage }}</p>
+    </div>
+
   </div>
+</div>
 
 </div>
