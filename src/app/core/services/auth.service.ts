@@ -75,4 +75,14 @@ export class AuthService {
     this.authState.next(false);
     this.router.navigate(['/login']);
   }
+
+  loginWithGoogle(): void {
+  window.location.href = `${this.apiUrl}/auth/google`;
+}
+
+  handleGoogleCallback(token: string, name: string, role: string): void {
+  localStorage.setItem(this.tokenKey, token);
+  localStorage.setItem(this.userKey, JSON.stringify({ name, role }));
+  this.authState.next(true);
+}
 }

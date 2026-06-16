@@ -95,6 +95,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent)
   },
   {
+  path: 'auth/google/callback',
+  loadComponent: () => import('./features/auth/google-callback/google-callback.component').then(m => m.GoogleCallbackComponent)
+  },
+  {
     path: '**',
     loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent),
     data: { code: 404 }
