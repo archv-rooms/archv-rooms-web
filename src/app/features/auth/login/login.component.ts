@@ -2,7 +2,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
+import { environment } from '../../../../environments/environments';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +18,7 @@ export class LoginComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private http = inject(HttpClient);
 
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -49,11 +52,29 @@ export class LoginComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         const role = this.authService.getUserRole();
+
         if (role === 'admin') {
           this.router.navigate(['/admin']);
-        } else {
-          this.router.navigate(['/library']);
+          return;
         }
+
+        const token = this.authService.getToken();
+        if (!token) {
+          this.router.navigate(['/library']);
+          return;
+        }
+
+        const headers = { Authorization: `Bearer ${token}` };
+        this.http.get<any>(`${environment.apiUrl}/user/profile`, { headers }).subscribe({
+          next: (res) => {
+            if (res.success && !res.data.user.onboardingDone) {
+              this.router.navigate(['/']);
+            } else {
+              this.router.navigate(['/library']);
+            }
+          },
+          error: () => this.router.navigate(['/library'])
+        });
       },
       error: (err) => {
         this.isLoading = false;
