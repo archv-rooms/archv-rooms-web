@@ -1,15 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
 
 :root {
-  --color-bg: #0a0015;
-  --color-primary: #00ffff;
+  --color-bg:        #0a0015;
+  --color-primary:   #00ffff;
   --color-secondary: #ffd700;
-  --color-text: #e0e0e0;
-  --color-black: #000000;
-  --color-error: #ff003c;
-  
+  --color-text:      #e0e0e0;
+  --color-black:     #000000;
+  --color-error:     #ff003c;
+  --color-accent:    #ff00ff;
+  --color-glow:      0 0 10px #00ffff;
+
   --font-title: 'Press Start 2P', cursive;
-  --font-text: 'VT323', monospace;
+  --font-text:  'VT323', monospace;
 }
 
 * {

@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { GameService } from '../../core/services/game.service';
 import { AuthService } from '../../core/services/auth.service';
 import { environment } from '../../../environments/environments';
+import { ThemeService, THEMES, Theme } from '../../core/services/theme.service';
 
 @Component({
   selector: 'app-adm',
@@ -22,6 +23,7 @@ export class AdmComponent implements OnInit {
   private cdr         = inject(ChangeDetectorRef);
   private router      = inject(Router);
   private api         = environment.apiUrl;
+  themeService        = inject(ThemeService);  // público para uso no template
 
   currentSection = 'games';
   errorMessage = '';
@@ -58,6 +60,10 @@ export class AdmComponent implements OnInit {
   showCategoryModal = false;
   editingCategory = false;
   categoryForm: any = { name: '' };
+
+  // THEMES
+  allThemes: Theme[] = Object.values(THEMES);
+  activeThemeName: string = '';
 
   // ── BAN ──────────────────────────────────────────────────────
   showBanModal = false;
@@ -103,6 +109,7 @@ export class AdmComponent implements OnInit {
     this.loadSales();
     this.loadPlans();
     this.loadCategories();
+    this.loadActiveTheme();
   }
 
   private get authHeaders() {
@@ -135,29 +142,29 @@ export class AdmComponent implements OnInit {
     });
   }
 
-openGameModal(game?: any): void {
-  this.showGameModal = true;
-  this.editingGame = !!game;
+  openGameModal(game?: any): void {
+    this.showGameModal = true;
+    this.editingGame = !!game;
 
-  if (game) {
-    const platformMap: Record<string, string> = {
-      'MD': 'MEGA DRIVE',
-      'GB': 'GAME BOY',
-    };
-    const platform = platformMap[game.console] ?? game.console;
-    this.gameForm = { 
-      ...game, 
-      platform,
-      coverUrl: game.image ?? ''  // ← popula com a imagem atual
-    };
-  } else {
-    this.gameForm = { title: '', platform: 'NES', coverUrl: '', accessLevel: 1, planId: null };
+    if (game) {
+      const platformMap: Record<string, string> = {
+        'MD': 'MEGA DRIVE',
+        'GB': 'GAME BOY',
+      };
+      const platform = platformMap[game.console] ?? game.console;
+      this.gameForm = {
+        ...game,
+        platform,
+        coverUrl: game.image ?? ''
+      };
+    } else {
+      this.gameForm = { title: '', platform: 'NES', coverUrl: '', accessLevel: 1, planId: null };
+    }
+
+    this.selectedImage = null;
+    this.selectedRoom = null;
+    this.cdr.detectChanges();
   }
-
-  this.selectedImage = null;
-  this.selectedRoom = null;
-  this.cdr.detectChanges();
-}
 
   onImageSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -177,49 +184,43 @@ openGameModal(game?: any): void {
   changeSection(section: string): void {
     this.currentSection = section;
 
-    if (section === 'users' && this.users.length === 0) {
-    this.loadUsers();
-    }
-    if (section === 'sales' && this.sales.length === 0) {
-    this.loadSales();
-    }
-    if (section === 'games' && this.games.length === 0) {
-    this.loadGames();
-    }
-    if (section === 'plans' && this.plans.length === 0) {
-    this.loadPlans();
-    }
+    if (section === 'users' && this.users.length === 0) this.loadUsers();
+    if (section === 'sales' && this.sales.length === 0) this.loadSales();
+    if (section === 'games' && this.games.length === 0) this.loadGames();
+    if (section === 'plans' && this.plans.length === 0) this.loadPlans();
+    if (section === 'themes') this.loadActiveTheme();
 
     this.cdr.detectChanges();
-}
-
-saveGame(): void {
-  if (this.editingGame) {
-    const payload: any = {
-      title: this.gameForm.title,
-      platform: this.gameForm.platform,
-      accessLevel: this.gameForm.accessLevel,
-      coverUrl: this.gameForm.coverUrl || undefined,
-    };
-
-    this.gameService.updateGame(this.gameForm.id, payload).subscribe({
-      next: (res) => {
-        const id = res.data?.id ?? this.gameForm.id;
-        this.uploadGameFiles(id, () => { this.loadGames(); this.closeGameModal(); });
-      },
-      error: () => alert('Erro ao atualizar jogo')
-    });
-  } else {
-    this.gameService.createGame(this.gameForm).subscribe({
-      next: (res) => {
-        const id = res.data?.id;
-        if (!id) { this.loadGames(); this.closeGameModal(); return; }
-        this.uploadGameFiles(id, () => { this.loadGames(); this.closeGameModal(); });
-      },
-      error: () => alert('Erro ao criar jogo')
-    });
   }
-}
+
+  saveGame(): void {
+    if (this.editingGame) {
+      const payload: any = {
+        title: this.gameForm.title,
+        platform: this.gameForm.platform,
+        accessLevel: this.gameForm.accessLevel,
+        coverUrl: this.gameForm.coverUrl || undefined,
+      };
+
+      this.gameService.updateGame(this.gameForm.id, payload).subscribe({
+        next: (res) => {
+          const id = res.data?.id ?? this.gameForm.id;
+          this.uploadGameFiles(id, () => { this.loadGames(); this.closeGameModal(); });
+        },
+        error: () => alert('Erro ao atualizar jogo')
+      });
+    } else {
+      this.gameService.createGame(this.gameForm).subscribe({
+        next: (res) => {
+          const id = res.data?.id;
+          if (!id) { this.loadGames(); this.closeGameModal(); return; }
+          this.uploadGameFiles(id, () => { this.loadGames(); this.closeGameModal(); });
+        },
+        error: () => alert('Erro ao criar jogo')
+      });
+    }
+  }
+
   private uploadGameFiles(gameId: number, onDone: () => void): void {
     const uploads: Promise<void>[] = [];
 
@@ -510,5 +511,17 @@ saveGame(): void {
       next: () => { this.loadCategories(); this.cdr.detectChanges(); },
       error: () => alert('Erro ao excluir categoria')
     });
+  }
+
+  // ── THEMES ────────────────────────────────────────────────
+  loadActiveTheme(): void {
+    this.activeThemeName = this.themeService.getActiveTheme().name;
+    this.cdr.detectChanges();
+  }
+
+  setTheme(themeName: string | null): void {
+    this.themeService.setOverride(themeName);
+    this.activeThemeName = this.themeService.getActiveTheme().name;
+    this.cdr.detectChanges();
   }
 }
