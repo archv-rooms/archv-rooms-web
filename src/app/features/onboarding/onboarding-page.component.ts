@@ -83,6 +83,6 @@ export class OnboardingPageComponent {
   }
 
   goToPlans(): void {
-    this.router.navigate(['/plans']);
+    this.finish();
   }
 }

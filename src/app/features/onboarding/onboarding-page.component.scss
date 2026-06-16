@@ -1,16 +1,18 @@
 .onboarding-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
+  backdrop-filter: blur(4px);
 }
 
 .onboarding-modal {
-  background: #12121f;
-  border: 1px solid #2a2a40;
+  background: var(--color-surface, #1a1a2e);
+  border: 1px solid var(--color-border, #333);
+  border-radius: 16px;
   padding: 2rem;
   width: 90%;
   max-width: 440px;
@@ -18,45 +20,27 @@
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
-  font-family: 'Courier New', monospace;
   position: relative;
-}
-
-.onboarding-header {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  &__brand {
-    color: #5a5a8a;
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
-
-  &__count {
-    color: #3a3a5a;
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-  }
 }
 
 .onboarding-progress {
   width: 100%;
-  height: 2px;
-  background: #1e1e30;
+  height: 4px;
+  background: var(--color-border, #333);
+  border-radius: 2px;
+  overflow: hidden;
 
   &__bar {
     height: 100%;
-    background: #7c3aed;
+    background: var(--color-primary, #e63946);
+    border-radius: 2px;
     transition: width 0.3s ease;
   }
 }
 
 .onboarding-steps {
   width: 100%;
-  min-height: 180px;
+  min-height: 200px;
   position: relative;
 }
 
@@ -68,28 +52,27 @@
   gap: 0.75rem;
   animation: fadeIn 0.3s ease;
 
-  &--active { display: flex; }
+  &--active {
+    display: flex;
+  }
 
   &__icon {
-    font-size: 2.5rem;
+    font-size: 3rem;
     line-height: 1;
   }
 
   &__title {
-    font-size: 1rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: #e2e2f0;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    color: var(--color-text, #fff);
     margin: 0;
   }
 
   &__description {
-    font-size: 0.82rem;
-    color: #5a5a7a;
-    line-height: 1.7;
-    letter-spacing: 0.02em;
+    font-size: 0.95rem;
+    color: var(--color-text-muted, #aaa);
     margin: 0;
+    line-height: 1.6;
   }
 }
 
@@ -99,13 +82,16 @@
 }
 
 .onboarding-dot {
-  width: 6px;
-  height: 6px;
-  background: #1e1e30;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-border, #333);
   cursor: pointer;
   transition: background 0.2s;
 
-  &--active { background: #7c3aed; }
+  &--active {
+    background: var(--color-primary, #e63946);
+  }
 }
 
 .onboarding-actions {
@@ -116,54 +102,50 @@
 }
 
 .onboarding-btn {
-  padding: 0.5rem 1.4rem;
-  font-family: 'Courier New', monospace;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  padding: 0.6rem 1.4rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
   border: none;
   transition: opacity 0.2s;
 
-  &:hover { opacity: 0.8; }
+  &:hover { opacity: 0.85; }
 
   &--primary {
-    background: #7c3aed;
-    color: #e2e2f0;
+    background: var(--color-primary, #e63946);
+    color: #fff;
   }
 
   &--ghost {
     background: transparent;
-    border: 1px solid #2a2a40;
-    color: #5a5a7a;
+    border: 1px solid var(--color-border, #333);
+    color: var(--color-text-muted, #aaa);
   }
 
   &--plans {
     background: transparent;
-    border: 1px solid #7c3aed;
-    color: #7c3aed;
-    font-size: 0.75rem;
+    border: 1px solid var(--color-primary, #e63946);
+    color: var(--color-primary, #e63946);
+    font-size: 0.85rem;
     padding: 0.4rem 1rem;
+    margin-top: 0.25rem;
   }
 }
 
 .onboarding-skip {
   background: none;
   border: none;
-  color: #3a3a5a;
-  font-family: 'Courier New', monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  color: var(--color-text-muted, #aaa);
+  font-size: 0.8rem;
   cursor: pointer;
   text-decoration: underline;
   padding: 0;
 
-  &:hover { color: #5a5a7a; }
+  &:hover { color: var(--color-text, #fff); }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
