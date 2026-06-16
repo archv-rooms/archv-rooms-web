@@ -657,3 +657,53 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
 }
+
+/* ───────────────────────────────────────── */
+/* GOOGLE BUTTON */
+/* ───────────────────────────────────────── */
+
+.auth-divider {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-text-dim);
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.btn-google {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 12px 20px;
+
+  background: transparent;
+  border: 1px solid var(--color-border);
+
+  color: var(--color-text);
+
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.25s,
+    box-shadow 0.25s,
+    color 0.25s,
+    transform 0.2s;
+
+  &:hover {
+    border-color: var(--color-accent);
+    color: #fff;
+    box-shadow: 0 0 18px var(--color-accent-glow);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
