@@ -1,6 +1,11 @@
 <!-- home.component.html -->
 <div class="home-wrapper">
 
+  <app-onboarding
+  *ngIf="showOnboarding"
+  (concluded)="onOnboardingConcluded()"
+  ></app-onboarding>
+  
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <nav class="sidebar-nav">

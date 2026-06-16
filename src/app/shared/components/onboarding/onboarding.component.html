@@ -1,0 +1,57 @@
+<div class="onboarding-overlay">
+  <div class="onboarding-modal">
+
+    <div class="onboarding-progress">
+      <div class="onboarding-progress__bar" [style.width.%]="progressPct"></div>
+    </div>
+
+    <div class="onboarding-steps">
+      <div
+        class="onboarding-step"
+        *ngFor="let step of steps; let i = index"
+        [class.onboarding-step--active]="i === currentStep"
+      >
+        <div class="onboarding-step__icon">{{ step.icon }}</div>
+        <h2 class="onboarding-step__title">{{ step.title }}</h2>
+        <p class="onboarding-step__description">{{ step.description }}</p>
+
+        <button
+          *ngIf="i === 2"
+          class="onboarding-btn onboarding-btn--plans"
+          (click)="goToPlans()"
+        >
+          Ver Planos
+        </button>
+      </div>
+    </div>
+
+    <div class="onboarding-dots">
+      <span
+        *ngFor="let step of steps; let i = index"
+        class="onboarding-dot"
+        [class.onboarding-dot--active]="i === currentStep"
+        (click)="currentStep = i"
+      ></span>
+    </div>
+
+    <div class="onboarding-actions">
+      <button
+        class="onboarding-btn onboarding-btn--ghost"
+        *ngIf="currentStep > 0"
+        (click)="prev()"
+      >
+        Voltar
+      </button>
+
+      <button
+        class="onboarding-btn onboarding-btn--primary"
+        (click)="next()"
+      >
+        {{ isLastStep ? 'Começar a jogar!' : 'Próximo' }}
+      </button>
+    </div>
+
+    <button class="onboarding-skip" (click)="finish()">Pular</button>
+
+  </div>
+</div>

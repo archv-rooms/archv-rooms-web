@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { environment } from '../../../environments/environments';
 import { AuthService } from '../../core/services/auth.service';
+import { OnboardingComponent } from '../../shared/components/onboarding/onboarding.component';
 
 interface Game {
   id: number;
@@ -31,7 +32,7 @@ interface PlatformsResponse {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, OnboardingComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
@@ -40,6 +41,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   userName = '';
   isAdmin = false;
+
+  // ── ONBOARDING ───────────────────────────────────────
+  showOnboarding = false;
 
   // ── GAMES ────────────────────────────────────────────
   games: Game[] = [];
@@ -96,8 +100,27 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.isLoggedIn) {
       this.userName = this.authService.getUserName();
       const token = this.authService.getToken();
-      if (token) this.loadGames(token);
+      if (token) {
+        this.loadGames(token);
+        this.checkOnboarding(token);
+      }
     }
+  }
+
+  private checkOnboarding(token: string): void {
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    this.http.get<any>(`${environment.apiUrl}/user/profile`, { headers }).subscribe({
+      next: (res) => {
+        if (res.success && res.data.user.onboardingDone === false) {
+          this.showOnboarding = true;
+        }
+      },
+      error: () => {}
+    });
+  }
+
+  onOnboardingConcluded(): void {
+    this.showOnboarding = false;
   }
 
   logout(): void {
