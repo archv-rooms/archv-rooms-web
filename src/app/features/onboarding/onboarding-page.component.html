@@ -1,6 +1,13 @@
 <div class="onboarding-overlay">
   <div class="onboarding-modal">
 
+    <div class="onboarding-header">
+      <span class="onboarding-header__brand">// sistema</span>
+      <span class="onboarding-header__count">
+        {{ currentStep + 1 }} / {{ steps.length }}
+      </span>
+    </div>
+
     <div class="onboarding-progress">
       <div class="onboarding-progress__bar" [style.width.%]="progressPct"></div>
     </div>
