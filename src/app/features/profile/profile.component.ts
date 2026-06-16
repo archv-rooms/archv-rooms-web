@@ -35,9 +35,12 @@ export class ProfileComponent implements AfterViewInit {
   errorMessage = '';
   isAdmin      = false;
 
-  activeTab: 'overview' | 'settings' = 'overview';
+  activeTab: 'overview' | 'settings' | 'payments' = 'overview';
 
   activityLog: any[] = [];
+
+  payments: any[] = [];
+  loadingPayments = false;
 
   editForm = { username: '', email: '', bio: '', avatarUrl: '' };
   pwForm   = { current: '', new: '', confirm: '' };
@@ -113,6 +116,21 @@ export class ProfileComponent implements AfterViewInit {
       error: (err) => {
         this.isLoading    = false;
         this.errorMessage = err.error?.message || 'Erro ao carregar perfil.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  loadPayments(): void {
+    this.loadingPayments = true;
+    this.userService.getPaymentHistory().subscribe({
+      next: (res) => {
+        this.payments = res.data.payments;
+        this.loadingPayments = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.loadingPayments = false;
         this.cdr.detectChanges();
       }
     });
@@ -231,7 +249,13 @@ export class ProfileComponent implements AfterViewInit {
     return ['FRACA', 'RAZOÁVEL', 'BOA', 'FORTE', 'EXCELENTE'][this.pwStrength] || '';
   }
 
-  setTab(tab: typeof this.activeTab): void { this.activeTab = tab; }
+  setTab(tab: typeof this.activeTab): void {
+    this.activeTab = tab;
+    if (tab === 'payments' && this.payments.length === 0) {
+      this.loadPayments();
+    }
+  }
+
   navigate(path: string): void { this.router.navigate([path]); }
   logout(): void { this.authService.logout(); }
   openEditModal(): void { this.setTab('settings'); }
@@ -256,7 +280,6 @@ export class ProfileComponent implements AfterViewInit {
       this.pwError = 'Senha muito fraca.';
       return;
     }
-    // TODO: this.userService.changePassword(this.pwForm).subscribe(...)
     this.pwSuccess = true;
     this.pwForm    = { current: '', new: '', confirm: '' };
     setTimeout(() => this.pwSuccess = false, 3000);

@@ -147,6 +147,7 @@
         <div class="profile-tabs">
           <button class="tab-btn" [class.active]="activeTab === 'overview'"  (click)="setTab('overview')">VISÃO GERAL</button>
           <button class="tab-btn" [class.active]="activeTab === 'settings'" (click)="setTab('settings')">CONFIGURAÇÕES</button>
+          <button class="tab-btn" [class.active]="activeTab === 'payments'" (click)="setTab('payments')">PAGAMENTOS</button>
         </div>
 
         <!-- VISÃO GERAL -->
@@ -346,6 +347,53 @@
 
           </div>
         </div>
+
+        <!-- PAGAMENTOS -->
+<div class="tab-panel" *ngIf="activeTab === 'payments'">
+
+  <div class="loading-fullscreen" *ngIf="loadingPayments">
+    <div class="loading-row">
+      <span class="loading-dot"></span>
+      <span class="loading-dot"></span>
+      <span class="loading-dot"></span>
+      <span class="loading-text">CARREGANDO HISTÓRICO...</span>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!loadingPayments">
+    <div class="panel" *ngIf="payments.length === 0">
+      <div class="empty-state">
+        <span class="empty-icon">◈</span>
+        <p>NENHUM PAGAMENTO REGISTRADO</p>
+      </div>
+    </div>
+
+    <div class="panel" *ngIf="payments.length > 0">
+      <div class="panel-header">
+        <span class="panel-label">HISTÓRICO DE PAGAMENTOS</span>
+        <span class="panel-dot green"></span>
+      </div>
+      <div class="terminal-lines">
+        <div class="t-line" style="opacity:0.5; font-size:10px; padding-bottom:8px;">
+          <span class="t-key" style="width:80px">DATA</span>
+          <span class="t-key" style="width:120px">PLANO</span>
+          <span class="t-key" style="width:80px">VALOR</span>
+          <span class="t-key" style="width:80px">MÉTODO</span>
+          <span class="t-key">STATUS</span>
+        </div>
+        <div class="t-line" *ngFor="let p of payments">
+          <span class="t-prompt">&gt;</span>
+          <span class="t-key">{{ p.createdAt | date:'dd/MM/yyyy' }}</span>
+          <span class="t-val purple">{{ p.subscription?.plan?.name | uppercase }}</span>
+          <span class="t-val">R$ {{ p.amount | number:'1.2-2' }}</span>
+          <span class="t-val" style="opacity:0.6">{{ p.method || '—' }}</span>
+          <span class="t-val green">[ {{ p.status | uppercase }} ]</span>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+</div>
 
         <footer class="site-footer">
           <span>ARCHV.ROOMS OS v2.4.1</span>

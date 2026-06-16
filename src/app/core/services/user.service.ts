@@ -127,4 +127,12 @@ export class UserService {
       { headers: this.getJsonHeaders() }
     );
   }
+
+  // GET /user/payments
+  getPaymentHistory(): Observable<any> {
+    return this.http.get<any>(
+     `${this.apiUrl}/user/payments`,
+     { headers: this.getAuthHeaders() }
+    );
+  }
 }
