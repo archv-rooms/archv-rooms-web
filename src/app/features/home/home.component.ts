@@ -110,14 +110,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   private checkOnboarding(token: string): void {
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     this.http.get<any>(`${environment.apiUrl}/user/profile`, { headers }).subscribe({
-      next: (res) => {
-        if (res.success && res.data.user.onboardingDone === false) {
-          this.showOnboarding = true;
-        }
-      },
-      error: () => {}
-    });
-  }
+    next: (res) => {
+      if (res.success && !res.data.user.onboardingDone) {
+        this.showOnboarding = true;
+      }
+    },
+    error: () => {}
+  });
+}
 
   onOnboardingConcluded(): void {
     this.showOnboarding = false;
