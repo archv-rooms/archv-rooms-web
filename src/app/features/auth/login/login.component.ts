@@ -68,7 +68,7 @@ export class LoginComponent implements OnInit {
         this.http.get<any>(`${environment.apiUrl}/user/profile`, { headers }).subscribe({
           next: (res) => {
             if (res.success && !res.data.user.onboardingDone) {
-              this.router.navigate(['/']);
+              this.router.navigate(['/onboarding']);
             } else {
               this.router.navigate(['/library']);
             }
