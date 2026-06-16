@@ -7,26 +7,26 @@ export interface Theme {
 }
 
 export const THEMES: Record<string, Theme> = {
-  default: {
-    name: 'default',
-    label: '👾 Padrão',
-    vars: {
-      '--color-bg':           '#0a0015',
-      '--color-bg-panel':     '#181b24',
-      '--color-bg-card':      '#202433',
-      '--color-primary':      '#00ffff',
-      '--color-primary-dim':  '#0088aa',
-      '--color-secondary':    '#ffd700',
-      '--color-accent':       '#ff00ff',
-      '--color-text':         '#e0e0e0',
-      '--color-text-muted':   '#9aa3c7',
-      '--color-text-dim':     '#727896',
-      '--color-border':       '#34384a',
-      '--color-border-glow':  '#00ffff',
-      '--color-glow':         '0 0 10px #00ffff',
-      '--color-error':        '#ff003c',
-    }
-  },
+default: {
+  name: 'default',
+  label: '👾 Padrão',
+  vars: {
+    '--color-bg':           '#11131a',
+    '--color-bg-panel':     '#181b24',
+    '--color-bg-card':      '#202433',
+    '--color-primary':      '#8b5cf6',
+    '--color-primary-dim':  '#6d4ed8',
+    '--color-secondary':    '#fbbf24',
+    '--color-accent':       '#8b5cf6',
+    '--color-text':         '#f2f4ff',
+    '--color-text-muted':   '#9aa3c7',
+    '--color-text-dim':     '#727896',
+    '--color-border':       '#34384a',
+    '--color-border-glow':  '#6d4ed8',
+    '--color-glow':         '0 0 10px #8b5cf6',
+    '--color-error':        '#fb7185',
+  }
+},
   valentines: {
     name: 'valentines',
     label: '💝 Namorados',
