@@ -99,6 +99,11 @@ export const routes: Routes = [
   loadComponent: () => import('./features/auth/google-callback/google-callback.component').then(m => m.GoogleCallbackComponent)
   },
   {
+  path: 'history',
+  loadComponent: () => import('./features/history/history.component').then(m => m.HistoryComponent),
+  canActivate: [AuthGuard]
+  },
+  {
     path: '**',
     loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent),
     data: { code: 404 }

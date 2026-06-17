@@ -1,0 +1,22 @@
+<div class="history-container">
+  <h1 class="title">// HISTÓRICO_DE_PARTIDAS</h1>
+
+  <div *ngIf="loading" class="status">CARREGANDO...</div>
+  <div *ngIf="error" class="status error">FALHA AO CARREGAR HISTÓRICO.</div>
+
+  <div *ngIf="!loading && !error && sessions.length === 0" class="status">
+    NENHUMA PARTIDA REGISTRADA.
+  </div>
+
+  <div class="sessions-list" *ngIf="!loading && !error && sessions.length > 0">
+    <div class="session-card" *ngFor="let session of sessions">
+      <img [src]="session.game.image" [alt]="session.game.title" class="game-image" />
+      <div class="session-info">
+        <span class="game-title">{{ session.game.title }}</span>
+        <span class="game-console">{{ session.game.console }}</span>
+        <span class="session-date">{{ session.startedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+        <span class="session-duration">{{ formatDuration(session.duration) }}</span>
+      </div>
+    </div>
+  </div>
+</div>

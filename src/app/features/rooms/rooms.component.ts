@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { environment } from '../../../environments/environments';
 import { SaveService, SaveSlot } from '../../core/services/save.service';
+import { SessionService } from '../../core/services/session.service';
 
 interface Game {
   id: number;
@@ -30,6 +31,7 @@ export class RoomsComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private sanitizer = inject(DomSanitizer);
   private saveService = inject(SaveService);
+  private sessionService = inject(SessionService);
 
   game: Game | null = null;
   isLoading = true;
@@ -49,6 +51,9 @@ export class RoomsComponent implements OnInit {
   saveSlots: SaveSlot[] = [];
   saveMessage = '';
   isSaving = false;
+
+  // Sessão
+  currentSessionId: number | null = null;
 
   ngOnInit(): void {
     this.checkAuth();
@@ -137,6 +142,17 @@ export class RoomsComponent implements OnInit {
 
   playGame(): void {
     if (!this.game?.fileUrl) { alert('Arquivo não disponível.'); return; }
+
+    // Inicia a sessão antes de abrir o emulador
+    this.sessionService.startSession(this.game.id).subscribe({
+      next: (res: any) => {
+        this.currentSessionId = res.data.session.id;
+      },
+      error: () => {
+        // Falha silenciosa: não impede o jogo de abrir
+      }
+    });
+
     this.showEmulator = true;
     this.emulatorReady = false;
     this.cdr.detectChanges();
@@ -160,6 +176,16 @@ export class RoomsComponent implements OnInit {
   }
 
   closeEmulator(): void {
+    // Encerra a sessão ao fechar o emulador
+    if (this.currentSessionId !== null) {
+      this.sessionService.endSession(this.currentSessionId).subscribe({
+        error: () => {
+          // Falha silenciosa
+        }
+      });
+      this.currentSessionId = null;
+    }
+
     const ejs = (window as any).EJS_emulator;
     if (ejs) {
       try { ejs.pause(); } catch {}
@@ -181,10 +207,8 @@ export class RoomsComponent implements OnInit {
     this.showSavePanel = true;
     this.saveMessage = '';
 
-    // Carrega slots locais primeiro
     this.saveSlots = await this.saveService.loadAllLocal(this.game.id);
 
-    // Tenta mesclar com nuvem se logado
     if (this.isLoggedIn) {
       const cloud = await this.saveService.loadFromCloud(this.game.id);
       cloud.forEach(cs => {
@@ -220,7 +244,6 @@ export class RoomsComponent implements OnInit {
       const saveData = ejs.saveState ? await ejs.saveState() : { slot, ts: Date.now() };
       await this.saveService.save(this.game.id, slot, saveData);
 
-      // Atualiza slot na lista
       const idx = this.saveSlots.findIndex(s => s.slot === slot);
       const entry: SaveSlot = { slot, saveData, updatedAt: new Date().toISOString() };
       if (idx >= 0) this.saveSlots[idx] = entry;
