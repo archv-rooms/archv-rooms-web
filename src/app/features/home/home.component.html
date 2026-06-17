@@ -100,7 +100,7 @@
         <div class="hero-scroll-hint">▼</div>
       </section>
 
-      <!-- CARROSSEL DE JOGOS --------------------------------------- -->
+<!-- CARROSSEL DE JOGOS --------------------------------------- -->
       <section class="section" *ngIf="isLoggedIn">
         <div class="section-header">
           <span class="section-label">acervo</span>
@@ -108,10 +108,24 @@
           <span class="section-link" (click)="navigate('/library')">ver tudo ›</span>
         </div>
 
+        <!-- Skeleton loading -->
+        <div class="carousel-wrap" *ngIf="loadingGames">
+          <button class="carousel-btn" disabled>‹</button>
+          <div class="games-grid">
+            <div class="game-card skeleton-card" *ngFor="let i of [1,2,3,4]">
+              <div class="game-thumb skeleton-thumb"></div>
+              <div class="game-info">
+                <div class="skeleton-line skeleton-title"></div>
+                <div class="skeleton-line skeleton-id"></div>
+              </div>
+            </div>
+          </div>
+          <button class="carousel-btn" disabled>›</button>
+        </div>
+
         <!-- Carrossel com navegação -->
         <div class="carousel-wrap" *ngIf="!loadingGames && !gamesError">
           <button class="carousel-btn" (click)="carouselPrev()" [disabled]="!carouselHasPrev">‹</button>
-
           <div class="games-grid">
             <div class="game-card" *ngFor="let game of carouselGames" (click)="onGameClick(game)">
               <div class="game-thumb">
@@ -125,16 +139,14 @@
               </div>
             </div>
           </div>
-
           <button class="carousel-btn" (click)="carouselNext()" [disabled]="!carouselHasNext">›</button>
         </div>
 
-        <!-- Não logado -->
-        <p class="section-hint" *ngIf="!isLoggedIn">
-          faça login para acessar o acervo.
+        <p class="section-hint" *ngIf="!loadingGames && gamesError">
+          falha ao carregar acervo.
         </p>
-
       </section>
+
 
       <!-- PLATAFORMAS --------------------------------------------- -->
       <section class="section platforms-section" *ngIf="platforms.length > 0">
