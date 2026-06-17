@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
@@ -8,9 +8,9 @@ import { environment } from '../../../../environments/environments';
   selector: 'app-theme-effects',
   standalone: true,
   imports: [CommonModule],
-  template: `<canvas #canvas style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;opacity:0.7;"></canvas>`,
+  template: `<canvas #canvas style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;opacity:0.8;"></canvas>`,
 })
-export class ThemeEffectsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
   private ctx!: CanvasRenderingContext2D;
@@ -19,8 +19,6 @@ export class ThemeEffectsComponent implements OnInit, AfterViewInit, OnDestroy {
   private theme = 'none';
 
   constructor(private http: HttpClient) {}
-
-  ngOnInit(): void {}
 
   async ngAfterViewInit(): Promise<void> {
     const canvas = this.canvasRef.nativeElement;
@@ -56,69 +54,61 @@ export class ThemeEffectsComponent implements OnInit, AfterViewInit, OnDestroy {
     const W = window.innerWidth;
     const H = window.innerHeight;
 
+    // Neve — Natal
     if (this.theme === 'christmas') {
-for (let i = 0; i < 8; i++) {
-  this.particles.push({
-    x: Math.random() * W, y: Math.random() * H * 0.7,
-    speedX: (Math.random() - 0.5) * 1.5,
-    speedY: (Math.random() - 0.5) * 0.8,
-    size: Math.random() * 30 + 25,
-    flap: Math.random() * Math.PI * 2,
-    flapSpeed: Math.random() * 0.1 + 0.06,
-  });
-}
-    }
-
-    if (this.theme === 'halloween') {
-      for (let i = 0; i < 12; i++) {
+      for (let i = 0; i < 150; i++) {
         this.particles.push({
-          x: Math.random() * W, y: Math.random() * H * 0.6,
-          speedX: (Math.random() - 0.5) * 1.2,
-          speedY: (Math.random() - 0.5) * 0.6,
-          size: Math.random() * 20 + 14,
-          flap: Math.random() * Math.PI * 2,
-          flapSpeed: Math.random() * 0.08 + 0.04,
-        });
-      }
-    }
-
-    if (this.theme === 'valentines') {
-      for (let i = 0; i < 30; i++) {
-        this.particles.push({
-          x: Math.random() * W, y: Math.random() * H + H,
-          speedY: Math.random() * 0.8 + 0.3,
-          speedX: (Math.random() - 0.5) * 0.4,
-          size: Math.random() * 16 + 8,
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: Math.random() * 3 + 1,
+          speed: Math.random() * 1.2 + 0.3,
+          wind: Math.random() * 0.6 - 0.3,
           opacity: Math.random() * 0.5 + 0.3,
-          wobble: Math.random() * Math.PI * 2,
-          wobbleSpeed: Math.random() * 0.02 + 0.01,
         });
       }
     }
 
+    // Corações — Namorados
+    if (this.theme === 'valentines') {
+      for (let i = 0; i < 25; i++) {
+        this.particles.push({
+          x: Math.random() * W,
+          y: H + Math.random() * H,
+          speedY: Math.random() * 0.6 + 0.2,
+          size: Math.random() * 12 + 6,
+          opacity: Math.random() * 0.4 + 0.2,
+          wobble: Math.random() * Math.PI * 2,
+          wobbleSpeed: Math.random() * 0.015 + 0.005,
+        });
+      }
+    }
+
+    // Confetes — Carnaval
     if (this.theme === 'carnival') {
       const colors = ['#ffe600','#ff0080','#00e5ff','#ff4400','#00ff88','#ff44ff'];
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 80; i++) {
         this.particles.push({
-          x: Math.random() * W, y: Math.random() * H,
-          speedY: Math.random() * 2 + 1,
-          speedX: (Math.random() - 0.5) * 1.5,
-          w: Math.random() * 8 + 4,
-          h: Math.random() * 4 + 2,
+          x: Math.random() * W,
+          y: Math.random() * H,
+          speedY: Math.random() * 1.5 + 0.5,
+          speedX: (Math.random() - 0.5) * 1,
+          w: Math.random() * 7 + 3,
+          h: Math.random() * 3 + 2,
           color: colors[Math.floor(Math.random() * colors.length)],
           rotation: Math.random() * Math.PI * 2,
-          rotSpeed: (Math.random() - 0.5) * 0.1,
+          rotSpeed: (Math.random() - 0.5) * 0.08,
         });
       }
     }
 
+    // Fogos — Ano Novo
     if (this.theme === 'newyear') {
       this.scheduleFirework();
     }
   }
 
   private scheduleFirework(): void {
-    const delay = Math.random() * 2000 + 800;
+    const delay = Math.random() * 2000 + 1000;
     setTimeout(() => {
       if (this.theme !== 'newyear') return;
       this.spawnFirework();
@@ -137,7 +127,7 @@ for (let i = 0; i < 8; i++) {
       const angle = (Math.PI * 2 / 60) * i;
       const speed = Math.random() * 3 + 1;
       this.particles.push({
-        type: 'firework', x, y,
+        x, y,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
         alpha: 1, color,
@@ -153,7 +143,6 @@ for (let i = 0; i < 8; i++) {
     this.ctx.clearRect(0, 0, W, H);
 
     if (this.theme === 'christmas')  this.drawSnow(W, H);
-    if (this.theme === 'halloween')  this.drawBats(W, H);
     if (this.theme === 'valentines') this.drawHearts(W, H);
     if (this.theme === 'carnival')   this.drawConfetti(W, H);
     if (this.theme === 'newyear')    this.drawFireworks();
@@ -170,36 +159,8 @@ for (let i = 0; i < 8; i++) {
       p.y += p.speed;
       p.x += p.wind;
       if (p.y > H) { p.y = -5; p.x = Math.random() * W; }
-    });
-  }
-
-  private drawBats(W: number, H: number): void {
-    this.particles.forEach(p => {
-      p.flap += p.flapSpeed;
-      const wingY = Math.sin(p.flap) * p.size * 0.5;
-      this.ctx.save();
-      this.ctx.translate(p.x, p.y);
-     this.ctx.fillStyle = 'rgba(20,0,30,0.95)';
-      this.ctx.beginPath();
-      this.ctx.ellipse(0, 0, p.size * 0.2, p.size * 0.15, 0, 0, Math.PI * 2);
-      this.ctx.fill();
-      this.ctx.beginPath();
-      this.ctx.moveTo(0, 0);
-      this.ctx.quadraticCurveTo(-p.size * 0.6, -wingY, -p.size, p.size * 0.1);
-      this.ctx.quadraticCurveTo(-p.size * 0.5, p.size * 0.2, 0, 0);
-      this.ctx.fill();
-      this.ctx.beginPath();
-      this.ctx.moveTo(0, 0);
-      this.ctx.quadraticCurveTo(p.size * 0.6, -wingY, p.size, p.size * 0.1);
-      this.ctx.quadraticCurveTo(p.size * 0.5, p.size * 0.2, 0, 0);
-      this.ctx.fill();
-      this.ctx.restore();
-      p.x += p.speedX;
-      p.y += p.speedY;
-      if (p.x < -50) p.x = W + 50;
-      if (p.x > W + 50) p.x = -50;
-      if (p.y < -50) p.y = H * 0.6;
-      if (p.y > H * 0.6) p.y = -50;
+      if (p.x > W) p.x = 0;
+      if (p.x < 0) p.x = W;
     });
   }
 
@@ -207,7 +168,7 @@ for (let i = 0; i < 8; i++) {
     this.particles.forEach(p => {
       p.wobble += p.wobbleSpeed;
       p.y -= p.speedY;
-      p.x += Math.sin(p.wobble) * 0.5;
+      p.x += Math.sin(p.wobble) * 0.4;
       const s = p.size;
       this.ctx.save();
       this.ctx.globalAlpha = p.opacity;
@@ -215,7 +176,7 @@ for (let i = 0; i < 8; i++) {
       this.ctx.translate(p.x, p.y);
       this.ctx.beginPath();
       this.ctx.moveTo(0, -s * 0.3);
-      this.ctx.bezierCurveTo( s * 0.5, -s, s, -s * 0.3,  0,  s * 0.5);
+      this.ctx.bezierCurveTo( s * 0.5, -s,  s, -s * 0.3, 0,  s * 0.5);
       this.ctx.bezierCurveTo(-s, -s * 0.3, -s * 0.5, -s, 0, -s * 0.3);
       this.ctx.fill();
       this.ctx.restore();
@@ -232,8 +193,10 @@ for (let i = 0; i < 8; i++) {
       this.ctx.translate(p.x, p.y);
       this.ctx.rotate(p.rotation);
       this.ctx.fillStyle = p.color;
+      this.ctx.globalAlpha = 0.85;
       this.ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
       this.ctx.restore();
+      this.ctx.globalAlpha = 1;
       if (p.y > H + 10) { p.y = -10; p.x = Math.random() * W; }
     });
   }
