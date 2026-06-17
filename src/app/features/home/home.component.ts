@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -74,7 +74,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -118,6 +119,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.platforms = res.data.platforms;
           this.totalGames = res.data.totalGames;
         }
+        this.cdr.detectChanges()
       },
       error: (err) => {
         console.error('[home] erro ao carregar plataformas:', err);
