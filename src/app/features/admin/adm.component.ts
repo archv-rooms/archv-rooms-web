@@ -513,15 +513,26 @@ export class AdmComponent implements OnInit {
     });
   }
 
-  // ── THEMES ────────────────────────────────────────────────
-  loadActiveTheme(): void {
-    this.activeThemeName = this.themeService.getActiveTheme().name;
-    this.cdr.detectChanges();
-  }
+// ── THEMES ────────────────────────────────────────────────
+loadActiveTheme(): void {
+  this.http.get<{ themeKey: string }>(`${this.api}/admin/theme`).subscribe({
+    next: (res) => {
+      this.activeThemeName = res.themeKey;
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.activeThemeName = this.themeService.getActiveTheme().name;
+      this.cdr.detectChanges();
+    }
+  });
+}
 
-  setTheme(themeName: string | null): void {
-    this.themeService.setOverride(themeName);
-    this.activeThemeName = this.themeService.getActiveTheme().name;
+setTheme(themeName: string | null): void {
+  this.themeService.setGlobalTheme(themeName).then(() => {
+    this.activeThemeName = themeName ?? 'default';
     this.cdr.detectChanges();
-  }
+  }).catch(() => {
+    alert('Erro ao salvar tema global.');
+  });
+}
 }

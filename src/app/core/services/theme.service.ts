@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environments';
 
 export interface Theme {
   name: string;
@@ -7,26 +10,26 @@ export interface Theme {
 }
 
 export const THEMES: Record<string, Theme> = {
-default: {
-  name: 'default',
-  label: '👾 Padrão',
-  vars: {
-    '--color-bg':           '#11131a',
-    '--color-bg-panel':     '#181b24',
-    '--color-bg-card':      '#202433',
-    '--color-primary':      '#8b5cf6',
-    '--color-primary-dim':  '#6d4ed8',
-    '--color-secondary':    '#fbbf24',
-    '--color-accent':       '#8b5cf6',
-    '--color-text':         '#f2f4ff',
-    '--color-text-muted':   '#9aa3c7',
-    '--color-text-dim':     '#727896',
-    '--color-border':       '#34384a',
-    '--color-border-glow':  '#6d4ed8',
-    '--color-glow':         '0 0 10px #8b5cf6',
-    '--color-error':        '#fb7185',
-  }
-},
+  default: {
+    name: 'default',
+    label: '👾 Padrão',
+    vars: {
+      '--color-bg':           '#11131a',
+      '--color-bg-panel':     '#181b24',
+      '--color-bg-card':      '#202433',
+      '--color-primary':      '#8b5cf6',
+      '--color-primary-dim':  '#6d4ed8',
+      '--color-secondary':    '#fbbf24',
+      '--color-accent':       '#8b5cf6',
+      '--color-text':         '#f2f4ff',
+      '--color-text-muted':   '#9aa3c7',
+      '--color-text-dim':     '#727896',
+      '--color-border':       '#34384a',
+      '--color-border-glow':  '#6d4ed8',
+      '--color-glow':         '0 0 10px #8b5cf6',
+      '--color-error':        '#fb7185',
+    }
+  },
   valentines: {
     name: 'valentines',
     label: '💝 Namorados',
@@ -132,7 +135,71 @@ default: {
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
 
-  private readonly STORAGE_KEY = 'archv_theme_override';
+  private readonly apiUrl = `${environment.apiUrl}/api/admin/theme`;
+
+  constructor(private http: HttpClient) {}
+
+  // ─── Público: chamado no app.component.ts no ngOnInit ───
+  async applyTheme(): Promise<void> {
+    const key = await this.fetchGlobalTheme();
+    this.applyThemeVars(key);
+  }
+
+  // ─── Admin: salva no backend e aplica imediatamente ─────
+  async setGlobalTheme(themeName: string | null): Promise<void> {
+    const key = themeName ?? 'default';
+    await firstValueFrom(this.http.post(this.apiUrl, { themeKey: key }));
+    this.applyThemeVars(key);
+  }
+
+  getActiveTheme(): Theme {
+    return THEMES[this.getActiveThemeNameFromDate()] ?? THEMES['default'];
+  }
+
+  getAllThemes(): Theme[] {
+    return Object.values(THEMES);
+  }
+
+  // ─── Privados ────────────────────────────────────────────
+  private async fetchGlobalTheme(): Promise<string> {
+    try {
+      const res = await firstValueFrom(
+        this.http.get<{ themeKey: string }>(this.apiUrl)
+      );
+      return res.themeKey ?? 'default';
+    } catch {
+      // fallback: usa tema sazonal por data caso a API falhe
+      return this.getActiveThemeNameFromDate();
+    }
+  }
+
+  private applyThemeVars(name: string): void {
+    const theme = THEMES[name] ?? THEMES['default'];
+    const root = document.documentElement;
+    Object.entries(theme.vars).forEach(([key, value]) => {
+      root.style.setProperty(key, value);
+    });
+  }
+
+  private getActiveThemeNameFromDate(): string {
+    const now   = new Date();
+    const month = now.getMonth() + 1;
+    const day   = now.getDate();
+    const year  = now.getFullYear();
+
+    if (month === 12 && day >= 26) return 'newyear';
+    if (month === 12 && day <= 25) return 'christmas';
+    if (month === 10)              return 'halloween';
+
+    const carnival = this.getCarnavalTuesday(year);
+    const carnivalStart = new Date(carnival);
+    carnivalStart.setDate(carnival.getDate() - 4);
+    if (now >= carnivalStart && now <= carnival) return 'carnival';
+
+    if (month === 2 && day <= 14) return 'valentines';
+
+    return 'default';
+  }
 
   private getCarnavalTuesday(year: number): Date {
     const easter = this.getEaster(year);
@@ -150,56 +217,7 @@ export class ThemeService {
     const J = (year + f(year / 4) + I + 2 - C + f(C / 4)) % 7;
     const L = I - J;
     const month = 3 + f((L + 40) / 44);
-    const day = L + 28 - 31 * f(month / 4);
+    const day   = L + 28 - 31 * f(month / 4);
     return new Date(year, month - 1, day);
-  }
-
-  private getActiveThemeName(): string {
-    const override = localStorage.getItem(this.STORAGE_KEY);
-    if (override && THEMES[override]) return override;
-
-    const now = new Date();
-    const month = now.getMonth() + 1;
-    const day   = now.getDate();
-    const year  = now.getFullYear();
-
-    if (month === 12 && day >= 26) return 'newyear';
-    if (month === 12 && day <= 25) return 'christmas';
-    if (month === 10) return 'halloween';
-
-    const carnival = this.getCarnavalTuesday(year);
-    const carnivalStart = new Date(carnival);
-    carnivalStart.setDate(carnival.getDate() - 4);
-    if (now >= carnivalStart && now <= carnival) return 'carnival';
-
-    if (month === 2 && day <= 14) return 'valentines';
-
-    return 'default';
-  }
-
-  applyTheme(themeName?: string): void {
-    const name = themeName ?? this.getActiveThemeName();
-    const theme = THEMES[name] ?? THEMES['default'];
-    const root = document.documentElement;
-    Object.entries(theme.vars).forEach(([key, value]) => {
-      root.style.setProperty(key, value);
-    });
-  }
-
-  setOverride(themeName: string | null): void {
-    if (themeName) {
-      localStorage.setItem(this.STORAGE_KEY, themeName);
-    } else {
-      localStorage.removeItem(this.STORAGE_KEY);
-    }
-    this.applyTheme();
-  }
-
-  getActiveTheme(): Theme {
-    return THEMES[this.getActiveThemeName()] ?? THEMES['default'];
-  }
-
-  getAllThemes(): Theme[] {
-    return Object.values(THEMES);
   }
 }
