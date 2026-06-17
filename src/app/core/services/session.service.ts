@@ -9,14 +9,14 @@ export class SessionService {
   constructor(private http: HttpClient) {}
 
   startSession(gameId: number) {
-    return this.http.post(`${this.api}/api/sessions/start`, { gameId })
+    return this.http.post(`${this.api}/sessions/start`, { gameId })
   }
 
   endSession(sessionId: number) {
-    return this.http.patch(`${this.api}/api/sessions/${sessionId}/end`, {})
+    return this.http.patch(`${this.api}/sessions/${sessionId}/end`, {})
   }
 
   getHistory() {
-    return this.http.get(`${this.api}/api/sessions/history`)
+    return this.http.get(`${this.api}/sessions/history`)
   }
 }
