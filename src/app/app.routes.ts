@@ -104,6 +104,10 @@ export const routes: Routes = [
   canActivate: [AuthGuard]
   },
   {
+  path: 'faq',
+  loadComponent: () => import('./features/faq/faq.component').then(m => m.FaqComponent)
+  },
+  {
     path: '**',
     loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent),
     data: { code: 404 }
