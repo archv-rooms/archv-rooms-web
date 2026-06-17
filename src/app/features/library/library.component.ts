@@ -31,6 +31,9 @@ export class LibraryComponent implements OnInit {
   games: Game[] = [];
   filteredGames: Game[] = [];
 
+  favoriteIds = new Set<number>();
+  showOnlyFavorites = false;
+
   loadingGames = false;
   gamesError = '';
 
@@ -52,7 +55,7 @@ export class LibraryComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
-    private authService: AuthService  // ← adicionado
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -61,23 +64,27 @@ export class LibraryComponent implements OnInit {
     if (this.isLoggedIn) {
       this.userName = this.authService.getUserName();
       this.loadGames();
+      this.loadFavorites();
     }
   }
 
+  private get authHeaders(): HttpHeaders {
+    const token = this.authService.getToken();
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
+  }
+
   loadGames(): void {
-    const token = this.authService.getToken(); // ← corrigido
+    const token = this.authService.getToken();
     if (!token) return;
 
     this.loadingGames = true;
     this.gamesError = '';
 
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-
     this.http.get<{
       success: boolean;
       data: { games: Game[] };
       message: string;
-    }>(`${environment.apiUrl}/library`, { headers }).subscribe({
+    }>(`${environment.apiUrl}/library`, { headers: this.authHeaders }).subscribe({
       next: (res) => {
         if (res.success) {
           this.games = res.data.games;
@@ -96,31 +103,85 @@ export class LibraryComponent implements OnInit {
     });
   }
 
-applyFilters(): void {
-  const query = this.searchQuery.toLowerCase().trim();
+  loadFavorites(): void {
+    this.http.get<{
+      success: boolean;
+      data: { games: Game[] };
+      message: string;
+    }>(`${environment.apiUrl}/user/favorites`, { headers: this.authHeaders }).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.favoriteIds = new Set(res.data.games.map(g => g.id));
+          this.cdr.detectChanges();
+        }
+      },
+      error: () => {
+        // Falha silenciosa: favoritos não são essenciais pra abrir a biblioteca
+      }
+    });
+  }
 
-  const filterMap: Record<string, string[]> = {
-    'mega drive': ['md', 'mega drive', 'genesis'],
-    'game boy':   ['gb', 'game boy', 'gbc', 'gameboy'],
-  };
+  toggleFavorite(game: Game, event: Event): void {
+    event.stopPropagation(); // evita abrir o jogo ao clicar na estrela
 
-  this.filteredGames = this.games.filter(game => {
-    const consoleLC = game.console.toLowerCase();
-    const filterLC = this.activeFilter.toLowerCase();
+    this.http.post<{
+      success: boolean;
+      data: { favorited: boolean };
+      message: string;
+    }>(`${environment.apiUrl}/user/favorites/${game.id}`, {}, { headers: this.authHeaders }).subscribe({
+      next: (res) => {
+        if (res.success) {
+          if (res.data.favorited) {
+            this.favoriteIds.add(game.id);
+          } else {
+            this.favoriteIds.delete(game.id);
+            if (this.showOnlyFavorites) this.applyFilters();
+          }
+          this.cdr.detectChanges();
+        }
+      },
+      error: () => {
+        // Opcional: mostrar um toast de erro aqui
+      }
+    });
+  }
 
-    const matchesFilter =
-      this.activeFilter === 'all' ||
-      consoleLC === filterLC ||
-      (filterMap[filterLC]?.includes(consoleLC) ?? false);
+  isFavorite(gameId: number): boolean {
+    return this.favoriteIds.has(gameId);
+  }
 
-    const matchesSearch =
-      !query ||
-      game.title.toLowerCase().includes(query) ||
-      consoleLC.includes(query);
+  toggleShowFavorites(): void {
+    this.showOnlyFavorites = !this.showOnlyFavorites;
+    this.applyFilters();
+  }
 
-    return matchesFilter && matchesSearch;
-  });
-}
+  applyFilters(): void {
+    const query = this.searchQuery.toLowerCase().trim();
+
+    const filterMap: Record<string, string[]> = {
+      'mega drive': ['md', 'mega drive', 'genesis'],
+      'game boy':   ['gb', 'game boy', 'gbc', 'gameboy'],
+    };
+
+    this.filteredGames = this.games.filter(game => {
+      const consoleLC = game.console.toLowerCase();
+      const filterLC = this.activeFilter.toLowerCase();
+
+      const matchesFilter =
+        this.activeFilter === 'all' ||
+        consoleLC === filterLC ||
+        (filterMap[filterLC]?.includes(consoleLC) ?? false);
+
+      const matchesSearch =
+        !query ||
+        game.title.toLowerCase().includes(query) ||
+        consoleLC.includes(query);
+
+      const matchesFavorites = !this.showOnlyFavorites || this.favoriteIds.has(game.id);
+
+      return matchesFilter && matchesSearch && matchesFavorites;
+    });
+  }
 
   setFilter(value: string): void {
     this.activeFilter = value;

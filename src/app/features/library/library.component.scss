@@ -644,6 +644,50 @@ $red-alert: #fb7185;
   padding: 10px;
 }
 
+.favorite-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+
+  z-index: 3;
+
+  width: 26px;
+  height: 26px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+  line-height: 1;
+
+  background: rgba($bg, 0.6);
+
+  border: 1px solid rgba($border-glow, 0.3);
+  border-radius: 50%;
+
+  color: $text-dim;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $purple-bright;
+    color: $purple-bright;
+
+    background: rgba($purple, 0.2);
+  }
+
+  &.active {
+    border-color: #facc15;
+    color: #facc15;
+
+    background: rgba(#facc15, 0.15);
+
+    box-shadow: 0 0 8px rgba(#facc15, 0.5);
+  }
+}
+
 .game-title {
   font-size: 11px;
   letter-spacing: 1px;

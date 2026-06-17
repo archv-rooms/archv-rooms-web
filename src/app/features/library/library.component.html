@@ -73,6 +73,12 @@
         </button>
       </div>
       <div class="filter-right">
+        <button
+          class="filter-btn"
+          [class.active]="showOnlyFavorites"
+          (click)="toggleShowFavorites()">
+          ★ FAVORITOS
+        </button>
         <span class="result-count">{{ filteredGames.length }} JOGOS_ENCONTRADOS</span>
       </div>
     </div>
@@ -123,6 +129,12 @@
               <span class="overlay-text">ABRIR</span>
             </div>
             <span class="console-badge">{{ game.console }}</span>
+            <button
+              class="favorite-btn"
+              [class.active]="isFavorite(game.id)"
+              (click)="toggleFavorite(game, $event)">
+              ★
+            </button>
           </div>
           <div class="game-info">
             <p class="game-title">{{ game.title }}</p>
