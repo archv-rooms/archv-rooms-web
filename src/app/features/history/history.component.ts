@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { SessionService } from '../../core/services/session.service'
 
@@ -14,24 +14,26 @@ export class HistoryComponent implements OnInit {
   loading = true
   error = false
 
-  constructor(private sessionService: SessionService) {}
+  constructor(
+    private sessionService: SessionService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    console.log('ngOnInit chamado')
     this.sessionService.getHistory().subscribe({
       next: (res: any) => {
-        console.log('next:', res)
         this.sessions = res?.data?.sessions ?? []
         this.loading = false
+        this.cdr.detectChanges()
       },
       error: (err: any) => {
-        console.log('error:', err)
         this.error = true
         this.loading = false
+        this.cdr.detectChanges()
       },
       complete: () => {
-        console.log('complete')
         this.loading = false
+        this.cdr.detectChanges()
       }
     })
   }
