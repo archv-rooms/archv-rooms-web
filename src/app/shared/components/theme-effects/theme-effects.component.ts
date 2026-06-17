@@ -54,7 +54,6 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
     const W = window.innerWidth;
     const H = window.innerHeight;
 
-    // Neve — Natal
     if (this.theme === 'christmas') {
       for (let i = 0; i < 150; i++) {
         this.particles.push({
@@ -68,7 +67,21 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
       }
     }
 
-    // Corações — Namorados
+    if (this.theme === 'halloween') {
+      for (let i = 0; i < 10; i++) {
+        this.particles.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          speedX: (Math.random() - 0.5) * 0.6,
+          speedY: (Math.random() - 0.5) * 0.4,
+          size: Math.random() * 30 + 20,
+          opacity: Math.random() * 0.3 + 0.1,
+          wobble: Math.random() * Math.PI * 2,
+          wobbleSpeed: Math.random() * 0.02 + 0.01,
+        });
+      }
+    }
+
     if (this.theme === 'valentines') {
       for (let i = 0; i < 25; i++) {
         this.particles.push({
@@ -83,7 +96,6 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
       }
     }
 
-    // Confetes — Carnaval
     if (this.theme === 'carnival') {
       const colors = ['#ffe600','#ff0080','#00e5ff','#ff4400','#00ff88','#ff44ff'];
       for (let i = 0; i < 80; i++) {
@@ -101,7 +113,6 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
       }
     }
 
-    // Fogos — Ano Novo
     if (this.theme === 'newyear') {
       this.scheduleFirework();
     }
@@ -143,6 +154,7 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
     this.ctx.clearRect(0, 0, W, H);
 
     if (this.theme === 'christmas')  this.drawSnow(W, H);
+    if (this.theme === 'halloween')  this.drawGhosts(W, H);
     if (this.theme === 'valentines') this.drawHearts(W, H);
     if (this.theme === 'carnival')   this.drawConfetti(W, H);
     if (this.theme === 'newyear')    this.drawFireworks();
@@ -161,6 +173,40 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
       if (p.y > H) { p.y = -5; p.x = Math.random() * W; }
       if (p.x > W) p.x = 0;
       if (p.x < 0) p.x = W;
+    });
+  }
+
+  private drawGhosts(W: number, H: number): void {
+    this.particles.forEach(p => {
+      p.wobble += p.wobbleSpeed;
+      p.x += p.speedX + Math.sin(p.wobble) * 0.3;
+      p.y += p.speedY;
+      const s = p.size;
+      this.ctx.save();
+      this.ctx.globalAlpha = p.opacity;
+      this.ctx.fillStyle = '#ffffff';
+      this.ctx.translate(p.x, p.y);
+      this.ctx.beginPath();
+      this.ctx.arc(0, -s * 0.3, s * 0.5, Math.PI, 0);
+      this.ctx.lineTo(s * 0.5, s * 0.4);
+      this.ctx.quadraticCurveTo(s * 0.3,   s * 0.6,  s * 0.15,  s * 0.4);
+      this.ctx.quadraticCurveTo(0,          s * 0.65, -s * 0.15, s * 0.4);
+      this.ctx.quadraticCurveTo(-s * 0.3,  s * 0.6,  -s * 0.5,  s * 0.4);
+      this.ctx.lineTo(-s * 0.5, -s * 0.3);
+      this.ctx.fill();
+      this.ctx.globalAlpha = p.opacity * 2;
+      this.ctx.fillStyle = '#000000';
+      this.ctx.beginPath();
+      this.ctx.ellipse(-s * 0.15, -s * 0.3, s * 0.08, s * 0.1, 0, 0, Math.PI * 2);
+      this.ctx.fill();
+      this.ctx.beginPath();
+      this.ctx.ellipse(s * 0.15, -s * 0.3, s * 0.08, s * 0.1, 0, 0, Math.PI * 2);
+      this.ctx.fill();
+      this.ctx.restore();
+      if (p.x < -100) p.x = W + 100;
+      if (p.x > W + 100) p.x = -100;
+      if (p.y < -100) p.y = H + 100;
+      if (p.y > H + 100) p.y = -100;
     });
   }
 
