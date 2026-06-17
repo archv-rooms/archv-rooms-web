@@ -48,4 +48,8 @@ export class RegisterComponent {
       }
     });
   }
+
+  loginWithGoogle(): void {
+    this.authService.loginWithGoogle();
+  }
 }
