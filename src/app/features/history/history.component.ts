@@ -16,21 +16,25 @@ export class HistoryComponent implements OnInit {
 
   constructor(private sessionService: SessionService) {}
 
- ngOnInit() {
-  this.sessionService.getHistory().subscribe({
-    next: (res: any) => {
-      this.sessions = res?.data?.sessions ?? []
-      this.loading = false
-    },
-    error: () => {
-      this.error = true
-      this.loading = false
-    },
-    complete: () => {
-      this.loading = false
-    }
-  })
-}
+  ngOnInit() {
+    console.log('ngOnInit chamado')
+    this.sessionService.getHistory().subscribe({
+      next: (res: any) => {
+        console.log('next:', res)
+        this.sessions = res?.data?.sessions ?? []
+        this.loading = false
+      },
+      error: (err: any) => {
+        console.log('error:', err)
+        this.error = true
+        this.loading = false
+      },
+      complete: () => {
+        console.log('complete')
+        this.loading = false
+      }
+    })
+  }
 
   formatDuration(seconds: number): string {
     if (!seconds) return '—'
