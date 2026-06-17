@@ -57,15 +57,16 @@ export class ThemeEffectsComponent implements OnInit, AfterViewInit, OnDestroy {
     const H = window.innerHeight;
 
     if (this.theme === 'christmas') {
-      for (let i = 0; i < 120; i++) {
-        this.particles.push({
-          x: Math.random() * W, y: Math.random() * H,
-          r: Math.random() * 3 + 1,
-          speed: Math.random() * 1 + 0.3,
-          wind: Math.random() * 0.5 - 0.25,
-          opacity: Math.random() * 0.6 + 0.4,
-        });
-      }
+for (let i = 0; i < 8; i++) {
+  this.particles.push({
+    x: Math.random() * W, y: Math.random() * H * 0.7,
+    speedX: (Math.random() - 0.5) * 1.5,
+    speedY: (Math.random() - 0.5) * 0.8,
+    size: Math.random() * 30 + 25,
+    flap: Math.random() * Math.PI * 2,
+    flapSpeed: Math.random() * 0.1 + 0.06,
+  });
+}
     }
 
     if (this.theme === 'halloween') {
@@ -178,7 +179,7 @@ export class ThemeEffectsComponent implements OnInit, AfterViewInit, OnDestroy {
       const wingY = Math.sin(p.flap) * p.size * 0.5;
       this.ctx.save();
       this.ctx.translate(p.x, p.y);
-      this.ctx.fillStyle = 'rgba(80,0,120,0.75)';
+     this.ctx.fillStyle = 'rgba(20,0,30,0.95)';
       this.ctx.beginPath();
       this.ctx.ellipse(0, 0, p.size * 0.2, p.size * 0.15, 0, 0, Math.PI * 2);
       this.ctx.fill();
