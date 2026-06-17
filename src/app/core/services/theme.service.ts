@@ -135,7 +135,7 @@ export const THEMES: Record<string, Theme> = {
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
 
-  private readonly apiUrl = `${environment.apiUrl}/api/admin/theme`;
+  private readonly apiUrl = `${environment.apiUrl}/admin/theme`;
 
   constructor(private http: HttpClient) {}
 
