@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ThemeService } from '../../../core/services/theme.service';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../../environments/environments';
 
 @Component({
   selector: 'app-theme-effects',
@@ -14,48 +16,39 @@ export class ThemeEffectsComponent implements OnInit, AfterViewInit, OnDestroy {
   private ctx!: CanvasRenderingContext2D;
   private particles: any[] = [];
   private animationId!: number;
-  private theme = '';
+  private theme = 'none';
 
-  constructor(private themeService: ThemeService) {}
+  constructor(private http: HttpClient) {}
 
-  ngOnInit(): void {
-    this.theme = '';
-  }
+  ngOnInit(): void {}
 
-  ngAfterViewInit(): void {
+  async ngAfterViewInit(): Promise<void> {
     const canvas = this.canvasRef.nativeElement;
     this.ctx = canvas.getContext('2d')!;
     this.resize();
     window.addEventListener('resize', () => this.resize());
 
-    this.themeService.applyTheme().then(() => {
-      this.detectTheme();
-      this.initParticles();
-      this.animate();
-    });
+    try {
+      const res = await firstValueFrom(
+        this.http.get<{ themeKey: string }>(`${environment.apiUrl}/admin/theme`)
+      );
+      this.theme = res.themeKey ?? 'none';
+    } catch {
+      this.theme = 'none';
+    }
+
+    this.initParticles();
+    this.animate();
   }
 
   ngOnDestroy(): void {
     cancelAnimationFrame(this.animationId);
-    window.removeEventListener('resize', () => this.resize());
   }
 
   private resize(): void {
     const canvas = this.canvasRef.nativeElement;
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
-  }
-
-  private detectTheme(): void {
-    const body = document.documentElement.style;
-    const primary = body.getPropertyValue('--color-primary').trim();
-
-    if (primary.includes('ff6d00') || primary.includes('ff6D00')) this.theme = 'halloween';
-    else if (primary.includes('00e676')) this.theme = 'christmas';
-    else if (primary.includes('e91e63') || primary.includes('ff4081')) this.theme = 'valentines';
-    else if (primary.includes('ffe600')) this.theme = 'carnival';
-    else if (primary.includes('ffd700')) this.theme = 'newyear';
-    else this.theme = 'none';
   }
 
   private initParticles(): void {
@@ -158,11 +151,11 @@ export class ThemeEffectsComponent implements OnInit, AfterViewInit, OnDestroy {
     const H = canvas.height;
     this.ctx.clearRect(0, 0, W, H);
 
-    if (this.theme === 'christmas') this.drawSnow(W, H);
-    if (this.theme === 'halloween') this.drawBats(W, H);
+    if (this.theme === 'christmas')  this.drawSnow(W, H);
+    if (this.theme === 'halloween')  this.drawBats(W, H);
     if (this.theme === 'valentines') this.drawHearts(W, H);
-    if (this.theme === 'carnival') this.drawConfetti(W, H);
-    if (this.theme === 'newyear') this.drawFireworks();
+    if (this.theme === 'carnival')   this.drawConfetti(W, H);
+    if (this.theme === 'newyear')    this.drawFireworks();
 
     this.animationId = requestAnimationFrame(() => this.animate());
   }
@@ -186,17 +179,14 @@ export class ThemeEffectsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.ctx.save();
       this.ctx.translate(p.x, p.y);
       this.ctx.fillStyle = 'rgba(80,0,120,0.75)';
-      // corpo
       this.ctx.beginPath();
       this.ctx.ellipse(0, 0, p.size * 0.2, p.size * 0.15, 0, 0, Math.PI * 2);
       this.ctx.fill();
-      // asa esquerda
       this.ctx.beginPath();
       this.ctx.moveTo(0, 0);
       this.ctx.quadraticCurveTo(-p.size * 0.6, -wingY, -p.size, p.size * 0.1);
       this.ctx.quadraticCurveTo(-p.size * 0.5, p.size * 0.2, 0, 0);
       this.ctx.fill();
-      // asa direita
       this.ctx.beginPath();
       this.ctx.moveTo(0, 0);
       this.ctx.quadraticCurveTo(p.size * 0.6, -wingY, p.size, p.size * 0.1);
@@ -225,7 +215,7 @@ export class ThemeEffectsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.ctx.beginPath();
       this.ctx.moveTo(0, -s * 0.3);
       this.ctx.bezierCurveTo( s * 0.5, -s, s, -s * 0.3,  0,  s * 0.5);
-      this.ctx.bezierCurveTo(-s,       -s * 0.3, -s * 0.5, -s, 0, -s * 0.3);
+      this.ctx.bezierCurveTo(-s, -s * 0.3, -s * 0.5, -s, 0, -s * 0.3);
       this.ctx.fill();
       this.ctx.restore();
       if (p.y < -50) { p.y = H + 50; p.x = Math.random() * W; }
