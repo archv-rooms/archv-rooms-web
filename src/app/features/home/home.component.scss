@@ -583,6 +583,7 @@ $amber:     #fbbf24;
   position: relative;
   overflow: hidden;
   cursor: grab;
+  padding: 4px 0;
 
   &:active,
   &.dragging {
@@ -593,9 +594,8 @@ $amber:     #fbbf24;
 .platforms-track {
   display: flex;
   gap: 12px;
-
   width: max-content;
-
+  padding: 0 20px;
   animation: scrollLeft 30s linear infinite;
 
   &.paused {
@@ -965,6 +965,8 @@ $amber:     #fbbf24;
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
+  overflow: hidden;
 }
 
 .carousel-btn {
@@ -1001,6 +1003,7 @@ $amber:     #fbbf24;
 
 .carousel-wrap .games-grid {
   flex: 1;
+  min-width: 0;
   grid-template-columns: repeat(4, 1fr);
 }
 
