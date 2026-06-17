@@ -8,7 +8,7 @@ import { environment } from '../../../../environments/environments';
   selector: 'app-theme-effects',
   standalone: true,
   imports: [CommonModule],
-  template: `<canvas #canvas style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>`,
+  template: `<canvas #canvas style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;opacity:0.7;"></canvas>`,
 })
 export class ThemeEffectsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('canvas') canvasRef!: ElementRef<HTMLCanvasElement>;
