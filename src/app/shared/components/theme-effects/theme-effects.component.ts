@@ -1,6 +1,7 @@
 import { Component, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../../environments/environments';
 
@@ -183,7 +184,11 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
     'Os dados corrompidos voltaram para assombrar.',
   ];
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+    private router: Router
+  ) {}
 
   async ngAfterViewInit(): Promise<void> {
     try {
@@ -195,7 +200,9 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
       this.theme = 'none';
     }
 
-    if (this.theme === 'halloween') {
+    const isHome = this.router.url === '/' || this.router.url === '/home';
+
+    if (this.theme === 'halloween' && isHome) {
       this.triggerBanner();
       this.scheduleGlitch();
     }
