@@ -286,7 +286,7 @@
     }
   </style>
 
-  <script>
+<script>
     const canvas = document.getElementById('game-canvas');
     const ctx = canvas.getContext('2d');
     const W = canvas.width, H = canvas.height;
@@ -441,13 +441,58 @@
     const textEl = document.getElementById('loading-text');
     const progEl = document.getElementById('loading-progress');
 
+    // ← FUNÇÃO AQUI FORA, NO TOPO
+    function showWelcomeMessage() {
+      const isFirstVisit = !localStorage.getItem('archv-visited');
+      const message = isFirstVisit
+        ? '> NOVO JOGADOR DETECTADO. BEM-VINDO.'
+        : '> BEM-VINDO DE VOLTA, JOGADOR.';
+
+      if (isFirstVisit) localStorage.setItem('archv-visited', '1');
+
+      const welcomeEl = document.createElement('div');
+      welcomeEl.style.cssText = `
+        position: fixed;
+        bottom: 32px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: 'VT323', monospace;
+        font-size: 22px;
+        letter-spacing: 3px;
+        color: #7c3aed;
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        white-space: nowrap;
+      `;
+      document.body.appendChild(welcomeEl);
+
+      setTimeout(() => {
+        welcomeEl.style.opacity = '1';
+        let i = 0;
+        const type = setInterval(() => {
+          welcomeEl.textContent += message[i++];
+          if (i >= message.length) {
+            clearInterval(type);
+            setTimeout(() => {
+              welcomeEl.style.opacity = '0';
+              setTimeout(() => welcomeEl.remove(), 400);
+            }, 2500);
+          }
+        }, 45);
+      }, 300);
+    }
+
     function typeNext() {
       if (msgIndex >= messages.length) {
         progEl.style.width = '100%';
         setTimeout(() => {
           const screen = document.getElementById('loading-screen');
           screen.classList.add('fade-out');
-          setTimeout(() => screen.remove(), 800);
+          setTimeout(() => {
+            screen.remove();
+            showWelcomeMessage(); // ← chamada aqui
+          }, 800);
         }, 400);
         return;
       }
