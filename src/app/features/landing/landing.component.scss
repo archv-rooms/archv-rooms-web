@@ -306,3 +306,17 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #111018;
+  padding: 20px;
+}
