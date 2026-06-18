@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -26,7 +26,7 @@ export class GamesComponent implements OnInit {
   error = false;
   selectedGame: Game | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.http.get<{ success: boolean; data: Game[] }>(`${environment.apiUrl}/games`)
@@ -34,10 +34,12 @@ export class GamesComponent implements OnInit {
         next: (res) => {
           this.games = res.data;
           this.loading = false;
+          this.cdr.detectChanges();  // ← força atualização da view
         },
         error: () => {
           this.error = true;
           this.loading = false;
+          this.cdr.detectChanges();  // ← força atualização da view
         }
       });
   }
