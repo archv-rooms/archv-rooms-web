@@ -29,19 +29,7 @@
   <div id="loading-screen">
     <div id="loading-content">
       <div id="loading-title">ARCHV.ROOMS</div>
-      <div id="runner-container">
-        <div id="ship">
-          <pre class="sprite">
-  /\
- /\/\
-/____\
- |  |
-          </pre>
-        </div>
-        <div id="laser-container">
-          <span id="laser"></span>
-        </div>
-      </div>
+      <canvas id="game-canvas" width="300" height="160"></canvas>
       <div id="loading-line">
         <span id="loading-text"></span><span id="loading-cursor">_</span>
       </div>
@@ -52,6 +40,8 @@
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+    body { margin: 0; background: #11131a; }
 
     #loading-screen {
       position: fixed;
@@ -72,53 +62,24 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
+      gap: 20px;
     }
     #loading-title {
       font-family: 'Press Start 2P', cursive;
       font-size: 36px;
       letter-spacing: 8px;
       color: #8b5cf6;
-      text-shadow: 0 0 10px #8b5cf6;
+      text-shadow: 0 0 20px #8b5cf6, 0 0 40px #8b5cf6;
       animation: blink-title 1.5s step-start infinite;
     }
-    #runner-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 8px 0;
-    }
-    #ship {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .sprite {
-      font-family: 'VT323', monospace;
-      font-size: 22px;
-      color: #8b5cf6;
-      line-height: 1.2;
-      margin: 0;
-      text-align: center;
-    }
-    #laser-container {
-      display: flex;
-      justify-content: center;
-      height: 20px;
-    }
-    #laser {
-      display: inline-block;
-      width: 3px;
-      background: #fbbf24;
-      animation: shoot 0.6s steps(1) infinite;
-      height: 0;
+    #game-canvas {
+      image-rendering: pixelated;
     }
     #loading-line {
       font-family: 'VT323', monospace;
       font-size: 22px;
       letter-spacing: 3px;
       color: #9aa3c7;
-      margin-top: 8px;
     }
     #loading-cursor {
       color: #8b5cf6;
@@ -132,15 +93,110 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }
     }
-    @keyframes shoot {
-      0%   { height: 0px;  opacity: 1; }
-      30%  { height: 20px; opacity: 1; }
-      60%  { height: 20px; opacity: 0; }
-      100% { height: 0px;  opacity: 0; }
-    }
   </style>
 
   <script>
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    const ship = { x: W / 2, y: H - 30, w: 20, h: 18 };
+    const bullets = [];
+    const enemies = [];
+    const stars = Array.from({ length: 40 }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      s: Math.random() * 1.5 + 0.5,
+      speed: Math.random() * 1 + 0.3
+    }));
+
+    let enemyTimer = 0;
+    let bulletTimer = 0;
+    let shipDir = 1;
+
+    function spawnEnemy() {
+      enemies.push({
+        x: Math.random() * (W - 20) + 10,
+        y: -10,
+        w: 16, h: 12,
+        speed: Math.random() * 1 + 0.5,
+        frame: 0, ft: 0
+      });
+    }
+
+    function drawShip(x, y) {
+      ctx.fillStyle = '#8b5cf6';
+      ctx.fillRect(x - 2, y - 2, 4, 4);
+      ctx.fillRect(x - 6, y + 2, 12, 4);
+      ctx.fillRect(x - 10, y + 6, 20, 4);
+      ctx.fillRect(x - 10, y + 10, 4, 4);
+      ctx.fillRect(x + 6, y + 10, 4, 4);
+      ctx.fillStyle = '#fbbf24';
+      ctx.fillRect(x - 2, y + 10, 4, 6);
+    }
+
+    function drawEnemy(e) {
+      ctx.fillStyle = '#fb7185';
+      ctx.fillRect(e.x - 2, e.y, 4, 4);
+      ctx.fillRect(e.x - 8, e.y + 4, 16, 4);
+      ctx.fillRect(e.x - 6, e.y + 8, 12, 4);
+      ctx.fillRect(e.x - 8, e.y + 4, 4, 8);
+      ctx.fillRect(e.x + 4, e.y + 4, 4, 8);
+    }
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, W, H);
+
+      stars.forEach(s => {
+        s.y += s.speed;
+        if (s.y > H) s.y = 0;
+        ctx.fillStyle = `rgba(162,168,199,${s.s / 2})`;
+        ctx.fillRect(s.x, s.y, s.s, s.s);
+      });
+
+      ship.x += shipDir * 0.8;
+      if (ship.x > W - 20 || ship.x < 20) shipDir *= -1;
+
+      bulletTimer++;
+      if (bulletTimer > 20) {
+        bullets.push({ x: ship.x, y: ship.y - 10, speed: 5 });
+        bulletTimer = 0;
+      }
+
+      enemyTimer++;
+      if (enemyTimer > 60) {
+        spawnEnemy();
+        enemyTimer = 0;
+      }
+
+      bullets.forEach(b => { b.y -= b.speed; });
+      bullets.splice(0, bullets.length, ...bullets.filter(b => b.y > 0));
+
+      enemies.forEach(e => { e.y += e.speed; });
+      enemies.splice(0, enemies.length, ...enemies.filter(e => e.y < H + 20));
+
+      bullets.forEach((b, bi) => {
+        enemies.forEach((e, ei) => {
+          if (Math.abs(b.x - e.x) < 10 && Math.abs(b.y - e.y) < 10) {
+            bullets.splice(bi, 1);
+            enemies.splice(ei, 1);
+            for (let i = 0; i < 6; i++) {
+              stars.push({ x: e.x + (Math.random() - 0.5) * 20, y: e.y, s: 2, speed: Math.random() * 2 });
+            }
+          }
+        });
+      });
+
+      ctx.fillStyle = '#fbbf24';
+      bullets.forEach(b => ctx.fillRect(b.x - 1, b.y, 2, 6));
+
+      enemies.forEach(e => drawEnemy(e));
+      drawShip(ship.x, ship.y);
+    }
+
+    setInterval(gameLoop, 1000 / 30);
+
     const messages = [
       'INICIALIZANDO SISTEMA...',
       'CARREGANDO BIBLIOTECA...',
