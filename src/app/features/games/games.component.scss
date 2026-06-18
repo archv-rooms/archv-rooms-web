@@ -113,7 +113,7 @@
 
 .card-image {
   position: relative;
-  aspect-ratio: 1;
+  aspect-ratio: 3/4;
   overflow: hidden;
 
   img {
@@ -155,10 +155,10 @@
 }
 
 .card-info {
-  padding: 0.6rem 0.75rem;
+  padding: 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.35rem;
   border-top: 1px solid var(--color-border);
   transition: border-top-color 0.25s;
   position: relative;
@@ -256,10 +256,8 @@
     background: var(--color-accent);
     transform: translateX(-100%);
     transition: transform 0.3s ease;
-    z-index: 0;
+    z-index: -1;
   }
-
-  span { position: relative; z-index: 1; }
 
   &:hover {
     color: #fff;
