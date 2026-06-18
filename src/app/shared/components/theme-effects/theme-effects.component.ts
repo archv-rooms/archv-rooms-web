@@ -182,7 +182,7 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
     this.showBanner = true;
     this.cdr.detectChanges();
 
-    setTimeout(() => { this.bannerVisible = true; }, 100);
+    setTimeout(() => { this.bannerVisible = true; this.cdr.detectChanges(); }, 100);
     setTimeout(() => { this.bannerHiding = true; this.bannerVisible = false; this.cdr.detectChanges(); }, 10000);
     setTimeout(() => { this.showBanner = false; this.bannerHiding = false; this.cdr.detectChanges(); }, 11200);
     setTimeout(() => { this.triggerBanner(); }, 30000);
@@ -190,7 +190,7 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
   explorarTerror(): void {
   window.location.href = '/biblioteca?genero=terror';
   }
-  
+
   ngOnDestroy(): void {
     cancelAnimationFrame(this.animationId);
   }
