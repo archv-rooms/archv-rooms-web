@@ -11,55 +11,123 @@ import { environment } from '../../../../environments/environments';
   template: `
     <canvas #canvas style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;opacity:0.85;"></canvas>
 
-    <div *ngIf="showBanner" class="halloween-banner" [class.visible]="bannerVisible" [class.hiding]="bannerHiding">
-      <div class="banner-inner">
-        <span class="banner-icon">💀</span>
-        <span class="banner-text">{{ bannerMessage }}</span>
-        <span class="banner-icon">💀</span>
-      </div>
-    </div>
+<div *ngIf="showBanner" class="halloween-banner" [class.visible]="bannerVisible" [class.hiding]="bannerHiding">
+  <div class="correntes">
+    <div class="corrente"></div>
+    <div class="corrente"></div>
+  </div>
+  <div class="plaquinha">
+    <div class="parafuso tl"></div>
+    <div class="parafuso tr"></div>
+    <div class="parafuso bl"></div>
+    <div class="parafuso br"></div>
+    <p class="titulo">☠ sistema corrompido ☠</p>
+    <p class="mensagem">{{ bannerMessage }}</p>
+    <button class="btn-terror" (click)="explorarTerror()">▸ explorar jogos de terror</button>
+  </div>
+</div>
   `,
   styles: [`
-    .halloween-banner {
-      position: fixed;
-      top: -120px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10000;
-      pointer-events: none;
-      transition: top 1.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease;
-      opacity: 0;
-    }
-    .halloween-banner.visible {
-      top: 32px;
-      opacity: 1;
-    }
-    .halloween-banner.hiding {
-      top: 32px;
-      opacity: 0;
-    }
-    .banner-inner {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      background: #0f0500;
-      border: 1px solid #b84a00;
-      padding: 14px 28px;
-      box-shadow: 0 0 24px #b84a0088, inset 0 0 16px #1c0a00;
-    }
-    .banner-text {
-      font-family: 'Courier New', monospace;
-      font-size: 13px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #c8a060;
-      text-shadow: 0 0 8px #b84a00;
-      white-space: nowrap;
-    }
-    .banner-icon {
-      font-size: 18px;
-      filter: grayscale(0.4);
-    }
+.halloween-banner {
+  position: fixed;
+  top: -320px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  pointer-events: none;
+  transition: top 1.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease;
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.halloween-banner.visible {
+  top: 0;
+  opacity: 1;
+  pointer-events: all;
+}
+.halloween-banner.hiding {
+  top: 0;
+  opacity: 0;
+}
+.correntes {
+  display: flex;
+  gap: 160px;
+}
+.corrente {
+  width: 10px;
+  height: 50px;
+  border-left: 2px dashed #4a4030;
+  border-right: 2px dashed #4a4030;
+}
+.plaquinha {
+  background: #1c0f06;
+  border: 2px solid #4a2e10;
+  border-radius: 5px;
+  padding: 28px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  animation: swing 4s ease-in-out infinite;
+  transform-origin: top center;
+  min-width: 360px;
+}
+.parafuso {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #1a0a02;
+  border: 1.5px solid #7a4010;
+  position: absolute;
+}
+.parafuso.tl { top: 12px; left: 16px; }
+.parafuso.tr { top: 12px; right: 16px; }
+.parafuso.bl { bottom: 12px; left: 16px; }
+.parafuso.br { bottom: 12px; right: 16px; }
+.titulo {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #6b3e10;
+  margin: 0;
+}
+.mensagem {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  color: #b8712a;
+  margin: 0;
+  text-align: center;
+}
+.btn-terror {
+  margin-top: 8px;
+  background: #0d0500;
+  border: 1.5px solid #7a3a08;
+  color: #cc6010;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  cursor: pointer;
+  animation: flicker 5s infinite;
+}
+.btn-terror:hover {
+  background: #1a0a02;
+  color: #ff8030;
+}
+@keyframes swing {
+  0%   { transform: rotate(-4deg); }
+  50%  { transform: rotate(4deg); }
+  100% { transform: rotate(-4deg); }
+}
+@keyframes flicker {
+  0%, 91%, 94%, 97%, 100% { opacity: 1; }
+  92%, 95% { opacity: 0.4; }
+}
   `]
 })
 export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
@@ -119,7 +187,10 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
     setTimeout(() => { this.showBanner = false; this.bannerHiding = false; this.cdr.detectChanges(); }, 11200);
     setTimeout(() => { this.triggerBanner(); }, 30000);
   }
-
+  explorarTerror(): void {
+  window.location.href = '/biblioteca?genero=terror';
+  }
+  
   ngOnDestroy(): void {
     cancelAnimationFrame(this.animationId);
   }
