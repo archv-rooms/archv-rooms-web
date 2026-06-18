@@ -159,12 +159,6 @@
   }
 }
 
-  &::after {
-    content: '_';
-    color: var(--color-cyan);
-    animation: cursorBlink 1s step-end infinite;
-  }
-
 // === FEATURES ===
 
 .landing-features {
