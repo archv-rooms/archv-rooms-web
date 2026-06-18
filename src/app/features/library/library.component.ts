@@ -77,6 +77,24 @@ export class LibraryComponent implements OnInit {
     sessionStorage.removeItem('show-welcome');
 
     const name = this.authService.getUserName();
+    const isFirstLogin = !localStorage.getItem('archv-logged');
+    if (isFirstLogin) localStorage.setItem('archv-logged', '1');
+
+    const lines = isFirstLogin ? [
+      { text: `> BEM-VINDO, ${name.toUpperCase()}.`, color: '#a78bfa' },
+      { text: '', color: '' },
+      { text: '  SEU FLIPERAMA ESTÁ PRONTO.', color: '#9d8ec9' },
+      { text: '', color: '' },
+      { text: '  EXPLORE O CATÁLOGO E', color: '#4ade80' },
+      { text: '  COMECE A JOGAR AGORA.', color: '#4ade80' },
+    ] : [
+      { text: `> BEM-VINDO DE VOLTA, ${name.toUpperCase()}.`, color: '#a78bfa' },
+      { text: '', color: '' },
+      { text: '  SEUS JOGOS ESTÃO TE', color: '#9d8ec9' },
+      { text: '  ESPERANDO.', color: '#9d8ec9' },
+      { text: '', color: '' },
+      { text: '  BOA SORTE, JOGADOR.', color: '#4ade80' },
+    ];
 
     const screen = document.createElement('div');
     screen.id = 'welcome-back-screen';
@@ -126,15 +144,6 @@ export class LibraryComponent implements OnInit {
     `;
 
     document.body.appendChild(screen);
-
-    const lines = [
-      { text: `> BEM-VINDO DE VOLTA, ${name.toUpperCase()}.`, color: '#a78bfa' },
-      { text: '', color: '' },
-      { text: '  SEUS JOGOS ESTÃO TE', color: '#9d8ec9' },
-      { text: '  ESPERANDO.', color: '#9d8ec9' },
-      { text: '', color: '' },
-      { text: '  BOA SORTE, JOGADOR.', color: '#4ade80' },
-    ];
 
     const linesEl = document.getElementById('wb-lines')!;
     const startBtn = document.getElementById('wb-start') as HTMLButtonElement;
