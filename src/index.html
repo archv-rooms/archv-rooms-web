@@ -551,7 +551,7 @@
           }
         </style>
       `;
-
+      document.querySelector('app-root').style.visibility = 'hidden';
       document.body.appendChild(screen);
 
       const lines = [
@@ -574,6 +574,7 @@
         if (lineIndex >= lines.length) {
           startBtn.style.display = 'inline-block';
           startBtn.onclick = () => {
+            document.querySelector('app-root').style.visibility = 'visible';
             screen.style.opacity = '0';
             setTimeout(() => screen.remove(), 800);
           };
