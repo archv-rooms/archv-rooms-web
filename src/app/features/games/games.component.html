@@ -45,7 +45,14 @@
 
 <div class="modal-backdrop" *ngIf="selectedGame" (click)="closeModal()">
   <div class="modal-box" (click)="$event.stopPropagation()">
-    <button class="modal-close" (click)="closeModal()">✕</button>
+
+    <!-- barra de terminal -->
+    <div class="modal-terminal-bar">
+      <div class="modal-dots">
+        <span></span><span></span><span></span>
+      </div>
+      <button class="modal-close" (click)="closeModal()">✕ FECHAR</button>
+    </div>
 
     <div class="modal-image">
       <img [src]="selectedGame.image" [alt]="selectedGame.title" />
