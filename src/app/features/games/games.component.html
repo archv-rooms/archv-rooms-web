@@ -43,35 +43,55 @@
 
 </div>
 
+<!-- modal -->
 <div class="modal-backdrop" *ngIf="selectedGame" (click)="closeModal()">
-  <div class="modal-box" (click)="$event.stopPropagation()">
+  <div class="modal-wrap" (click)="$event.stopPropagation()">
 
-    <!-- barra de terminal -->
-    <div class="modal-terminal-bar">
-      <div class="modal-dots">
-        <span></span><span></span><span></span>
-      </div>
-      <button class="modal-close" (click)="closeModal()">✕ FECHAR</button>
+    <div class="scanline-overlay"></div>
+
+    <div class="modal-header">
+      <span class="header-title">// FICHA DO JOGO</span>
+      <button class="modal-close" (click)="closeModal()">✕ ESC</button>
     </div>
 
-    <div class="modal-image">
-      <img [src]="selectedGame.image" [alt]="selectedGame.title" />
-      <div class="modal-lock" *ngIf="isLocked(selectedGame)">
-        <span>🔒</span>
-        <span class="pro-badge">PLANO PRO</span>
+    <div class="pixel-divider"></div>
+
+    <div class="modal-body">
+      <div class="cover-side">
+        <img class="cover-img" [src]="selectedGame.image" [alt]="selectedGame.title" />
+        <div class="cover-console-bar">{{ selectedGame.console }}</div>
+      </div>
+
+      <div class="info-side">
+        <h2 class="game-name">{{ selectedGame.title }}</h2>
+
+        <div class="info-row">
+          <span class="info-label">Plataforma</span>
+          <span class="info-value">{{ consoleName(selectedGame.console) }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="info-label">Acesso</span>
+          <div class="access-tag" [class.free]="!isLocked(selectedGame)" [class.pro]="isLocked(selectedGame)">
+            <span class="dot"></span>
+            {{ isLocked(selectedGame) ? 'PLANO PRO' : 'GRATIS' }}
+          </div>
+        </div>
+
+        <div class="info-row">
+          <span class="info-label">Status</span>
+          <span class="info-value status-text">🔒 LOGIN NECESSARIO</span>
+        </div>
       </div>
     </div>
 
-    <div class="modal-info">
-      <h2 class="modal-title">{{ selectedGame.title }}</h2>
-      <span class="modal-console">{{ selectedGame.console }}</span>
-      <span class="badge-free" *ngIf="!isLocked(selectedGame)">● GRATIS</span>
-      <span class="badge-pro" *ngIf="isLocked(selectedGame)">● PRO</span>
+    <div class="pixel-divider"></div>
 
-      <div class="modal-actions">
-        <a routerLink="/register" class="btn-submit" (click)="closeModal()">CRIAR CONTA GRATIS</a>
-        <a routerLink="/login" class="btn-outline" (click)="closeModal()">JA TENHO CONTA</a>
-      </div>
+    <div class="modal-footer">
+      <a routerLink="/register" class="btn-pixel btn-primary" (click)="closeModal()">▶ CRIAR CONTA</a>
+      <a routerLink="/login" class="btn-pixel btn-secondary" (click)="closeModal()">JA TENHO CONTA</a>
+      <span class="insert-coin">INSERT COIN</span>
     </div>
+
   </div>
 </div>

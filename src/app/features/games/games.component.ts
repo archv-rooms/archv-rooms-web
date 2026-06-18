@@ -34,12 +34,12 @@ export class GamesComponent implements OnInit {
         next: (res) => {
           this.games = res.data;
           this.loading = false;
-          this.cdr.detectChanges();  // ← força atualização da view
+          this.cdr.detectChanges();
         },
         error: () => {
           this.error = true;
           this.loading = false;
-          this.cdr.detectChanges();  // ← força atualização da view
+          this.cdr.detectChanges();
         }
       });
   }
@@ -54,5 +54,21 @@ export class GamesComponent implements OnInit {
 
   isLocked(game: Game): boolean {
     return game.accessLevel > 0;
+  }
+
+  consoleName(code: string): string {
+    const map: Record<string, string> = {
+      NES:  'Nintendo Entertainment System',
+      SNES: 'Super Nintendo',
+      GBA:  'Game Boy Advance',
+      GB:   'Game Boy',
+      GBC:  'Game Boy Color',
+      N64:  'Nintendo 64',
+      PS1:  'PlayStation 1',
+      PS2:  'PlayStation 2',
+      GEN:  'Sega Genesis',
+      SMS:  'Sega Master System',
+    };
+    return map[code.toUpperCase()] ?? code;
   }
 }
