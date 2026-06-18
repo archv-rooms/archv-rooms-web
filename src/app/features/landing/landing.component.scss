@@ -269,11 +269,14 @@
 
 .footer-link {
   position: relative;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  width: 100%;
+
+  width: fit-content;
+  margin: 0 auto;
   padding: 10px 18px;
   background: transparent;
   border: 1px solid var(--color-border);
