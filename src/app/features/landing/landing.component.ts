@@ -1,7 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-landing',
@@ -11,9 +10,7 @@ import { AuthService } from '../../../core/services/auth.service';
   styleUrls: ['./landing.component.scss']
 })
 export class LandingComponent {
-  private authService = inject(AuthService);
-
   loginWithGoogle(): void {
-    this.authService.loginWithGoogle();
+    window.location.href = 'https://archv-rooms.onrender.com/auth/google';
   }
 }
