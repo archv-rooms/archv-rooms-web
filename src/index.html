@@ -35,7 +35,7 @@
       <div class="scanlines"></div>
 
       <div class="title-wrap">
-        <span class="title-main">ARCHV.ROOMS</span>
+        <span class="title-main" id="glitch-title">ARCHV ROOMS</span>
         <span class="title-sub">your space &mdash; your game</span>
       </div>
 
@@ -99,6 +99,9 @@
       flex-direction: column;
       align-items: center;
       gap: 0;
+      box-shadow:
+        0 0 40px rgba(124,58,237,0.15),
+        inset 0 0 60px rgba(124,58,237,0.03);
     }
 
     .scanlines {
@@ -132,15 +135,35 @@
       text-align: center;
       margin-bottom: 24px;
     }
+
     .title-main {
       font-family: 'Press Start 2P', cursive;
       font-size: 28px;
       letter-spacing: 6px;
-      color: #7c3aed;
-      text-shadow: 0 0 12px rgba(124,58,237,0.6);
+      color: #fff;
       display: block;
-      animation: blink-title 2s step-start infinite;
+      position: relative;
+      animation: glitch 3s infinite;
     }
+    .title-main::before {
+      content: 'ARCHV ROOMS';
+      position: absolute;
+      left: 2px; top: 0;
+      color: #06b6d4;
+      clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%);
+      animation: glitch-top 3s infinite;
+      opacity: 0.8;
+    }
+    .title-main::after {
+      content: 'ARCHV ROOMS';
+      position: absolute;
+      left: -2px; top: 0;
+      color: #f59e0b;
+      clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+      animation: glitch-bot 3s infinite;
+      opacity: 0.8;
+    }
+
     .title-sub {
       font-family: 'VT323', monospace;
       font-size: 15px;
@@ -164,6 +187,7 @@
       image-rendering: pixelated;
       border: 1px solid #1a1030;
       background: #08090f;
+      box-shadow: 0 0 20px rgba(124,58,237,0.08) inset;
     }
 
     .hud {
@@ -200,19 +224,32 @@
       flex-direction: column;
       gap: 10px;
     }
+
     .progress-track {
       width: 100%;
-      height: 6px;
+      height: 10px;
       background: #12101e;
       border: 1px solid #2a1f4e;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding: 2px 3px;
+      box-sizing: border-box;
     }
+
     .progress-fill {
       height: 100%;
-      background: #7c3aed;
       width: 0%;
       transition: width 0.3s ease;
+      background-image: repeating-linear-gradient(
+        90deg,
+        #7c3aed 0px,
+        #7c3aed 6px,
+        transparent 6px,
+        transparent 9px
+      );
     }
+
     .log-line {
       font-family: 'VT323', monospace;
       font-size: 18px;
@@ -226,9 +263,22 @@
       animation: blink-cursor 0.7s step-start infinite;
     }
 
-    @keyframes blink-title {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
+    @keyframes glitch {
+      0%, 90%, 100% { transform: none; }
+      92% { transform: skewX(-2deg); }
+      94% { transform: skewX(2deg); }
+    }
+    @keyframes glitch-top {
+      0%, 89%, 100% { transform: none; opacity: 0; }
+      90% { transform: translateX(-3px); opacity: 0.8; }
+      93% { transform: translateX(3px); opacity: 0.8; }
+      95% { opacity: 0; }
+    }
+    @keyframes glitch-bot {
+      0%, 91%, 100% { transform: none; opacity: 0; }
+      92% { transform: translateX(3px); opacity: 0.8; }
+      94% { transform: translateX(-3px); opacity: 0.8; }
+      96% { opacity: 0; }
     }
     @keyframes blink-cursor {
       0%, 100% { opacity: 1; }
@@ -381,15 +431,15 @@
 
     const messages = [
       'INICIALIZANDO SISTEMA...',
-      'CARREGANDO BIBLIOTECA...',
-      'ACESSANDO CARTUCHOS...',
-      'VERIFICANDO SAVES...',
-      'PRONTO.',
+      'CARREGANDO CARTUCHOS...',
+      'BUSCANDO SAVES ANTIGOS...',
+      'LIGANDO O FLIPERAMA...',
+      'PRONTO JOGADOR 1.',
     ];
 
     let msgIndex = 0, charIndex = 0;
-    const textEl   = document.getElementById('loading-text');
-    const progEl   = document.getElementById('loading-progress');
+    const textEl = document.getElementById('loading-text');
+    const progEl = document.getElementById('loading-progress');
 
     function typeNext() {
       if (msgIndex >= messages.length) {
