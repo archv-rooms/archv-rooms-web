@@ -30,106 +30,111 @@ export const THEMES: Record<string, Theme> = {
       '--color-error':        '#fb7185',
     }
   },
-valentines: {
-  name: 'valentines',
-  label: '💝 Namorados',
-  vars: {
-    '--color-bg':          '#120008',
-    '--color-bg-panel':    '#200010',
-    '--color-bg-card':     '#30001a',
-    '--color-primary':     '#e91e63',
-    '--color-primary-dim': '#ad1457',
-    '--color-secondary':   '#f48fb1',
-    '--color-accent':      '#ff1744',
-    '--color-text':        '#fce4ec',
-    '--color-text-muted':  '#f48fb1',
-    '--color-text-dim':    '#c2185b',
-    '--color-border':      '#6a0030',
-    '--color-border-glow': '#e91e63',
-    '--color-glow':        '0 0 20px #e91e63',
-    '--color-error':       '#ff003c',
+
+  valentines: {
+    name: 'valentines',
+    label: '💝 Namorados',
+    vars: {
+      '--color-bg':           '#0d0008',
+      '--color-bg-panel':     '#160010',
+      '--color-bg-card':      '#200018',
+      '--color-primary':      '#a0143c',
+      '--color-primary-dim':  '#700d2a',
+      '--color-secondary':    '#6b2040',
+      '--color-accent':       '#c41e3a',
+      '--color-text':         '#e8d0d8',
+      '--color-text-muted':   '#9a6070',
+      '--color-text-dim':     '#5a3040',
+      '--color-border':       '#3a0820',
+      '--color-border-glow':  '#a0143c',
+      '--color-glow':         '0 0 12px #a0143c',
+      '--color-error':        '#c41e3a',
+    }
+  },
+
+  carnival: {
+    name: 'carnival',
+    label: '🎊 Carnaval',
+    vars: {
+      '--color-bg':           '#08000f',
+      '--color-bg-panel':     '#100020',
+      '--color-bg-card':      '#180030',
+      '--color-primary':      '#c9a800',
+      '--color-primary-dim':  '#8a7200',
+      '--color-secondary':    '#b8005a',
+      '--color-accent':       '#007a8a',
+      '--color-text':         '#f0e8c0',
+      '--color-text-muted':   '#a08840',
+      '--color-text-dim':     '#5a4a10',
+      '--color-border':       '#280050',
+      '--color-border-glow':  '#c9a800',
+      '--color-glow':         '0 0 14px #c9a800',
+      '--color-error':        '#c41e3a',
+    }
+  },
+
+  halloween: {
+    name: 'halloween',
+    label: '👻 Halloween',
+    vars: {
+      '--color-bg':           '#080400',
+      '--color-bg-panel':     '#110600',
+      '--color-bg-card':      '#1c0a00',
+      '--color-primary':      '#b84a00',
+      '--color-primary-dim':  '#7a3000',
+      '--color-secondary':    '#5a0080',
+      '--color-accent':       '#d45000',
+      '--color-text':         '#e0cdb8',
+      '--color-text-muted':   '#9a7050',
+      '--color-text-dim':     '#5a3a18',
+      '--color-border':       '#3a1400',
+      '--color-border-glow':  '#b84a00',
+      '--color-glow':         '0 0 14px #b84a00',
+      '--color-error':        '#c41e3a',
+    }
+  },
+
+  christmas: {
+    name: 'christmas',
+    label: '🎄 Natal',
+    vars: {
+      '--color-bg':           '#020a04',
+      '--color-bg-panel':     '#041208',
+      '--color-bg-card':      '#071c0c',
+      '--color-primary':      '#1a7a40',
+      '--color-primary-dim':  '#0f5028',
+      '--color-secondary':    '#8a1020',
+      '--color-accent':       '#a07800',
+      '--color-text':         '#cce0d0',
+      '--color-text-muted':   '#608060',
+      '--color-text-dim':     '#2e4e34',
+      '--color-border':       '#0a2e10',
+      '--color-border-glow':  '#1a7a40',
+      '--color-glow':         '0 0 14px #1a7a40',
+      '--color-error':        '#8a1020',
+    }
+  },
+
+  newyear: {
+    name: 'newyear',
+    label: '🎆 Ano Novo',
+    vars: {
+      '--color-bg':           '#04040e',
+      '--color-bg-panel':     '#080818',
+      '--color-bg-card':      '#0c0c24',
+      '--color-primary':      '#a88a00',
+      '--color-primary-dim':  '#706000',
+      '--color-secondary':    '#006080',
+      '--color-accent':       '#8a3000',
+      '--color-text':         '#e8e0c0',
+      '--color-text-muted':   '#908060',
+      '--color-text-dim':     '#504830',
+      '--color-border':       '#18183a',
+      '--color-border-glow':  '#a88a00',
+      '--color-glow':         '0 0 18px #a88a00, 0 0 36px #8a3000',
+      '--color-error':        '#c41e3a',
+    }
   }
-},
-carnival: {
-  name: 'carnival',
-  label: '🎊 Carnaval',
-  vars: {
-    '--color-bg':          '#0a0020',
-    '--color-bg-panel':    '#130040',
-    '--color-bg-card':     '#1e0060',
-    '--color-primary':     '#ffe600',
-    '--color-primary-dim': '#ccb800',
-    '--color-secondary':   '#ff0080',
-    '--color-accent':      '#00e5ff',
-    '--color-text':        '#fff9e0',
-    '--color-text-muted':  '#d4c040',
-    '--color-text-dim':    '#8a7a10',
-    '--color-border':      '#3a0080',
-    '--color-border-glow': '#ffe600',
-    '--color-glow':        '0 0 16px #ffe600',
-    '--color-error':       '#ff003c',
-  }
-},
-halloween: {
-  name: 'halloween',
-  label: '👻 Halloween',
-  vars: {
-    '--color-bg':          '#0f0500',
-    '--color-bg-panel':    '#1a0800',
-    '--color-bg-card':     '#2b1000',
-    '--color-primary':     '#ff6d00',
-    '--color-primary-dim': '#cc4400',
-    '--color-secondary':   '#9c00ff',
-    '--color-accent':      '#ff3d00',
-    '--color-text':        '#ffe8d0',
-    '--color-text-muted':  '#cc9966',
-    '--color-text-dim':    '#7a4a22',
-    '--color-border':      '#5a1e00',
-    '--color-border-glow': '#ff6d00',
-    '--color-glow':        '0 0 16px #ff6d00',
-    '--color-error':       '#ff003c',
-  }
-},
-christmas: {
-  name: 'christmas',
-  label: '🎄 Natal',
-  vars: {
-    '--color-bg':          '#020f05',
-    '--color-bg-panel':    '#041a09',
-    '--color-bg-card':     '#072b10',
-    '--color-primary':     '#00e676',
-    '--color-primary-dim': '#00a854',
-    '--color-secondary':   '#ff1744',
-    '--color-accent':      '#ffd700',
-    '--color-text':        '#d6f5e0',
-    '--color-text-muted':  '#7abf90',
-    '--color-text-dim':    '#3d7a52',
-    '--color-border':      '#0a4020',
-    '--color-border-glow': '#00e676',
-    '--color-glow':        '0 0 16px #00e676',
-    '--color-error':       '#ff1744',
-  }
-},
-newyear: {
-  name: 'newyear',
-  label: '🎆 Ano Novo',
-  vars: {
-    '--color-bg':          '#00010a',
-    '--color-bg-panel':    '#00021a',
-    '--color-bg-card':     '#00042a',
-    '--color-primary':     '#ffd700',
-    '--color-primary-dim': '#ffaa00',
-    '--color-secondary':   '#00cfff',
-    '--color-accent':      '#ff4400',
-    '--color-text':        '#fffde7',
-    '--color-text-muted':  '#ffe082',
-    '--color-text-dim':    '#8a7500',
-    '--color-border':      '#0a0a40',
-    '--color-border-glow': '#ffd700',
-    '--color-glow':        '0 0 24px #ffd700, 0 0 48px #ff4400',
-    '--color-error':       '#ff003c',
-  }
- }
 }
 
 @Injectable({ providedIn: 'root' })
@@ -139,13 +144,11 @@ export class ThemeService {
 
   constructor(private http: HttpClient) {}
 
-  // ─── Público: chamado no app.component.ts no ngOnInit ───
   async applyTheme(): Promise<void> {
     const key = await this.fetchGlobalTheme();
     this.applyThemeVars(key);
   }
 
-  // ─── Admin: salva no backend e aplica imediatamente ─────
   async setGlobalTheme(themeName: string | null): Promise<void> {
     const key = themeName ?? 'default';
     await firstValueFrom(this.http.post(this.apiUrl, { themeKey: key }));
@@ -160,7 +163,6 @@ export class ThemeService {
     return Object.values(THEMES);
   }
 
-  // ─── Privados ────────────────────────────────────────────
   private async fetchGlobalTheme(): Promise<string> {
     try {
       const res = await firstValueFrom(
@@ -168,7 +170,6 @@ export class ThemeService {
       );
       return res.themeKey ?? 'default';
     } catch {
-      // fallback: usa tema sazonal por data caso a API falhe
       return this.getActiveThemeNameFromDate();
     }
   }
