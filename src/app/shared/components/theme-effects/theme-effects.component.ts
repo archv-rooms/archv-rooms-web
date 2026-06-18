@@ -197,6 +197,7 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
     this.cdr.detectChanges();
   }
 });
+
   }
 
   async ngAfterViewInit(): Promise<void> {
