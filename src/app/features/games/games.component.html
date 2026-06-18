@@ -1,0 +1,80 @@
+<div class="games-page">
+
+  <!-- HEADER -->
+  <header class="games-header">
+    <a routerLink="/" class="back-link">← VOLTAR</a>
+    <h1 class="page-title">BIBLIOTECA DE JOGOS</h1>
+    <p class="page-subtitle">Explore nosso catálogo completo de clássicos retrô</p>
+  </header>
+
+  <!-- LOADING -->
+  <div class="state-container" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>CARREGANDO JOGOS...</p>
+  </div>
+
+  <!-- ERRO -->
+  <div class="state-container" *ngIf="error && !loading">
+    <p class="error-text">ERRO AO CARREGAR JOGOS</p>
+    <a routerLink="/" class="btn-submit">VOLTAR À HOME</a>
+  </div>
+
+  <!-- GRID DE JOGOS -->
+  <section class="games-grid" *ngIf="!loading && !error">
+    <div
+      class="game-card"
+      *ngFor="let game of games"
+      (click)="openModal(game)"
+    >
+      <div class="card-image">
+        <img [src]="game.image" [alt]="game.title" loading="lazy" />
+        <div class="lock-overlay" *ngIf="isLocked(game)">
+          <span class="lock-icon">🔒</span>
+          <span class="pro-badge">PLANO PRO</span>
+        </div>
+      </div>
+      <div class="card-info">
+        <span class="game-title">{{ game.title }}</span>
+        <span class="game-console">{{ game.console }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="cta-section" *ngIf="!loading && !error">
+    <h2 class="cta-title">PRONTO PARA JOGAR?</h2>
+    <p class="cta-subtitle">Crie sua conta grátis e acesse os clássicos agora</p>
+    <div class="cta-buttons">
+      <a routerLink="/register" class="btn-submit">CRIAR CONTA GRÁTIS</a>
+      <a routerLink="/login" class="btn-outline">JÁ TENHO CONTA</a>
+    </div>
+  </section>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-backdrop" *ngIf="selectedGame" (click)="closeModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <button class="modal-close" (click)="closeModal()">✕</button>
+
+    <div class="modal-image">
+      <img [src]="selectedGame.image" [alt]="selectedGame.title" />
+      <div class="modal-lock" *ngIf="isLocked(selectedGame)">
+        <span>🔒</span>
+        <span class="pro-badge">PLANO PRO</span>
+      </div>
+    </div>
+
+    <div class="modal-info">
+      <h2 class="modal-title">{{ selectedGame.title }}</h2>
+      <span class="modal-console">{{ selectedGame.console }}</span>
+      <span class="badge-free" *ngIf="!isLocked(selectedGame)">● GRÁTIS</span>
+      <span class="badge-pro" *ngIf="isLocked(selectedGame)">● PRO</span>
+
+      <div class="modal-actions">
+        <a routerLink="/register" class="btn-submit" (click)="closeModal()">CRIAR CONTA GRÁTIS</a>
+        <a routerLink="/login" class="btn-outline" (click)="closeModal()">JÁ TENHO CONTA</a>
+      </div>
+    </div>
+  </div>
+</div>

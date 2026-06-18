@@ -115,6 +115,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/faq/faq.component').then(m => m.FaqComponent)
   },
   {
+    path: 'games',
+    loadComponent: () => import('./features/games/games.component').then(m => m.GamesComponent)
+  },
+  {
     path: '**',
     loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent),
     data: { code: 404 }
