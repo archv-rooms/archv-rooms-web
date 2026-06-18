@@ -55,7 +55,6 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
     const H = window.innerHeight;
 
     if (this.theme === 'christmas') {
-      // neve
       for (let i = 0; i < 120; i++) {
         this.particles.push({
           type: 'snow',
@@ -69,7 +68,6 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
           twinkleSpeed: Math.random() * 0.02 + 0.005,
         });
       }
-      // estrelas cintilando no fundo
       for (let i = 0; i < 60; i++) {
         this.particles.push({
           type: 'star',
@@ -84,15 +82,7 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
     }
 
     if (this.theme === 'halloween') {
-      // lua cheia
-      this.particles.push({
-        type: 'moon',
-        x: window.innerWidth * 0.82,
-        y: window.innerHeight * 0.14,
-        r: 54,
-      });
-      // fantasmas
-      for (let i = 0; i < 7; i++) {
+      for (let i = 0; i < 8; i++) {
         this.particles.push({
           type: 'ghost',
           x: Math.random() * W,
@@ -105,21 +95,6 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
           wobbleSpeed: Math.random() * 0.018 + 0.008,
         });
       }
-      // morcegos
-      for (let i = 0; i < 7; i++) {
-        this.particles.push({
-          type: 'bat',
-          x: Math.random() * W,
-          y: Math.random() * H * 0.6,
-          speedX: (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1.2 + 0.5),
-          speedY: (Math.random() - 0.5) * 0.4,
-          size: Math.random() * 10 + 10,
-          wingPhase: Math.random() * Math.PI * 2,
-          wingSpeed: Math.random() * 0.12 + 0.08,
-          opacity: Math.random() * 0.35 + 0.15,
-        });
-      }
-      // brasas
       for (let i = 0; i < 40; i++) {
         this.particles.push({
           type: 'ember',
@@ -136,7 +111,6 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
     }
 
     if (this.theme === 'valentines') {
-      // corações variados
       for (let i = 0; i < 28; i++) {
         this.particles.push({
           type: 'heart',
@@ -154,7 +128,6 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
 
     if (this.theme === 'carnival') {
       const colors = ['#c9a800','#b8005a','#007a8a','#8a3000','#6a0080','#c9a800'];
-      // confetes
       for (let i = 0; i < 70; i++) {
         this.particles.push({
           type: 'confetti',
@@ -170,7 +143,6 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
           opacity: Math.random() * 0.5 + 0.3,
         });
       }
-      // serpentinas
       for (let i = 0; i < 12; i++) {
         const segCount = 18;
         const segs: {x: number, y: number}[] = [];
@@ -191,7 +163,6 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
     }
 
     if (this.theme === 'newyear') {
-      // brilhos espalhados no fundo
       for (let i = 0; i < 80; i++) {
         this.particles.push({
           type: 'glitter',
@@ -280,54 +251,6 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
 
   private drawHalloween(W: number, H: number): void {
     this.particles.forEach(p => {
-      if (p.type === 'moon') {
-        this.ctx.save();
-        this.ctx.globalAlpha = 0.18;
-        this.ctx.beginPath();
-        this.ctx.arc(p.x, p.y, p.r + 18, 0, Math.PI * 2);
-        this.ctx.fillStyle = '#c8a040';
-        this.ctx.fill();
-        this.ctx.globalAlpha = 0.55;
-        this.ctx.beginPath();
-        this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        this.ctx.fillStyle = '#d4aa50';
-        this.ctx.fill();
-        this.ctx.restore();
-      }
-
-      if (p.type === 'bat') {
-        p.wingPhase += p.wingSpeed;
-        p.x += p.speedX;
-        p.y += p.speedY + Math.sin(p.wingPhase * 0.5) * 0.3;
-        const s = p.size;
-        const wing = Math.sin(p.wingPhase) * s * 1.1;
-        this.ctx.save();
-        this.ctx.globalAlpha = p.opacity;
-        this.ctx.fillStyle = '#1a0a00';
-        this.ctx.translate(p.x, p.y);
-        // asa esquerda
-        this.ctx.beginPath();
-        this.ctx.moveTo(0, 0);
-        this.ctx.quadraticCurveTo(-s, -wing, -s * 2, 0);
-        this.ctx.quadraticCurveTo(-s, s * 0.3, 0, 0);
-        this.ctx.fill();
-        // asa direita
-        this.ctx.beginPath();
-        this.ctx.moveTo(0, 0);
-        this.ctx.quadraticCurveTo(s, -wing, s * 2, 0);
-        this.ctx.quadraticCurveTo(s, s * 0.3, 0, 0);
-        this.ctx.fill();
-        // corpo
-        this.ctx.beginPath();
-        this.ctx.ellipse(0, s * 0.1, s * 0.3, s * 0.45, 0, 0, Math.PI * 2);
-        this.ctx.fill();
-        this.ctx.restore();
-        if (p.x < -60) p.x = W + 60;
-        if (p.x > W + 60) p.x = -60;
-        if (p.y < -40) p.y = H * 0.6;
-        if (p.y > H * 0.6) p.y = -40;
-      }
-
       if (p.type === 'ghost') {
         p.wobble += p.wobbleSpeed;
         p.x += p.speedX + Math.sin(p.wobble) * 0.25;
