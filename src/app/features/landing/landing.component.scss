@@ -115,12 +115,30 @@
     border-color: var(--color-accent);
     box-shadow: 0 0 14px var(--color-accent-glow);
   }
+
+  &:nth-child(1) .feature-icon {
+    animation: floatInvader 2s ease-in-out infinite;
+  }
+
+  &:nth-child(2) .feature-icon {
+    animation: swingJoystick 2.5s ease-in-out infinite;
+  }
+
+  &:nth-child(3) .feature-icon {
+    animation: bounceTrophy 1.8s ease-in-out infinite;
+  }
+
+  &:hover .feature-icon {
+    animation-play-state: paused;
+    filter: drop-shadow(0 0 8px var(--color-accent-glow));
+    transform: scale(1.2);
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
 }
 
 .feature-icon {
   font-size: 1.6rem;
-  color: var(--color-accent);
-  text-shadow: 0 0 10px var(--color-accent-glow);
+  display: inline-block;
 }
 
 .feature-label {
@@ -319,4 +337,23 @@
   justify-content: center;
   background-color: #111018;
   padding: 20px;
+}
+
+@keyframes floatInvader {
+  0%, 100% { transform: translateY(0px); }
+  25% { transform: translateY(-4px) translateX(3px); }
+  50% { transform: translateY(0px); }
+  75% { transform: translateY(-4px) translateX(-3px); }
+}
+
+@keyframes swingJoystick {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-12deg); }
+  75% { transform: rotate(12deg); }
+}
+
+@keyframes bounceTrophy {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  40% { transform: translateY(-6px) scale(1.1); }
+  60% { transform: translateY(-4px) scale(1.05); }
 }
