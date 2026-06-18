@@ -443,40 +443,6 @@
     const progEl = document.getElementById('loading-progress');
 
     function showWelcomeMessage() {
-      const isFirstVisit = !localStorage.getItem('archv-visited');
-      if (isFirstVisit) localStorage.setItem('archv-visited', '1');
-
-      if (!isFirstVisit) {
-        document.querySelector('app-root').style.visibility = 'visible';
-        const welcomeEl = document.createElement('div');
-        welcomeEl.style.cssText = `
-          position: fixed; bottom: 32px; left: 50%;
-          transform: translateX(-50%);
-          font-family: 'VT323', monospace; font-size: 22px;
-          letter-spacing: 3px; color: #7c3aed;
-          z-index: 9999; opacity: 0;
-          transition: opacity 0.4s ease; white-space: nowrap;
-        `;
-        welcomeEl.textContent = '';
-        document.body.appendChild(welcomeEl);
-        setTimeout(() => {
-          welcomeEl.style.opacity = '1';
-          const msg = '> BEM-VINDO DE VOLTA, JOGADOR.';
-          let i = 0;
-          const type = setInterval(() => {
-            welcomeEl.textContent += msg[i++];
-            if (i >= msg.length) {
-              clearInterval(type);
-              setTimeout(() => {
-                welcomeEl.style.opacity = '0';
-                setTimeout(() => welcomeEl.remove(), 400);
-              }, 2500);
-            }
-          }, 45);
-        }, 300);
-        return;
-      }
-
       const screen = document.createElement('div');
       screen.id = 'welcome-screen';
       screen.style.cssText = `
@@ -504,7 +470,6 @@
             background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
             pointer-events: none; z-index: 10;
           "></div>
-
           <div style="position:absolute;top:10px;left:10px;width:14px;height:14px;border:2px solid #6d28d9;border-right:none;border-bottom:none;opacity:0.7"></div>
           <div style="position:absolute;top:10px;right:10px;width:14px;height:14px;border:2px solid #6d28d9;border-left:none;border-bottom:none;opacity:0.7"></div>
           <div style="position:absolute;bottom:10px;left:10px;width:14px;height:14px;border:2px solid #6d28d9;border-right:none;border-top:none;opacity:0.7"></div>
@@ -553,10 +518,11 @@
           }
         </style>
       `;
+
       document.body.appendChild(screen);
 
       const lines = [
-        { text: '> BEM-VINDO, NOVO JOGADOR.', color: '#a78bfa' },
+        { text: '> BEM-VINDO, JOGADOR.', color: '#a78bfa' },
         { text: '', color: '' },
         { text: '  ARCHV ROOMS É UMA PLATAFORMA', color: '#9d8ec9' },
         { text: '  DE JOGOS CLÁSSICOS DOS ANOS', color: '#9d8ec9' },
