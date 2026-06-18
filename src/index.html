@@ -443,6 +443,13 @@
     const progEl = document.getElementById('loading-progress');
 
     function showWelcomeMessage() {
+      const isFirstVisit = !localStorage.getItem('archv-visited');
+      if (!isFirstVisit) {
+        document.querySelector('app-root').style.visibility = 'visible';
+        return;
+      }
+      localStorage.setItem('archv-visited', '1');
+
       const screen = document.createElement('div');
       screen.id = 'welcome-screen';
       screen.style.cssText = `
