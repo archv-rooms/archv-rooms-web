@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environments';
 
 interface Game {
@@ -16,12 +17,16 @@ interface Game {
 @Component({
   selector: 'app-games',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './games.component.html',
   styleUrls: ['./games.component.scss']
 })
 export class GamesComponent implements OnInit {
   games: Game[] = [];
+  filteredGames: Game[] = [];
+  consoles: string[] = [];
+  activeFilter = 'TODOS';
+  searchQuery = '';
   loading = true;
   error = false;
   selectedGame: Game | null = null;
@@ -33,6 +38,8 @@ export class GamesComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.games = res.data;
+          this.filteredGames = res.data;
+          this.consoles = [...new Set(res.data.map(g => g.console))];
           this.loading = false;
           this.cdr.detectChanges();
         },
@@ -44,55 +51,54 @@ export class GamesComponent implements OnInit {
       });
   }
 
-  openModal(game: Game) {
-    this.selectedGame = game;
+  setFilter(console: string) {
+    this.activeFilter = console;
+    this.applyFilters();
   }
 
-  closeModal() {
-    this.selectedGame = null;
+  onSearch() {
+    this.applyFilters();
   }
 
-  isLocked(game: Game): boolean {
-    return game.accessLevel > 0;
+  applyFilters() {
+    let result = this.games;
+    if (this.activeFilter !== 'TODOS') {
+      result = result.filter(g => g.console === this.activeFilter);
+    }
+    if (this.searchQuery.trim()) {
+      const q = this.searchQuery.toLowerCase();
+      result = result.filter(g => g.title.toLowerCase().includes(q));
+    }
+    this.filteredGames = result;
+    this.cdr.detectChanges();
   }
 
-  consoleName(code: string): string {
-    const map: Record<string, string> = {
-      NES:  'Nintendo Entertainment System',
-      SNES: 'Super Nintendo',
-      GBA:  'Game Boy Advance',
-      GB:   'Game Boy',
-      GBC:  'Game Boy Color',
-      N64:  'Nintendo 64',
-      PS1:  'PlayStation 1',
-      PS2:  'PlayStation 2',
-      GEN:  'Sega Genesis',
-      SMS:  'Sega Master System',
-    };
-    return map[code.toUpperCase()] ?? code;
-  }
+  openModal(game: Game) { this.selectedGame = game; }
+  closeModal() { this.selectedGame = null; }
+  isLocked(game: Game): boolean { return game.accessLevel > 0; }
 
   formatId(id: number): string {
     return id.toString().padStart(6, '0');
   }
 
   getRegion(console: string): string {
-    const regions: Record<string, string> = {
-      SNES: 'NTSC-J / PAL', SFC: 'NTSC-J', PS1: 'NTSC-U',
-      PSX: 'NTSC-U', N64: 'NTSC-U / PAL', GBA: 'NTSC-U / PAL',
-      MD: 'NTSC-U / PAL', NES: 'NTSC-U', GB: 'NTSC-J / U'
+    const map: Record<string, string> = {
+      NES: 'NTSC-U', SNES: 'NTSC-J / PAL', SFC: 'NTSC-J',
+      GBA: 'NTSC-U / PAL', GB: 'NTSC-J / U', GBC: 'NTSC-J / U',
+      N64: 'NTSC-U / PAL', PS1: 'NTSC-U', PSX: 'NTSC-U',
+      MD: 'NTSC-U / PAL',
     };
-    return regions[console?.toUpperCase()] ?? 'MULTI';
+    return map[console?.toUpperCase()] ?? 'MULTI';
   }
 
   getFormat(console: string): string {
-    const formats: Record<string, string> = {
-      SNES: 'SFC CART [32MBIT]', SFC: 'SFC CART [32MBIT]',
-      PS1: 'CD-ROM [700MB]', PSX: 'CD-ROM [700MB]',
-      N64: 'N64 CART [64MBIT]', GBA: 'GBA CART [16MBIT]',
-      MD: 'MD CART [16MBIT]', NES: 'NES CART [8MBIT]',
-      GB: 'GB CART [8MBIT]', GBC: 'GBC CART [8MBIT]'
+    const map: Record<string, string> = {
+      NES: 'NES CART [8MBIT]', SNES: 'SFC CART [32MBIT]',
+      SFC: 'SFC CART [32MBIT]', GBA: 'GBA CART [16MBIT]',
+      GB: 'GB CART [8MBIT]', GBC: 'GBC CART [8MBIT]',
+      N64: 'N64 CART [64MBIT]', PS1: 'CD-ROM [700MB]',
+      PSX: 'CD-ROM [700MB]', MD: 'MD CART [16MBIT]',
     };
-    return formats[console?.toUpperCase()] ?? 'UNKNOWN';
+    return map[console?.toUpperCase()] ?? 'UNKNOWN';
   }
 }
