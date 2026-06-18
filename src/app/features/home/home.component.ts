@@ -41,20 +41,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   userName = '';
   isAdmin = false;
 
-  // ── GAMES ────────────────────────────────────────────
   games: Game[] = [];
   loadingGames = false;
   gamesError = '';
 
-  // ── CARROSSEL DE JOGOS ───────────────────────────────
   carouselIndex = 0;
   readonly carouselVisible = 4;
 
-  // ── PLATAFORMAS ──────────────────────────────────────
   platforms: Platform[] = [];
   totalGames = 0;
 
-  // ── CARROSSEL DE PLATAFORMAS — estado ────────────────
   carouselPaused = false;
   isDragging = false;
 
@@ -64,7 +60,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   @ViewChild('carouselTrackRef') carouselTrackRef!: ElementRef<HTMLElement>;
 
-  // ── EASTER EGG ────────────────────────────
   jumpscareActive = false;
   jumpscareVideoUrl = '/videos/hihi.mp4';
   private jumpscareTimer: any;
@@ -89,8 +84,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     clearTimeout(this.eggClickTimer);
   }
 
-  // ── AUTH ─────────────────────────────────────────────
-
   private checkAuth(): void {
     this.isLoggedIn = this.authService.isAuthenticated();
     this.isAdmin = this.authService.getUserRole() === 'admin';
@@ -114,6 +107,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   // ── WELCOME BACK ─────────────────────────────────────
 
   private showWelcomeBack(): void {
+    const shouldShow = sessionStorage.getItem('show-welcome');
+    if (!shouldShow) return;
+    sessionStorage.removeItem('show-welcome');
+
     const name = this.authService.getUserName();
     if (!name || name === 'Player 1') return;
 
@@ -214,8 +211,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     setTimeout(typeLine, 400);
   }
 
-  // ── PLATAFORMAS (público) ─────────────────────────────
-
   private loadPlatforms(): void {
     this.http.get<PlatformsResponse>(`${environment.apiUrl}/platforms`).subscribe({
       next: (res) => {
@@ -223,15 +218,13 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.platforms = res.data.platforms;
           this.totalGames = res.data.totalGames;
         }
-        this.cdr.detectChanges()
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('[home] erro ao carregar plataformas:', err);
       }
     });
   }
-
-  // ── GAMES (requer login) ──────────────────────────────
 
   private loadGames(token: string): void {
     this.loadingGames = true;
@@ -260,13 +253,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ── CARROSSEL DE JOGOS ───────────────────────────────
-
   get carouselGames(): Game[] {
-    return this.games.slice(
-      this.carouselIndex,
-      this.carouselIndex + this.carouselVisible
-    );
+    return this.games.slice(this.carouselIndex, this.carouselIndex + this.carouselVisible);
   }
 
   carouselPrev(): void {
@@ -286,22 +274,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     return this.carouselIndex + this.carouselVisible < this.games.length;
   }
 
-  // ── CARROSSEL DE PLATAFORMAS — controles ─────────────
-
-  pauseCarousel(): void {
-    this.carouselPaused = true;
-  }
+  pauseCarousel(): void { this.carouselPaused = true; }
 
   resumeCarousel(): void {
-    if (!this.isDragging) {
-      this.carouselPaused = false;
-    }
+    if (!this.isDragging) this.carouselPaused = false;
   }
 
   onDragStart(event: MouseEvent): void {
     const el = this.carouselTrackRef?.nativeElement;
     if (!el) return;
-
     this.isDragging = true;
     this.carouselPaused = true;
     this.dragStartX = event.pageX - el.offsetLeft;
@@ -311,10 +292,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   onDragMove(event: MouseEvent): void {
     if (!this.isDragging) return;
     event.preventDefault();
-
     const el = this.carouselTrackRef?.nativeElement;
     if (!el) return;
-
     const x = event.pageX - el.offsetLeft;
     const walk = (x - this.dragStartX) * 1.4;
     el.scrollLeft = this.dragScrollLeft - walk;
@@ -328,7 +307,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   onTouchStart(event: TouchEvent): void {
     const el = this.carouselTrackRef?.nativeElement;
     if (!el) return;
-
     this.isDragging = true;
     this.carouselPaused = true;
     this.touchStartX = event.touches[0].pageX;
@@ -337,63 +315,43 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   onTouchMove(event: TouchEvent): void {
     if (!this.isDragging) return;
-
     const el = this.carouselTrackRef?.nativeElement;
     if (!el) return;
-
     const walk = (this.touchStartX - event.touches[0].pageX) * 1.2;
     el.scrollLeft = this.dragScrollLeft + walk;
   }
 
-  // ── NAVEGAÇÃO ────────────────────────────────────────
-
-  navigate(path: string): void {
-    this.router.navigate([path]);
-  }
+  navigate(path: string): void { this.router.navigate([path]); }
 
   onInitializeLink(): void {
     this.router.navigate([this.isLoggedIn ? '/library' : '/register']);
   }
 
-  onGameClick(game: Game): void {
-    this.router.navigate(['/rooms', game.id]);
-  }
+  onGameClick(game: Game): void { this.router.navigate(['/rooms', game.id]); }
 
   onImgError(event: Event): void {
     const img = event.target as HTMLImageElement;
     img.src = 'assets/placeholder-game.png';
   }
 
-  isActive(path: string): boolean {
-    return this.router.url === path;
-  }
-
-  // ── EASTER EGG ────────────────────────────
+  isActive(path: string): boolean { return this.router.url === path; }
 
   onHomeIconClick(): void {
     this.navigate('/home');
-
     this.eggClickCount++;
     clearTimeout(this.eggClickTimer);
-
     if (this.eggClickCount >= 3) {
       this.eggClickCount = 0;
       this.triggerJumpscare();
       return;
     }
-
-    this.eggClickTimer = setTimeout(() => {
-      this.eggClickCount = 0;
-    }, 800);
+    this.eggClickTimer = setTimeout(() => { this.eggClickCount = 0; }, 800);
   }
 
   triggerJumpscare(): void {
     if (this.jumpscareActive) return;
     this.jumpscareActive = true;
-
-    this.jumpscareTimer = setTimeout(() => {
-      this.dismissJumpscare();
-    }, 24000);
+    this.jumpscareTimer = setTimeout(() => { this.dismissJumpscare(); }, 24000);
   }
 
   dismissJumpscare(): void {

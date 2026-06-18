@@ -94,6 +94,7 @@ export class AuthService {
     if (this.isBrowser) {
       localStorage.setItem(this.tokenKey, token);
       localStorage.setItem(this.userKey, JSON.stringify({ name, role }));
+      sessionStorage.setItem('show-welcome', '1');
       this.authState.next(true);
     }
   }

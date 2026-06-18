@@ -60,6 +60,7 @@ export class LoginComponent implements OnInit {
 
         const token = this.authService.getToken();
         if (!token) {
+          sessionStorage.setItem('show-welcome', '1');
           this.router.navigate(['/home']);
           return;
         }
@@ -70,10 +71,14 @@ export class LoginComponent implements OnInit {
             if (res.success && !res.data.user.onboardingDone) {
               this.router.navigate(['/onboarding']);
             } else {
+              sessionStorage.setItem('show-welcome', '1');
               this.router.navigate(['/home']);
             }
           },
-          error: () => this.router.navigate(['/home'])
+          error: () => {
+            sessionStorage.setItem('show-welcome', '1');
+            this.router.navigate(['/home']);
+          }
         });
       },
       error: (err) => {
