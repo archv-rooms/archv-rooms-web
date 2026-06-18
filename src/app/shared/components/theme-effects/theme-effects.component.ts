@@ -8,7 +8,59 @@ import { environment } from '../../../../environments/environments';
   selector: 'app-theme-effects',
   standalone: true,
   imports: [CommonModule],
-  template: `<canvas #canvas style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;opacity:0.85;"></canvas>`,
+  template: `
+    <canvas #canvas style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;opacity:0.85;"></canvas>
+
+    <div *ngIf="showBanner" class="halloween-banner" [class.visible]="bannerVisible" [class.hiding]="bannerHiding">
+      <div class="banner-inner">
+        <span class="banner-icon">💀</span>
+        <span class="banner-text">{{ bannerMessage }}</span>
+        <span class="banner-icon">💀</span>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .halloween-banner {
+      position: fixed;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      pointer-events: none;
+      transition: top 1.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease;
+      opacity: 0;
+    }
+    .halloween-banner.visible {
+      top: 32px;
+      opacity: 1;
+    }
+    .halloween-banner.hiding {
+      top: 32px;
+      opacity: 0;
+    }
+    .banner-inner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #0f0500;
+      border: 1px solid #b84a00;
+      padding: 14px 28px;
+      box-shadow: 0 0 24px #b84a0088, inset 0 0 16px #1c0a00;
+    }
+    .banner-text {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #c8a060;
+      text-shadow: 0 0 8px #b84a00;
+      white-space: nowrap;
+    }
+    .banner-icon {
+      font-size: 18px;
+      filter: grayscale(0.4);
+    }
+  `]
 })
 export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvas') canvasRef!: ElementRef<HTMLCanvasElement>;
@@ -17,6 +69,19 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
   private particles: any[] = [];
   private animationId!: number;
   private theme = 'none';
+
+  showBanner = false;
+  bannerVisible = false;
+  bannerHiding = false;
+  bannerMessage = '';
+
+  private readonly halloweenMessages = [
+    'Os mortos estão acordados. Jogue com cuidado.',
+    'Esta noite, o arquivo está amaldiçoado.',
+    'Algo te observa nas sombras do cartucho.',
+    'Nem todo save file sobrevive à esta noite.',
+    'Os dados corrompidos voltaram para assombrar.',
+  ];
 
   constructor(private http: HttpClient) {}
 
@@ -37,6 +102,20 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
 
     this.initParticles();
     this.animate();
+
+    if (this.theme === 'halloween') {
+      this.triggerBanner();
+    }
+  }
+
+  private triggerBanner(): void {
+    const msg = this.halloweenMessages[Math.floor(Math.random() * this.halloweenMessages.length)];
+    this.bannerMessage = msg;
+    this.showBanner = true;
+
+    setTimeout(() => { this.bannerVisible = true; }, 800);
+    setTimeout(() => { this.bannerHiding = true; this.bannerVisible = false; }, 5000);
+    setTimeout(() => { this.showBanner = false; this.bannerHiding = false; }, 6200);
   }
 
   ngOnDestroy(): void {
