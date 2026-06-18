@@ -30,6 +30,103 @@
   <meta name="twitter:image" content="https://archv-rooms-web.vercel.app/og-image.png" />
 </head>
 <body>
+  <div id="loading-screen">
+    <div id="loading-content">
+      <div id="loading-title">ARCHV.ROOMS</div>
+      <div id="loading-line">
+        <span id="loading-text"></span><span id="loading-cursor">_</span>
+      </div>
+    </div>
+  </div>
+
   <app-root></app-root>
+
+  <style>
+    #loading-screen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #0a0a0a;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.8s ease;
+    }
+    #loading-screen.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #loading-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+    #loading-title {
+      font-family: 'Courier New', monospace;
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: 12px;
+      color: #c8c8c8;
+      animation: blink-title 1.5s step-start infinite;
+    }
+    #loading-line {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: #666;
+    }
+    #loading-cursor {
+      animation: blink-cursor 0.8s step-start infinite;
+    }
+    @keyframes blink-title {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    @keyframes blink-cursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  </style>
+
+  <script>
+    const messages = [
+      'INICIALIZANDO SISTEMA...',
+      'CARREGANDO BIBLIOTECA...',
+      'ACESSANDO CARTUCHOS...',
+      'PRONTO.',
+    ];
+
+    let msgIndex = 0;
+    let charIndex = 0;
+    const textEl = document.getElementById('loading-text');
+
+    function typeNext() {
+      if (msgIndex >= messages.length) {
+        setTimeout(() => {
+          const screen = document.getElementById('loading-screen');
+          screen.classList.add('fade-out');
+          setTimeout(() => screen.remove(), 800);
+        }, 400);
+        return;
+      }
+      const msg = messages[msgIndex];
+      if (charIndex < msg.length) {
+        textEl.textContent += msg[charIndex];
+        charIndex++;
+        setTimeout(typeNext, 50);
+      } else {
+        setTimeout(() => {
+          textEl.textContent = '';
+          charIndex = 0;
+          msgIndex++;
+          typeNext();
+        }, 600);
+      }
+    }
+
+    typeNext();
+  </script>
 </body>
 </html>
