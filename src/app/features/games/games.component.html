@@ -2,8 +2,9 @@
 
   <header class="games-hero">
     <div class="hero-left">
-      <div class="hero-brand">▣ ARCHV.ROOMS</div>
-      <div class="hero-sub">// biblioteca de jogos · catálogo público</div>
+      <span class="hero-brand">▣ ARCHV.ROOMS</span>
+      <span class="hero-sep">//</span>
+      <span class="hero-page">BIBLIOTECA DE JOGOS</span>
     </div>
     <div class="hero-actions">
       <a routerLink="/login" class="btn btn-ghost btn-sm">entrar</a>
@@ -12,17 +13,22 @@
   </header>
 
   <div class="filter-bar" *ngIf="!loading && !error">
-    <span class="filter-label">▼ filtrar_por_plataforma:</span>
-    <button
-      class="filter-chip"
-      [class.active]="activeFilter === 'TODOS'"
-      (click)="setFilter('TODOS')">todos</button>
-    <button
-      class="filter-chip"
-      *ngFor="let c of consoles"
-      [class.active]="activeFilter === c"
-      (click)="setFilter(c)">{{ c }}</button>
-    <span class="filter-count">{{ filteredGames.length }} jogos_encontrados</span>
+    <div class="filter-left">
+      <span class="filter-icon">▼</span>
+      <span class="filter-label">filtrar_por_plataforma:</span>
+      <button
+        class="filter-btn"
+        [class.active]="activeFilter === 'TODOS'"
+        (click)="setFilter('TODOS')">todos</button>
+      <button
+        class="filter-btn"
+        *ngFor="let c of consoles"
+        [class.active]="activeFilter === c"
+        (click)="setFilter(c)">{{ c }}</button>
+    </div>
+    <div class="filter-right">
+      <span class="result-count">{{ filteredGames.length }} jogos_encontrados</span>
+    </div>
   </div>
 
   <div class="search-bar" *ngIf="!loading && !error">
@@ -33,37 +39,51 @@
       placeholder="BUSCAR_JOGO..."
       [(ngModel)]="searchQuery"
       (input)="onSearch()" />
+    <span class="search-clear" *ngIf="searchQuery" (click)="searchQuery = ''; onSearch()">✕</span>
   </div>
 
-  <div class="state-container" *ngIf="loading">
-    <div class="loading-dots">
-      <span></span><span></span><span></span>
-    </div>
-    <p class="loading-text">carregando...</p>
-  </div>
+  <div class="library-body">
 
-  <div class="state-container" *ngIf="error && !loading">
-    <p class="error-text">⚠ ERRO AO CARREGAR JOGOS</p>
-    <a routerLink="/" class="btn btn-outline btn-sm">← voltar</a>
-  </div>
-
-  <section class="games-grid" *ngIf="!loading && !error">
-    <div
-      class="game-card"
-      *ngFor="let game of filteredGames"
-      (click)="openModal(game)">
-      <div class="card-img">
-        <img [src]="game.image" [alt]="game.title" loading="lazy" />
-        <div class="card-scanline"></div>
-        <span class="card-badge">{{ game.console }}</span>
-        <span class="card-lock" *ngIf="isLocked(game)">🔒</span>
+    <div class="state-container" *ngIf="loading">
+      <div class="loading-dots">
+        <span></span><span></span><span></span>
       </div>
-      <div class="card-info">
-        <span class="card-title">{{ game.title | uppercase }}</span>
-        <span class="card-console">{{ game.console }}</span>
-      </div>
+      <p class="loading-text">carregando...</p>
     </div>
-  </section>
+
+    <div class="state-container" *ngIf="error && !loading">
+      <p class="error-text">⚠ ERRO AO CARREGAR JOGOS</p>
+      <a routerLink="/" class="btn btn-outline btn-sm">← voltar</a>
+    </div>
+
+    <section class="games-grid" *ngIf="!loading && !error">
+      <div
+        class="game-card"
+        *ngFor="let game of filteredGames"
+        (click)="openModal(game)">
+        <div class="game-thumb">
+          <img [src]="game.image" [alt]="game.title" loading="lazy" />
+          <div class="card-scanline"></div>
+          <div class="card-overlay">
+            <span class="overlay-text">ver detalhes</span>
+          </div>
+          <span class="console-badge">{{ game.console }}</span>
+          <span class="card-lock" *ngIf="isLocked(game)">🔒</span>
+        </div>
+        <div class="game-info">
+          <span class="game-title">{{ game.title }}</span>
+          <div class="game-meta">
+            <span class="meta-item">{{ game.console }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-results" *ngIf="filteredGames.length === 0">
+        <p class="no-results-text">// nenhum jogo encontrado</p>
+      </div>
+    </section>
+
+  </div>
 
   <footer class="games-footer" *ngIf="!loading && !error">
     <p class="footer-text">// faça login para jogar qualquer título do catálogo</p>

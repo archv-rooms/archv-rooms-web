@@ -1,3 +1,4 @@
+// ── TOKENS ───────────────────────────────────────────────
 $bg:          #11131a;
 $bg-panel:    #181b24;
 $bg-card:     #202433;
@@ -5,41 +6,57 @@ $border:      #34384a;
 $border-glow: #6d4ed8;
 $purple:      #8b5cf6;
 $purple-dim:  #6d4ed8;
-$text-bright: #f2f4ff;
-$text-base:   #bcc3e0;
-$text-muted:  #9aa3c7;
+$purple-bright: #fcfcfc;
 $text-dim:    #727896;
+$text-muted:  #9aa3c7;
+$text-base:   #bcc3e0;
+$text-bright: #f2f4ff;
 $green-ok:    #4ade80;
 $red-alert:   #fb7185;
 
+// ── BASE ─────────────────────────────────────────────────
 .games-page {
   min-height: 100vh;
   background: $bg;
   color: $text-base;
   font-family: 'Share Tech Mono', monospace;
+  display: flex;
+  flex-direction: column;
 }
 
-// HERO HEADER
+// ── HEADER ───────────────────────────────────────────────
 .games-hero {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  padding: 28px 28px 20px;
+  padding: 0 20px;
+  height: 52px;
+  background: rgba($bg-panel, 0.92);
   border-bottom: 1px solid $border;
+  flex-shrink: 0;
+}
+
+.hero-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .hero-brand {
-  font-family: 'VT323', monospace;
-  font-size: 32px;
-  letter-spacing: 4px;
-  color: $text-bright;
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: $text-muted;
+  text-transform: uppercase;
 }
 
-.hero-sub {
-  font-size: 10px;
-  letter-spacing: 2px;
+.hero-sep {
   color: $text-dim;
-  margin-top: 4px;
+}
+
+.hero-page {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: $purple-bright;
 }
 
 .hero-actions {
@@ -48,25 +65,24 @@ $red-alert:   #fb7185;
   align-items: center;
 }
 
-// BUTTONS
+// ── BUTTONS ──────────────────────────────────────────────
 .btn {
   font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
   letter-spacing: 2px;
-  text-transform: uppercase;
+  padding: 8px 20px;
+  border-radius: 4px;
   cursor: pointer;
+  text-transform: uppercase;
   text-decoration: none;
   display: inline-block;
-  transition: all 0.2s;
-  border-radius: 4px;
-
-  &-sm { font-size: 10px; padding: 6px 14px; }
+  transition: all 0.2s ease;
 
   &-outline {
     background: transparent;
-    border: 1px solid $text-bright;
-    color: $text-bright;
-    box-shadow: 0 0 8px rgba($purple, 0.3);
-    &:hover { background: rgba($purple, 0.15); box-shadow: 0 0 16px rgba($purple, 0.5); }
+    border: 1px solid $purple-bright;
+    color: $purple-bright;
+    &:hover { background: rgba($purple, 0.15); }
   }
 
   &-ghost {
@@ -75,66 +91,80 @@ $red-alert:   #fb7185;
     color: $text-muted;
     &:hover { border-color: $text-muted; color: $text-bright; }
   }
+
+  &-sm { font-size: 9px; padding: 4px 12px; }
 }
 
-// FILTER BAR
+// ── FILTER BAR ───────────────────────────────────────────
 .filter-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 28px;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: rgba($bg-panel, 0.5);
   border-bottom: 1px solid $border;
-  background: $bg;
-  overflow-x: auto;
+  flex-wrap: wrap;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.filter-left,
+.filter-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
-.filter-label {
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: $text-dim;
-  text-transform: uppercase;
-  flex-shrink: 0;
+.filter-icon {
+  color: $purple-dim;
+  font-size: 12px;
 }
 
-.filter-chip {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
+.filter-label {
+  font-size: 10px;
   letter-spacing: 2px;
-  padding: 4px 10px;
+  color: $text-dim;
+}
+
+.filter-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 5px 12px;
   background: transparent;
   border: 1px solid $border;
-  color: $text-dim;
+  border-radius: 4px;
+  color: $text-muted;
   cursor: pointer;
+  transition: all 0.2s ease;
   text-transform: uppercase;
-  transition: all 0.2s;
-  white-space: nowrap;
 
-  &:hover { border-color: $border-glow; color: $text-muted; }
-  &.active { border-color: $purple; color: $text-bright; background: rgba($purple, 0.12); }
+  &:hover { border-color: $border-glow; color: $text-bright; }
+  &.active { border-color: $purple-bright; color: $purple-bright; background: rgba($purple, 0.1); }
 }
 
-.filter-count {
-  margin-left: auto;
-  font-size: 9px;
-  letter-spacing: 2px;
+.result-count {
+  font-size: 10px;
+  letter-spacing: 1px;
   color: $text-dim;
-  flex-shrink: 0;
 }
 
-// SEARCH
+// ── SEARCH ───────────────────────────────────────────────
 .search-bar {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 28px;
+  padding: 12px 20px;
+  background: rgba($bg, 0.85);
   border-bottom: 1px solid $border;
-  background: rgba($bg-panel, 0.5);
+  flex-shrink: 0;
 }
 
-.search-icon { font-size: 14px; color: $text-dim; }
+.search-icon { font-size: 16px; color: $text-dim; }
 
 .search-input {
+  flex: 1;
   background: transparent;
   border: none;
   outline: none;
@@ -142,12 +172,29 @@ $red-alert:   #fb7185;
   font-size: 12px;
   letter-spacing: 2px;
   color: $text-bright;
-  width: 100%;
-
   &::placeholder { color: $text-dim; }
 }
 
-// STATES
+.search-clear {
+  color: $text-dim;
+  cursor: pointer;
+  transition: 0.2s;
+  &:hover { color: $red-alert; }
+}
+
+// ── BODY ─────────────────────────────────────────────────
+.library-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px;
+
+  &::-webkit-scrollbar { width: 5px; }
+  &::-webkit-scrollbar-track { background: $bg; }
+  &::-webkit-scrollbar-thumb { background: $border-glow; border-radius: 4px; }
+}
+
+// ── STATES ───────────────────────────────────────────────
 .state-container {
   display: flex;
   flex-direction: column;
@@ -172,38 +219,48 @@ $red-alert:   #fb7185;
 .loading-text { font-size: 10px; letter-spacing: 3px; color: $text-dim; }
 .error-text { font-size: 11px; letter-spacing: 2px; color: $red-alert; }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.2; }
-}
-
-// GRID
+// ── GRID ─────────────────────────────────────────────────
 .games-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
-  padding: 24px 28px;
-  max-width: 1400px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
 }
 
-// CARD
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 0;
+}
+
+.no-results-text {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: $text-dim;
+}
+
+// ── CARD ─────────────────────────────────────────────────
 .game-card {
-  border: 1px solid $border;
-  background: $bg-card;
   overflow: hidden;
+  background: $bg-card;
+  border: 1px solid rgba($border-glow, 0.25);
+  border-radius: 4px;
   cursor: pointer;
-  transition: border-color 0.2s, transform 0.15s;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
-    border-color: $border-glow;
-    transform: translateY(-2px);
-    .card-title { color: $text-bright; }
+    transform: translateY(-4px);
+    border-color: $purple-bright;
+    box-shadow: 0 0 18px rgba($purple, 0.2);
+
+    .card-overlay { opacity: 1; }
+    .game-thumb img { filter: brightness(0.7); }
   }
 }
 
-.card-img {
+.game-thumb {
   position: relative;
-  aspect-ratio: 3/4;
+  width: 100%;
+  aspect-ratio: 4/3;
   overflow: hidden;
   background: $bg;
 
@@ -211,71 +268,95 @@ $red-alert:   #fb7185;
     width: 100%; height: 100%;
     object-fit: cover;
     display: block;
-    filter: saturate(0.85);
-    transition: filter 0.2s;
+    transition: filter 0.2s ease;
   }
-
-  &:hover img { filter: saturate(1.05); }
 }
 
 .card-scanline {
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px
+  );
   pointer-events: none;
 }
 
-.card-badge {
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba($purple, 0.3);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.overlay-text {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.4);
+  padding: 5px 12px;
+}
+
+.console-badge {
   position: absolute;
   bottom: 6px; right: 6px;
+  z-index: 2;
+  padding: 2px 6px;
   font-size: 8px;
   letter-spacing: 1px;
-  background: rgba($bg, 0.9);
-  border: 1px solid $border;
-  color: $purple;
-  padding: 2px 6px;
+  text-transform: uppercase;
+  background: rgba($purple, 0.9);
+  color: #fff;
+  border-radius: 2px;
 }
 
 .card-lock {
   position: absolute;
   top: 6px; right: 6px;
   font-size: 12px;
+  z-index: 3;
 }
 
-.card-info {
-  padding: 8px 10px;
-  border-top: 1px solid $border;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+.game-info {
+  padding: 10px;
 }
 
-.card-title {
-  font-family: 'VT323', monospace;
-  font-size: 14px;
+.game-title {
+  font-size: 11px;
   letter-spacing: 1px;
-  color: $text-muted;
+  color: $text-bright;
+  text-transform: uppercase;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color 0.2s;
+  margin-bottom: 4px;
 }
 
-.card-console {
-  font-size: 8px;
+.game-meta {
+  display: flex;
+  gap: 8px;
+}
+
+.meta-item {
+  font-size: 9px;
   letter-spacing: 1px;
   color: $text-dim;
 }
 
-// FOOTER CTA
+// ── FOOTER ───────────────────────────────────────────────
 .games-footer {
   text-align: center;
-  padding: 40px 28px;
+  padding: 32px 20px;
   border-top: 1px solid $border;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  flex-shrink: 0;
 }
 
 .footer-text {
@@ -289,7 +370,7 @@ $red-alert:   #fb7185;
   gap: 12px;
 }
 
-// MODAL
+// ── MODAL ────────────────────────────────────────────────
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -355,6 +436,10 @@ $red-alert:   #fb7185;
   display: grid;
   grid-template-columns: 1fr 280px;
   border: 1px solid $border;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .artifact-left {
@@ -444,4 +529,10 @@ $red-alert:   #fb7185;
   .access-title { font-size: 9px; letter-spacing: 2px; color: $text-muted; text-transform: uppercase; }
   .access-sub { font-size: 10px; letter-spacing: 1px; color: $text-dim; }
   .btn { width: 100%; text-align: center; }
+}
+
+// ── ANIMATIONS ───────────────────────────────────────────
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
 }
