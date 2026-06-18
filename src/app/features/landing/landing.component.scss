@@ -112,12 +112,14 @@
   align-items: center;
   text-align: left;
   gap: 14px;
+  text-align: center;
 }
 
 .landing-hero-text {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  align-items: center;
 }
 
 .landing-icon {
