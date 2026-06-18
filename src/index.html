@@ -70,6 +70,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
 
     body { margin: 0; background: #0a0b10; }
+    app-root { visibility: hidden; }
 
     #loading-screen {
       position: fixed;
@@ -446,6 +447,7 @@
       if (isFirstVisit) localStorage.setItem('archv-visited', '1');
 
       if (!isFirstVisit) {
+        document.querySelector('app-root').style.visibility = 'visible';
         const welcomeEl = document.createElement('div');
         welcomeEl.style.cssText = `
           position: fixed; bottom: 32px; left: 50%;
@@ -551,7 +553,6 @@
           }
         </style>
       `;
-      document.querySelector('app-root').style.visibility = 'hidden';
       document.body.appendChild(screen);
 
       const lines = [
