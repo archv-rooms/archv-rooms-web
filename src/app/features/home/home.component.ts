@@ -81,6 +81,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadPlatforms();
     this.checkAuth();
+    this.showWelcomeBack();
   }
 
   ngOnDestroy(): void {
@@ -108,6 +109,109 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.isLoggedIn = false;
     this.userName = '';
     this.games = [];
+  }
+
+  // ── WELCOME BACK ─────────────────────────────────────
+
+  private showWelcomeBack(): void {
+    const name = this.authService.getUserName();
+    if (!name || name === 'Player 1') return;
+
+    const screen = document.createElement('div');
+    screen.id = 'welcome-back-screen';
+    screen.style.cssText = `
+      position: fixed; inset: 0;
+      background: #0a0b10;
+      z-index: 99998;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'VT323', monospace;
+      transition: opacity 0.8s ease;
+    `;
+
+    screen.innerHTML = `
+      <div style="
+        position: relative; width: 520px;
+        background: #0d0e16; border: 1px solid #2a1f4e;
+        border-radius: 4px; padding: 40px;
+        box-shadow: 0 0 40px rgba(124,58,237,0.2), inset 0 0 60px rgba(124,58,237,0.03);
+        overflow: hidden;
+      ">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,0.18) 3px,rgba(0,0,0,0.18) 4px);pointer-events:none;z-index:10;"></div>
+        <div style="position:absolute;top:10px;left:10px;width:14px;height:14px;border:2px solid #6d28d9;border-right:none;border-bottom:none;opacity:0.7"></div>
+        <div style="position:absolute;top:10px;right:10px;width:14px;height:14px;border:2px solid #6d28d9;border-left:none;border-bottom:none;opacity:0.7"></div>
+        <div style="position:absolute;bottom:10px;left:10px;width:14px;height:14px;border:2px solid #6d28d9;border-right:none;border-top:none;opacity:0.7"></div>
+        <div style="position:absolute;bottom:10px;right:10px;width:14px;height:14px;border:2px solid #6d28d9;border-left:none;border-top:none;opacity:0.7"></div>
+
+        <div style="position:relative;z-index:2;text-align:center;">
+          <div style="font-size:13px;letter-spacing:4px;color:#f59e0b;margin-bottom:6px;animation:wcBlink 1s step-start infinite;">★ PLAYER IDENTIFICADO ★</div>
+          <div style="width:100%;height:1px;background:linear-gradient(to right,transparent,#7c3aed,transparent);margin:16px 0;"></div>
+          <div style="font-size:28px;letter-spacing:6px;color:#fff;margin-bottom:4px;">ARCHV ROOMS</div>
+          <div style="font-size:14px;letter-spacing:3px;color:#4b3d72;margin-bottom:24px;">YOUR SPACE — YOUR GAME</div>
+          <div style="width:100%;height:1px;background:linear-gradient(to right,transparent,#7c3aed,transparent);margin-bottom:24px;"></div>
+          <div id="wb-lines" style="text-align:left;font-size:17px;letter-spacing:2px;color:#9d8ec9;line-height:1.8;min-height:100px;"></div>
+          <div style="width:100%;height:1px;background:linear-gradient(to right,transparent,#7c3aed,transparent);margin:24px 0 20px;"></div>
+          <button id="wb-start" style="
+            display:none; background:#7c3aed; border:none;
+            color:#fff; font-family:'VT323',monospace;
+            font-size:20px; letter-spacing:4px;
+            padding:12px 40px; cursor:pointer;
+            animation:wcBlink 0.8s step-start infinite;
+          ">▶ CONTINUAR</button>
+        </div>
+      </div>
+      <style>
+        @keyframes wcBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+      </style>
+    `;
+
+    document.body.appendChild(screen);
+
+    const lines = [
+      { text: `> BEM-VINDO DE VOLTA, ${name.toUpperCase()}.`, color: '#a78bfa' },
+      { text: '', color: '' },
+      { text: '  SEUS JOGOS ESTÃO TE', color: '#9d8ec9' },
+      { text: '  ESPERANDO.', color: '#9d8ec9' },
+      { text: '', color: '' },
+      { text: '  BOA SORTE, JOGADOR.', color: '#4ade80' },
+    ];
+
+    const linesEl = document.getElementById('wb-lines')!;
+    const startBtn = document.getElementById('wb-start') as HTMLButtonElement;
+    let lineIndex = 0;
+
+    const typeLine = () => {
+      if (lineIndex >= lines.length) {
+        startBtn.style.display = 'inline-block';
+        startBtn.onclick = () => {
+          screen.style.opacity = '0';
+          setTimeout(() => screen.remove(), 800);
+        };
+        return;
+      }
+
+      const { text, color } = lines[lineIndex];
+      const lineEl = document.createElement('div');
+      lineEl.style.color = color;
+      linesEl.appendChild(lineEl);
+
+      if (!text) {
+        lineIndex++;
+        setTimeout(typeLine, 100);
+        return;
+      }
+
+      let i = 0;
+      const type = setInterval(() => {
+        lineEl.textContent += text[i++];
+        if (i >= text.length) {
+          clearInterval(type);
+          lineIndex++;
+          setTimeout(typeLine, 200);
+        }
+      }, 35);
+    };
+
+    setTimeout(typeLine, 400);
   }
 
   // ── PLATAFORMAS (público) ─────────────────────────────
