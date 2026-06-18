@@ -288,6 +288,10 @@
   </style>
 
 <script>
+if (window.location.pathname !== '/') {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.querySelector('app-root').style.visibility = 'visible';
+}
     const canvas = document.getElementById('game-canvas');
     const ctx = canvas.getContext('2d');
     const W = canvas.width, H = canvas.height;
