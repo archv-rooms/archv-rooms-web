@@ -29,11 +29,11 @@
       </button>
 
       <!-- Apoiar -->
-<button class="nav-btn" [class.donate-active]="isActive('/donate')" title="Apoiar" (click)="navigate('/donate')">
-  <svg class="heart-glow" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
-    <path d="M12 21C12 21 3 14.5 3 8.5a4.5 4.5 0 0 1 9-0.5 4.5 4.5 0 0 1 9 .5c0 6-9 12.5-9 12.5z"/>
-  </svg>
-</button>
+      <button class="nav-btn" [class.donate-active]="isActive('/donate')" title="Apoiar" (click)="navigate('/donate')">
+        <svg class="heart-glow" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
+          <path d="M12 21C12 21 3 14.5 3 8.5a4.5 4.5 0 0 1 9-0.5 4.5 4.5 0 0 1 9 .5c0 6-9 12.5-9 12.5z"/>
+        </svg>
+      </button>
 
       <!-- Perfil (só quando logado) -->
       <button class="nav-btn" title="Perfil" *ngIf="isLoggedIn" (click)="navigate('/profile')">
@@ -50,11 +50,11 @@
       </button>
 
       <!-- Admin -->
-<button class="nav-btn" title="Admin" *ngIf="isAdmin" (click)="navigate('/admin')">
-  <svg class="star-glow" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
-    <path d="M12 2l3 7h7l-6 4.5 2.3 7L12 17l-6.3 3.5L8 13 2 8.5h7z"/>
-  </svg>
-</button>
+      <button class="nav-btn" title="Admin" *ngIf="isAdmin" (click)="navigate('/admin')">
+        <svg class="star-glow" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
+          <path d="M12 2l3 7h7l-6 4.5 2.3 7L12 17l-6.3 3.5L8 13 2 8.5h7z"/>
+        </svg>
+      </button>
 
     </nav>
   </aside>
@@ -100,7 +100,7 @@
         <div class="hero-scroll-hint">▼</div>
       </section>
 
-<!-- CARROSSEL DE JOGOS --------------------------------------- -->
+      <!-- CARROSSEL DE JOGOS --------------------------------------- -->
       <section class="section" *ngIf="isLoggedIn">
         <div class="section-header">
           <span class="section-label">acervo</span>
@@ -250,18 +250,61 @@
         </div>
       </section>
 
-<!-- FOOTER -------------------------------------------------- -->
+      <!-- FOOTER -------------------------------------------------- -->
       <footer class="site-footer">
-        <span class="footer-links">
-          <span (click)="navigate('/home')"        class="footer-link">home</span>
-          <span (click)="navigate('/library')" class="footer-link">biblioteca</span>
-          <span (click)="navigate('/pricing')" class="footer-link">planos</span>
-          <span (click)="navigate('/about')"   class="footer-link">sobre</span>
-          <span (click)="navigate('/terms')"   class="footer-link">termos</span>
-          <span (click)="navigate('/privacy')" class="footer-link">privacidade</span>
-          <span (click)="navigate('/faq')" class="footer-link">faq</span>
-        </span>
-        <span>© 2026 archv.rooms</span>
+        <div class="footer-border-top">
+          <span class="footer-corner">┌</span>
+          <span class="footer-line">─────────────────────────────────────────────────────────────────────────────</span>
+          <span class="footer-corner">┐</span>
+        </div>
+
+        <div class="footer-row footer-row-brand">
+          <span class="footer-vert">│</span>
+          <span class="footer-brand">▣ ARCHV.ROOMS</span>
+          <span class="footer-tagline">// preservando a história dos games</span>
+          <span class="footer-insert-coin">INSERT COIN ▮</span>
+          <span class="footer-vert">│</span>
+        </div>
+
+        <div class="footer-divider">
+          <span class="footer-corner">├</span>
+          <span class="footer-line">─────────────────────────────────────────────────────────────────────────────</span>
+          <span class="footer-corner">┤</span>
+        </div>
+
+        <div class="footer-row footer-row-links">
+          <span class="footer-vert">│</span>
+          <span class="footer-links">
+            <span class="footer-link" (click)="navigate('/home')">home</span>
+            <span class="footer-link" (click)="navigate('/library')">biblioteca</span>
+            <span class="footer-link" (click)="navigate('/pricing')">planos</span>
+            <span class="footer-link" (click)="navigate('/about')">sobre</span>
+            <span class="footer-link" (click)="navigate('/terms')">termos</span>
+            <span class="footer-link" (click)="navigate('/privacy')">privacidade</span>
+            <span class="footer-link" (click)="navigate('/faq')">faq</span>
+          </span>
+          <span class="footer-vert">│</span>
+        </div>
+
+        <div class="footer-divider">
+          <span class="footer-corner">├</span>
+          <span class="footer-line">─────────────────────────────────────────────────────────────────────────────</span>
+          <span class="footer-corner">┤</span>
+        </div>
+
+        <div class="footer-row footer-row-bottom">
+          <span class="footer-vert">│</span>
+          <span class="footer-copy">© 2026 archv.rooms</span>
+          <span class="footer-gameover">GAME OVER? NEVER.</span>
+          <span class="footer-live"><span class="live-dot"></span>LIVE</span>
+          <span class="footer-vert">│</span>
+        </div>
+
+        <div class="footer-border-bottom">
+          <span class="footer-corner">└</span>
+          <span class="footer-line">─────────────────────────────────────────────────────────────────────────────</span>
+          <span class="footer-corner">┘</span>
+        </div>
       </footer>
 
     </div>
@@ -271,16 +314,15 @@
   <div class="scanlines"></div>
 
   <!-- EASTER EGG JUMPSCARE -->
-<div class="jumpscare-overlay" *ngIf="jumpscareActive" (click)="dismissJumpscare()">
-  <video
-    #jumpscareVideo
-    class="jumpscare-video"
-    [src]="jumpscareVideoUrl"
-    autoplay
-    playsinline
-    muted="false"
-  ></video>
-</div>
+  <div class="jumpscare-overlay" *ngIf="jumpscareActive" (click)="dismissJumpscare()">
+    <video
+      #jumpscareVideo
+      class="jumpscare-video"
+      [src]="jumpscareVideoUrl"
+      autoplay
+      playsinline
+      muted="false"
+    ></video>
+  </div>
 
 </div>
-
