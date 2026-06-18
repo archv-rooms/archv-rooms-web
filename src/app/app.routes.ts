@@ -11,6 +11,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent)
   },
   {
+    path: 'home',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent)
+  },
+  {
     path: 'onboarding',
     canActivate: [AuthGuard, onboardingGuard],
     loadComponent: () => import('./features/onboarding/onboarding-page.component').then(m => m.OnboardingPageComponent)
