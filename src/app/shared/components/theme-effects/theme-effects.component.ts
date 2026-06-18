@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ElementRef, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
@@ -9,6 +9,9 @@ import { environment } from '../../../../environments/environments';
   standalone: true,
   imports: [CommonModule],
   template: `
+<div class="crt-overlay"></div>
+<div class="glitch-overlay" [class.active]="glitchActive"></div>
+
 <div *ngIf="showBanner" class="halloween-banner" [class.visible]="bannerVisible" [class.hiding]="bannerHiding">
   <div class="correntes">
     <div class="corrente"></div>
@@ -26,6 +29,41 @@ import { environment } from '../../../../environments/environments';
 </div>
   `,
   styles: [`
+.crt-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.08) 0px,
+    rgba(0, 0, 0, 0.08) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+.glitch-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9997;
+  opacity: 0;
+  background: rgba(180, 60, 0, 0.06);
+  transition: opacity 0.05s;
+}
+.glitch-overlay.active {
+  opacity: 1;
+  animation: glitch-flicker 0.15s steps(1) forwards;
+}
+@keyframes glitch-flicker {
+  0%   { transform: translateX(0);    opacity: 0.7; }
+  25%  { transform: translateX(-4px); opacity: 0.3; }
+  50%  { transform: translateX(3px);  opacity: 0.6; }
+  75%  { transform: translateX(-2px); opacity: 0.4; }
+  100% { transform: translateX(0);    opacity: 0; }
+}
 .halloween-banner {
   position: fixed;
   top: -320px;
@@ -135,6 +173,7 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
   bannerVisible = false;
   bannerHiding = false;
   bannerMessage = '';
+  glitchActive = false;
 
   private readonly halloweenMessages = [
     'Os mortos estão acordados. Jogue com cuidado.',
@@ -158,6 +197,7 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
 
     if (this.theme === 'halloween') {
       this.triggerBanner();
+      this.scheduleGlitch();
     }
   }
 
@@ -171,6 +211,19 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
     setTimeout(() => { this.bannerHiding = true; this.bannerVisible = false; this.cdr.detectChanges(); }, 10000);
     setTimeout(() => { this.showBanner = false; this.bannerHiding = false; this.cdr.detectChanges(); }, 11200);
     setTimeout(() => { this.triggerBanner(); }, 30000);
+  }
+
+  private scheduleGlitch(): void {
+    const delay = Math.random() * 8000 + 4000;
+    setTimeout(() => {
+      this.glitchActive = true;
+      this.cdr.detectChanges();
+      setTimeout(() => {
+        this.glitchActive = false;
+        this.cdr.detectChanges();
+        this.scheduleGlitch();
+      }, 200);
+    }, delay);
   }
 
   explorarTerror(): void {
