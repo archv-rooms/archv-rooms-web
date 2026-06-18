@@ -115,8 +115,9 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
     this.cdr.detectChanges();
 
     setTimeout(() => { this.bannerVisible = true; }, 800);
-    setTimeout(() => { this.bannerHiding = true; this.bannerVisible = false; }, 5000);
-    setTimeout(() => { this.showBanner = false; this.bannerHiding = false; }, 6200);
+    setTimeout(() => { this.bannerHiding = true; this.bannerVisible = false; this.cdr.detectChanges(); }, 10000);
+    setTimeout(() => { this.showBanner = false; this.bannerHiding = false; this.cdr.detectChanges(); }, 11200);
+    setTimeout(() => { this.triggerBanner(); }, 30000);
   }
 
   ngOnDestroy(): void {
