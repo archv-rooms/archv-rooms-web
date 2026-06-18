@@ -45,42 +45,74 @@
 
 <!-- modal -->
 <div class="modal-backdrop" *ngIf="selectedGame" (click)="closeModal()">
-  <div class="modal-box" (click)="$event.stopPropagation()">
+  <div class="modal-wrap" (click)="$event.stopPropagation()">
 
     <div class="modal-topbar">
-      <span class="modal-topbar-title">// FICHA DO JOGO</span>
-      <button class="modal-topbar-close" (click)="closeModal()">✕ ESC</button>
+      <div class="modal-topbar-left">
+        <span>▣ ARCHV.ROOMS</span>
+        <span class="modal-sep">//</span>
+        <span class="modal-page">game preview</span>
+      </div>
+      <button class="modal-close" (click)="closeModal()">✕ fechar</button>
     </div>
 
-    <div class="modal-cover">
-      <img [src]="selectedGame.image" [alt]="selectedGame.title" />
-      <div class="modal-cover-vignette"></div>
-      <span class="modal-console-badge">{{ selectedGame.console }}</span>
-      <span class="modal-cover-title">{{ selectedGame.title }}</span>
+    <div class="artifact-layout">
+
+      <div class="artifact-left">
+        <div class="artifact-img-wrap">
+          <img [src]="selectedGame.image" [alt]="selectedGame.title" />
+          <div class="img-scanline"></div>
+        </div>
+        <div class="artifact-title-bar">
+          <span class="artifact-name">{{ selectedGame.title | uppercase }}</span>
+          <span class="artifact-id">#{{ formatId(selectedGame.id) }} · {{ selectedGame.console }}</span>
+        </div>
+        <div class="artifact-description">
+          <p class="desc-text">
+            Plataforma: {{ selectedGame.console }}.
+            Nível de acesso: {{ selectedGame.accessLevel }}.
+            Status: <span class="status-archived">arquivado</span>.
+          </p>
+        </div>
+      </div>
+
+      <div class="artifact-right">
+        <div class="metadata-cluster">
+          <div class="metadata-header">
+            <span class="metadata-title">metadata</span>
+            <span class="metadata-badge">{{ selectedGame.id }}</span>
+          </div>
+          <div class="metadata-row">
+            <span class="meta-key">console</span>
+            <span class="meta-val">{{ selectedGame.console | uppercase }}</span>
+          </div>
+          <div class="metadata-row">
+            <span class="meta-key">região</span>
+            <span class="meta-val">{{ getRegion(selectedGame.console) }}</span>
+          </div>
+          <div class="metadata-row">
+            <span class="meta-key">formato</span>
+            <span class="meta-val">{{ getFormat(selectedGame.console) }}</span>
+          </div>
+          <div class="metadata-row">
+            <span class="meta-key">acesso</span>
+            <span class="meta-val">nível {{ selectedGame.accessLevel }}</span>
+          </div>
+          <div class="metadata-row">
+            <span class="meta-key">integridade</span>
+            <span class="meta-val verified">verificado</span>
+          </div>
+        </div>
+
+        <div class="access-panel">
+          <div class="access-icon">🔒</div>
+          <p class="access-title">login necessário</p>
+          <p class="access-sub">faça login para acessar o arquivo.</p>
+          <a routerLink="/register" class="btn btn-outline btn-sm" (click)="closeModal()">▶ criar conta</a>
+          <a routerLink="/login" class="btn btn-ghost btn-sm" (click)="closeModal()">entrar</a>
+        </div>
+      </div>
+
     </div>
-
-    <div class="modal-pixel-divider"></div>
-
-    <div class="modal-info-row">
-      <span class="modal-info-key">PLATAFORMA</span>
-      <span class="modal-info-val">{{ consoleName(selectedGame.console) }}</span>
-    </div>
-
-    <div class="modal-info-row">
-      <span class="modal-info-key">ACESSO</span>
-      <span class="modal-info-val" [class.free]="!isLocked(selectedGame)" [class.pro]="isLocked(selectedGame)">
-        <span class="modal-blink-dot"></span>
-        {{ isLocked(selectedGame) ? 'PLANO PRO' : 'GRATIS' }}
-      </span>
-    </div>
-
-    <div class="modal-pixel-divider"></div>
-
-    <div class="modal-footer">
-      <a routerLink="/register" class="modal-btn-primary" (click)="closeModal()">▶ CRIAR CONTA</a>
-      <a routerLink="/login" class="modal-btn-secondary" (click)="closeModal()">JA TENHO CONTA</a>
-      <span class="modal-insert-coin">INSERT COIN _</span>
-    </div>
-
   </div>
 </div>

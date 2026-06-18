@@ -71,4 +71,28 @@ export class GamesComponent implements OnInit {
     };
     return map[code.toUpperCase()] ?? code;
   }
+
+  formatId(id: number): string {
+    return id.toString().padStart(6, '0');
+  }
+
+  getRegion(console: string): string {
+    const regions: Record<string, string> = {
+      SNES: 'NTSC-J / PAL', SFC: 'NTSC-J', PS1: 'NTSC-U',
+      PSX: 'NTSC-U', N64: 'NTSC-U / PAL', GBA: 'NTSC-U / PAL',
+      MD: 'NTSC-U / PAL', NES: 'NTSC-U', GB: 'NTSC-J / U'
+    };
+    return regions[console?.toUpperCase()] ?? 'MULTI';
+  }
+
+  getFormat(console: string): string {
+    const formats: Record<string, string> = {
+      SNES: 'SFC CART [32MBIT]', SFC: 'SFC CART [32MBIT]',
+      PS1: 'CD-ROM [700MB]', PSX: 'CD-ROM [700MB]',
+      N64: 'N64 CART [64MBIT]', GBA: 'GBA CART [16MBIT]',
+      MD: 'MD CART [16MBIT]', NES: 'NES CART [8MBIT]',
+      GB: 'GB CART [8MBIT]', GBC: 'GBC CART [8MBIT]'
+    };
+    return formats[console?.toUpperCase()] ?? 'UNKNOWN';
+  }
 }
