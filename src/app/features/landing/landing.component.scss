@@ -92,6 +92,14 @@
   }
 }
 
+.terminal-status {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-green);
+  letter-spacing: 1px;
+  animation: statusBlink 1.5s ease-in-out infinite;
+}
+
 .landing-body {
   padding: 36px 32px 32px;
   display: flex;
@@ -105,6 +113,12 @@
   align-items: center;
   text-align: center;
   gap: 10px;
+}
+
+.landing-icon {
+  font-size: 32px;
+  filter: drop-shadow(0 0 16px var(--color-accent-glow));
+  animation: iconPulse 2s ease-in-out infinite;
 }
 
 .landing-title {
@@ -383,4 +397,14 @@
   96% { opacity: 0.4; }
   97% { opacity: 1; }
   98% { opacity: 0.6; }
+}
+
+@keyframes iconPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes statusBlink {
+  0%, 100% { opacity: 1; color: var(--color-green); }
+  50% { opacity: 0.3; color: var(--color-green); }
 }
