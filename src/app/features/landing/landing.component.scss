@@ -532,3 +532,67 @@
   0%, 100% { opacity: 1; color: var(--color-green); }
   50% { opacity: 0.3; color: var(--color-green); }
 }
+
+.auth-wrapper {
+  padding: 12px;
+}
+
+.landing-terminal {
+  max-height: calc(100vh - 24px);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.landing-terminal::-webkit-scrollbar {
+  display: none;
+}
+
+.landing-body {
+  padding: 20px 24px 20px;
+  gap: 16px;
+}
+
+.landing-hero {
+  gap: 10px;
+}
+
+.landing-title {
+  font-size: 30px;
+}
+
+.landing-subtitle {
+  font-size: 10px;
+}
+
+.feature-card {
+  padding: 10px 8px;
+  gap: 5px;
+}
+
+.feature-icon {
+  font-size: 1.3rem;
+}
+
+.feature-label {
+  font-size: 9px;
+}
+
+.btn-submit {
+  padding: 10px 20px;
+}
+
+.btn-google {
+  padding: 9px 20px;
+}
+
+.footer-link {
+  padding: 8px 16px;
+}
+
+.btn-catalog-row {
+  padding: 6px 14px;
+}
+
+.btn-catalog-cta {
+  padding: 9px 14px;
+}
