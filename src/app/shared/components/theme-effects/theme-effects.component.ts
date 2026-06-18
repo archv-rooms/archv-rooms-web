@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, ElementRef, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
@@ -83,7 +83,7 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
     'Os dados corrompidos voltaram para assombrar.',
   ];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   async ngAfterViewInit(): Promise<void> {
     const canvas = this.canvasRef.nativeElement;
@@ -112,6 +112,7 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
     const msg = this.halloweenMessages[Math.floor(Math.random() * this.halloweenMessages.length)];
     this.bannerMessage = msg;
     this.showBanner = true;
+    this.cdr.detectChanges();
 
     setTimeout(() => { this.bannerVisible = true; }, 800);
     setTimeout(() => { this.bannerHiding = true; this.bannerVisible = false; }, 5000);
