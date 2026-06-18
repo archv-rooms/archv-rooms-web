@@ -132,6 +132,29 @@
   color: #fff;
   letter-spacing: 4px;
   line-height: 1;
+  position: relative;
+  display: inline-block;
+  animation: glitch 3s infinite;
+
+  &::before {
+    content: 'ARCHV ROOMS';
+    position: absolute;
+    left: 2px; top: 0;
+    color: #06b6d4;
+    clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%);
+    animation: glitch-top 3s infinite;
+    opacity: 0.8;
+  }
+
+  &::after {
+    content: 'ARCHV ROOMS';
+    position: absolute;
+    left: -2px; top: 0;
+    color: #f59e0b;
+    clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+    animation: glitch-bot 3s infinite;
+    opacity: 0.8;
+  }
 }
 
 .landing-subtitle {
@@ -451,6 +474,26 @@
 }
 
 // === ANIMATIONS ===
+
+@keyframes glitch {
+  0%, 90%, 100% { transform: none; }
+  92% { transform: skewX(-2deg); }
+  94% { transform: skewX(2deg); }
+}
+
+@keyframes glitch-top {
+  0%, 89%, 100% { transform: none; opacity: 0; }
+  90% { transform: translateX(-3px); opacity: 0.8; }
+  93% { transform: translateX(3px); opacity: 0.8; }
+  95% { opacity: 0; }
+}
+
+@keyframes glitch-bot {
+  0%, 91%, 100% { transform: none; opacity: 0; }
+  92% { transform: translateX(3px); opacity: 0.8; }
+  94% { transform: translateX(-3px); opacity: 0.8; }
+  96% { opacity: 0; }
+}
 
 @keyframes terminalIn {
   from { opacity: 0; transform: translateY(16px); }
