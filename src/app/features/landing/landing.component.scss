@@ -109,10 +109,10 @@
 
 .landing-hero {
   display: flex;
+  justify-content: center;
   align-items: center;
-  text-align: left;
-  gap: 14px;
   text-align: center;
+  gap: 14px;
 }
 
 .landing-hero-text {
