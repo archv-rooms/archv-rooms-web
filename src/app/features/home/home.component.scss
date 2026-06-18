@@ -786,150 +786,61 @@ $amber:     #fbbf24;
 // ─────────────────────────────────────────────────────
 .site-footer {
   margin-top: auto;
-  padding: 0 20px 12px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--color-text-dim);
-  user-select: none;
+  border-top: 1px solid var(--color-border);
+  padding: 18px 20px;
 }
 
-.footer-border-top,
-.footer-border-bottom,
-.footer-divider {
+.footer-inner {
+  border-left: 2px solid var(--color-primary);
+  padding-left: 14px;
+
   display: flex;
   align-items: center;
-  color: #34384a;
-  line-height: 1;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
 }
 
-.footer-corner {
-  flex-shrink: 0;
-  color: #34384a;
-}
-
-.footer-line {
-  flex: 1;
-  overflow: hidden;
-  white-space: nowrap;
-  color: #34384a;
-  letter-spacing: 0;
-}
-
-.footer-row {
+.footer-brand-block {
   display: flex;
-  align-items: center;
-  gap: 0;
-  border-left: 1px solid #34384a;
-  border-right: 1px solid #34384a;
-  padding: 8px 12px;
-}
-
-.footer-vert {
-  color: #34384a;
-  flex-shrink: 0;
-  margin: 0 8px;
-}
-
-// BRAND ROW
-.footer-row-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .footer-brand {
   font-family: 'VT323', monospace;
-  font-size: 18px;
-  letter-spacing: 4px;
+  font-size: 14px;
+  letter-spacing: 2px;
   color: var(--color-text);
-  flex-shrink: 0;
 }
 
 .footer-tagline {
   font-size: 9px;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   color: var(--color-text-dim);
-  flex: 1;
-}
-
-.footer-insert-coin {
-  font-family: 'VT323', monospace;
-  font-size: 16px;
-  letter-spacing: 3px;
-  color: var(--color-primary);
-  flex-shrink: 0;
-  animation: footerBlink 1s step-end infinite;
-}
-
-// LINKS ROW
-.footer-row-links {
-  display: flex;
-  align-items: center;
 }
 
 .footer-links {
   display: flex;
-  gap: 24px;
-  flex: 1;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
 .footer-link {
-  font-size: 9px;
-  letter-spacing: 2px;
+  font-size: 10px;
+  letter-spacing: 1px;
   color: var(--color-text-dim);
   cursor: pointer;
-  text-transform: lowercase;
   transition: color 0.2s;
 
   &:hover { color: var(--color-primary); }
 }
 
-// BOTTOM ROW
-.footer-row-bottom {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
 .footer-copy {
-  font-size: 9px;
-  letter-spacing: 2px;
+  font-size: 10px;
+  letter-spacing: 1px;
   color: var(--color-text-dim);
-  flex: 1;
-}
-
-.footer-gameover {
-  font-family: 'VT323', monospace;
-  font-size: 16px;
-  letter-spacing: 3px;
-  color: var(--color-text-dim);
-  opacity: 0.5;
-}
-
-.footer-live {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: #4ade80;
   flex-shrink: 0;
-
-  .live-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #4ade80;
-    animation: livePulse 1.8s ease-in-out infinite;
-    display: inline-block;
-  }
-}
-
-@keyframes footerBlink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
 }
 
 // ─────────────────────────────────────────────────────
@@ -1203,35 +1114,16 @@ $amber:     #fbbf24;
     letter-spacing: 2px;
   }
 
-  .footer-row,
-  .footer-border-top,
-  .footer-border-bottom,
-  .footer-divider {
-    font-size: 9px;
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .footer-line {
-    display: none;
-  }
-
-  .footer-row-brand {
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .footer-tagline {
-    flex: 1 0 100%;
-  }
-
-  .footer-row-bottom {
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .footer-copy {
-    flex: 1 0 100%;
+  .footer-links {
+    gap: 12px;
   }
 }
+
 
 // ─────────────────────────────────────────────────────
 // EASTER EGG / DONATE / STAR
