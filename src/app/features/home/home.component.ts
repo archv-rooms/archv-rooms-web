@@ -267,7 +267,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   // ── EASTER EGG ────────────────────────────
 
   onHomeIconClick(): void {
-    this.navigate('/');
+    this.navigate('/home');
 
     this.eggClickCount++;
     clearTimeout(this.eggClickTimer);
