@@ -37,10 +37,10 @@ import { environment } from '../../../../environments/environments';
   z-index: 9998;
   background: repeating-linear-gradient(
     0deg,
-    rgba(0, 0, 0, 0.08) 0px,
-    rgba(0, 0, 0, 0.08) 1px,
+    rgba(0, 0, 0, 0.18) 0px,
+    rgba(0, 0, 0, 0.18) 1px,
     transparent 1px,
-    transparent 3px
+    transparent 2px
   );
 }
 .glitch-overlay {
