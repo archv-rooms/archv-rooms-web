@@ -188,7 +188,16 @@ export class ThemeEffectsComponent implements AfterViewInit, OnDestroy {
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
     private router: Router
-  ) {}
+  ) {
+    this.router.events.subscribe(() => {
+  if (this.router.url !== '/') {
+    this.showBanner = false;
+    this.bannerVisible = false;
+    this.bannerHiding = false;
+    this.cdr.detectChanges();
+  }
+});
+  }
 
   async ngAfterViewInit(): Promise<void> {
     try {
