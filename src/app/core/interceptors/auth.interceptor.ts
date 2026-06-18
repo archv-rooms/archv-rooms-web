@@ -25,7 +25,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         router.navigate(['/login'], {
           queryParams: { reason: 'session_conflict' }
         });
-      } else if (err.status === 401) {
+      } else if (err.status === 401 && token) {
         authService.logout();
         router.navigate(['/login']);
       }
