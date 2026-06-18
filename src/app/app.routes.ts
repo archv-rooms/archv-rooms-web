@@ -2,11 +2,13 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { onboardingGuard } from './core/guards/onboarding.guard';
+import { GuestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent)
+    canActivate: [GuestGuard],
+    loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent)
   },
   {
     path: 'onboarding',
@@ -95,17 +97,17 @@ export const routes: Routes = [
     loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent)
   },
   {
-  path: 'auth/google/callback',
-  loadComponent: () => import('./features/auth/google-callback/google-callback.component').then(m => m.GoogleCallbackComponent)
+    path: 'auth/google/callback',
+    loadComponent: () => import('./features/auth/google-callback/google-callback.component').then(m => m.GoogleCallbackComponent)
   },
   {
-  path: 'history',
-  loadComponent: () => import('./features/history/history.component').then(m => m.HistoryComponent),
-  canActivate: [AuthGuard]
+    path: 'history',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./features/history/history.component').then(m => m.HistoryComponent)
   },
   {
-  path: 'faq',
-  loadComponent: () => import('./features/faq/faq.component').then(m => m.FaqComponent)
+    path: 'faq',
+    loadComponent: () => import('./features/faq/faq.component').then(m => m.FaqComponent)
   },
   {
     path: '**',
