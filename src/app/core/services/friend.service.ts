@@ -43,7 +43,7 @@ export class FriendService {
   }
 
   respondRequest(friendshipId: number, status: 'accepted' | 'rejected'): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/respond/${friendshipId}`, { status }, {
+    return this.http.patch(`${this.baseUrl}/${friendshipId}/respond`, { status }, {
       headers: this.getHeaders()
     });
   }
