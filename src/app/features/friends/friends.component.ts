@@ -15,7 +15,6 @@ export class FriendsComponent implements OnInit, OnDestroy {
   private friendService = inject(FriendService);
   private router = inject(Router);
 
-  // ── Sidebar / Topbar ──
   isLoggedIn = false;
   userName = '';
   isAdmin = false;
@@ -26,7 +25,6 @@ export class FriendsComponent implements OnInit, OnDestroy {
   private eggClickCount = 0;
   private eggClickTimer: any;
 
-  // ── Amigos ──
   friends = signal<any[]>([]);
   pendingRequests = signal<any[]>([]);
   searchResults = signal<any[]>([]);
@@ -100,7 +98,6 @@ export class FriendsComponent implements OnInit, OnDestroy {
     clearTimeout(this.jumpscareTimer);
   }
 
-  // ── Amigos ──
   loadFriends(): void {
     this.isLoadingFriends.set(true);
     this.friendService.getFriends().subscribe({
@@ -174,13 +171,13 @@ export class FriendsComponent implements OnInit, OnDestroy {
     });
   }
 
-  removeFriend(friendId: number): void {
+  removeFriend(friend: any): void {
     if (!confirm('Remover este amigo?')) return;
-    this.friendService.removeFriend(friendId).subscribe({
+    this.friendService.removeFriend(friend.friendshipId).subscribe({
       next: (res) => {
         if (res.success) {
           this.showFeedback('Amigo removido.', 'success');
-          this.friends.update(list => list.filter(f => f.id !== friendId));
+          this.friends.update(list => list.filter(f => f.friendshipId !== friend.friendshipId));
         }
       },
       error: () => this.showFeedback('Erro ao remover amigo.', 'error')
