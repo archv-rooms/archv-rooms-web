@@ -1,0 +1,353 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+$purple-dark: #1a0a2e;
+$purple-mid: #2d1b4e;
+$purple-accent: #7c3aed;
+$purple-light: #a855f7;
+$purple-glow: #c084fc;
+$cyan: #22d3ee;
+$green: #4ade80;
+$red: #f87171;
+$text-primary: #e2d9f3;
+$text-muted: #9d8ec4;
+$border: #3d2a6e;
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #0a0010;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+  font-family: 'Press Start 2P', monospace;
+  color: $text-primary;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+// ── HEADER ──────────────────────────────────────────
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid $border;
+}
+
+.page-title {
+  font-size: 1.4rem;
+  color: $purple-glow;
+  text-shadow: 0 0 20px rgba(192, 132, 252, 0.8);
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.btn-back {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  color: $text-muted;
+  background: transparent;
+  border: 1px solid $border;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    color: $purple-light;
+    border-color: $purple-light;
+    text-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
+  }
+}
+
+// ── FEEDBACK TOAST ───────────────────────────────────
+.feedback-toast {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 999;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  padding: 0.75rem 1.25rem;
+  border: 2px solid;
+  animation: fadeIn 0.3s ease;
+
+  &.success {
+    background: rgba(74, 222, 128, 0.1);
+    border-color: $green;
+    color: $green;
+    text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+  }
+
+  &.error {
+    background: rgba(248, 113, 113, 0.1);
+    border-color: $red;
+    color: $red;
+    text-shadow: 0 0 8px rgba(248, 113, 113, 0.5);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── LAYOUT ───────────────────────────────────────────
+.friends-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 1.5rem;
+
+  .search-panel  { grid-column: 1 / 2; grid-row: 1; }
+  .pending-panel { grid-column: 2 / 3; grid-row: 1; }
+  .friends-panel { grid-column: 1 / 3; grid-row: 2; }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+
+    .search-panel,
+    .pending-panel,
+    .friends-panel { grid-column: 1; grid-row: auto; }
+  }
+}
+
+// ── PANEL ─────────────────────────────────────────────
+.panel {
+  background: linear-gradient(135deg, $purple-dark 0%, #0f0520 100%);
+  border: 1px solid $border;
+  padding: 1.5rem;
+  box-shadow:
+    0 0 20px rgba(124, 58, 237, 0.15),
+    inset 0 0 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, $purple-accent, transparent);
+  }
+}
+
+.panel-title {
+  font-size: 0.65rem;
+  color: $purple-light;
+  margin: 0 0 1.25rem 0;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.badge {
+  background: $purple-accent;
+  color: white;
+  font-size: 0.55rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  min-width: 1.2rem;
+  text-align: center;
+}
+
+// ── SEARCH BAR ────────────────────────────────────────
+.search-bar {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.input-retro {
+  flex: 1;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid $border;
+  color: $text-primary;
+  padding: 0.65rem 0.75rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &::placeholder { color: $text-muted; }
+
+  &:focus {
+    border-color: $purple-accent;
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+  }
+}
+
+// ── USER CARD ─────────────────────────────────────────
+.user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border: 1px solid $border;
+  background: rgba(0, 0, 0, 0.3);
+  margin-bottom: 0.6rem;
+  transition: border-color 0.2s, background 0.2s;
+
+  &:hover {
+    border-color: $purple-accent;
+    background: rgba(124, 58, 237, 0.05);
+  }
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-avatar {
+  width: 2rem;
+  height: 2rem;
+  background: linear-gradient(135deg, $purple-accent, $purple-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: white;
+  flex-shrink: 0;
+  border: 1px solid $purple-glow;
+  text-shadow: 0 0 6px rgba(255,255,255,0.5);
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.user-name {
+  font-size: 0.6rem;
+  color: $text-primary;
+}
+
+.user-email {
+  font-size: 0.45rem;
+  color: $text-muted;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+// ── BUTTONS ───────────────────────────────────────────
+%btn-base {
+  font-family: 'Press Start 2P', monospace;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  @extend %btn-base;
+  font-size: 0.55rem;
+  padding: 0.65rem 1rem;
+  background: $purple-accent;
+  border-color: $purple-light;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: $purple-light;
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+  }
+}
+
+.btn-secondary {
+  @extend %btn-base;
+  font-size: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border-color: $purple-accent;
+  color: $purple-light;
+
+  &:hover:not(:disabled) {
+    background: rgba(124, 58, 237, 0.2);
+    box-shadow: 0 0 8px rgba(124, 58, 237, 0.4);
+  }
+}
+
+.btn-accept {
+  @extend %btn-base;
+  font-size: 0.7rem;
+  padding: 0.4rem 0.65rem;
+  background: rgba(74, 222, 128, 0.1);
+  border-color: $green;
+  color: $green;
+
+  &:hover {
+    background: rgba(74, 222, 128, 0.25);
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
+  }
+}
+
+.btn-reject {
+  @extend %btn-base;
+  font-size: 0.7rem;
+  padding: 0.4rem 0.65rem;
+  background: rgba(248, 113, 113, 0.1);
+  border-color: $red;
+  color: $red;
+
+  &:hover {
+    background: rgba(248, 113, 113, 0.25);
+    box-shadow: 0 0 8px rgba(248, 113, 113, 0.4);
+  }
+}
+
+.btn-danger {
+  @extend %btn-base;
+  font-size: 0.45rem;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border-color: $red;
+  color: $red;
+
+  &:hover {
+    background: rgba(248, 113, 113, 0.1);
+    box-shadow: 0 0 8px rgba(248, 113, 113, 0.3);
+  }
+}
+
+// ── ESTADOS ───────────────────────────────────────────
+.loading {
+  font-size: 0.55rem;
+  color: $text-muted;
+  text-align: center;
+  padding: 1rem;
+  animation: blink 1s step-end infinite;
+}
+
+.empty-state {
+  font-size: 0.5rem;
+  color: $text-muted;
+  text-align: center;
+  padding: 1.5rem 0;
+  line-height: 2;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+.search-results {
+  margin-top: 0.5rem;
+  max-height: 280px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: $purple-accent; }
+}
