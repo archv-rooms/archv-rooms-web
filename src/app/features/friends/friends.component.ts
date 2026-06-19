@@ -171,19 +171,18 @@ export class FriendsComponent implements OnInit, OnDestroy {
     });
   }
 
-  removeFriend(friend: any): void {
-    if (!confirm('Remover este amigo?')) return;
-    this.friendService.removeFriend(friend.friendshipId).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.showFeedback('Amigo removido.', 'success');
-          this.friends.update(list => list.filter(f => f.friendshipId !== friend.friendshipId));
-        }
-      },
-      error: () => this.showFeedback('Erro ao remover amigo.', 'error')
-    });
-  }
-
+removeFriend(friendshipId: number): void {
+  if (!confirm('Remover este amigo?')) return;
+  this.friendService.removeFriend(friendshipId).subscribe({
+    next: (res) => {
+      if (res.success) {
+        this.showFeedback('Amigo removido.', 'success');
+        this.friends.update(list => list.filter(f => f.friendshipId !== friendshipId));
+      }
+    },
+    error: () => this.showFeedback('Erro ao remover amigo.', 'error')
+  });
+}
   showFeedback(message: string, type: 'success' | 'error'): void {
     this.feedbackMessage.set(message);
     this.feedbackType.set(type);
