@@ -1,0 +1,381 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+$purple-dark:   #1a0a2e;
+$purple-mid:    #2d1b4e;
+$purple-accent: #7c3aed;
+$purple-light:  #a855f7;
+$purple-glow:   #c084fc;
+$gold:          #fbbf24;
+$silver:        #94a3b8;
+$bronze:        #c2773a;
+$cyan:          #22d3ee;
+$green:         #4ade80;
+$red:           #f87171;
+$text-primary:  #e2d9f3;
+$text-muted:    #9d8ec4;
+$border:        #3d2a6e;
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #0a0010;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.10) 0%, transparent 50%);
+  font-family: 'Press Start 2P', monospace;
+  color: $text-primary;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+// ── HEADER ───────────────────────────────────────────
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid $border;
+}
+
+.page-title {
+  font-size: 1.4rem;
+  color: $purple-glow;
+  text-shadow: 0 0 20px rgba(192, 132, 252, 0.8);
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.btn-back {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  color: $text-muted;
+  background: transparent;
+  border: 1px solid $border;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    color: $purple-light;
+    border-color: $purple-light;
+    text-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
+  }
+}
+
+// ── FILTER BAR ───────────────────────────────────────
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: rgba(45, 27, 78, 0.4);
+  border: 1px solid $border;
+}
+
+.filter-label {
+  font-size: 0.55rem;
+  color: $purple-light;
+  white-space: nowrap;
+}
+
+.select-retro {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid $border;
+  color: $text-primary;
+  padding: 0.6rem 0.75rem;
+  cursor: pointer;
+  outline: none;
+  min-width: 220px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  option { background: #0a0010; }
+
+  &:focus {
+    border-color: $purple-accent;
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+  }
+
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+}
+
+// ── LAYOUT ───────────────────────────────────────────
+.leaderboard-layout {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ── PANEL ────────────────────────────────────────────
+.panel {
+  background: linear-gradient(135deg, $purple-dark 0%, #0f0520 100%);
+  border: 1px solid $border;
+  padding: 1.5rem;
+  box-shadow:
+    0 0 20px rgba(124, 58, 237, 0.15),
+    inset 0 0 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, $purple-accent, transparent);
+  }
+}
+
+.panel-title {
+  font-size: 0.65rem;
+  color: $purple-light;
+  margin: 0 0 1.5rem 0;
+  letter-spacing: 1px;
+}
+
+// ── PÓDIO ────────────────────────────────────────────
+.podium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid $border;
+}
+
+.podium-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+
+  &.first  { order: 2; }
+  &.second { order: 1; }
+  &.third  { order: 3; }
+}
+
+.medal {
+  font-size: 1.4rem;
+
+  .first  & { font-size: 1.8rem; }
+}
+
+.podium-avatar {
+  width: 2.8rem;
+  height: 2.8rem;
+  background: linear-gradient(135deg, $purple-accent, $purple-light);
+  border: 2px solid $purple-glow;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: white;
+  text-shadow: 0 0 6px rgba(255,255,255,0.5);
+
+  &.gold {
+    background: linear-gradient(135deg, $gold, #f59e0b);
+    border-color: $gold;
+    box-shadow: 0 0 16px rgba(251, 191, 36, 0.5);
+    width: 3.4rem;
+    height: 3.4rem;
+    font-size: 1.1rem;
+  }
+}
+
+.podium-name {
+  font-size: 0.45rem;
+  color: $text-primary;
+  text-align: center;
+  max-width: 5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.podium-time {
+  font-size: 0.45rem;
+  color: $cyan;
+  text-shadow: 0 0 6px rgba(34, 211, 238, 0.5);
+}
+
+// ── RANKING TABLE ────────────────────────────────────
+.ranking-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 480px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: $purple-accent; }
+}
+
+.ranking-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid transparent;
+  background: rgba(0, 0, 0, 0.25);
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: $border;
+    background: rgba(124, 58, 237, 0.05);
+  }
+
+  &.highlight {
+    border-color: $purple-accent;
+    background: rgba(124, 58, 237, 0.12);
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.2);
+  }
+
+  &.top3 { display: none; }
+}
+
+.rank-position {
+  font-size: 0.55rem;
+  color: $text-muted;
+  min-width: 2rem;
+  text-align: center;
+}
+
+.rank-avatar {
+  width: 1.8rem;
+  height: 1.8rem;
+  background: linear-gradient(135deg, $purple-mid, $purple-accent);
+  border: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.rank-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.rank-username {
+  font-size: 0.55rem;
+  color: $text-primary;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.you-tag {
+  font-size: 0.4rem;
+  background: $purple-accent;
+  color: white;
+  padding: 0.15rem 0.4rem;
+}
+
+.rank-game {
+  font-size: 0.4rem;
+  color: $text-muted;
+}
+
+.rank-time {
+  font-size: 0.55rem;
+  color: $cyan;
+  text-shadow: 0 0 6px rgba(34, 211, 238, 0.4);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+// ── HISTÓRICO ────────────────────────────────────────
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-height: 580px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: $purple-accent; }
+}
+
+.history-card {
+  padding: 0.75rem;
+  border: 1px solid $border;
+  background: rgba(0, 0, 0, 0.3);
+  transition: border-color 0.2s, background 0.2s;
+
+  &:hover {
+    border-color: $purple-accent;
+    background: rgba(124, 58, 237, 0.06);
+  }
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.history-game {
+  font-size: 0.55rem;
+  color: $purple-glow;
+  text-shadow: 0 0 6px rgba(192, 132, 252, 0.4);
+}
+
+.history-time {
+  font-size: 0.55rem;
+  color: $cyan;
+  text-shadow: 0 0 6px rgba(34, 211, 238, 0.4);
+  font-variant-numeric: tabular-nums;
+}
+
+.history-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-user {
+  font-size: 0.45rem;
+  color: $text-muted;
+}
+
+.history-date {
+  font-size: 0.4rem;
+  color: $text-muted;
+}
+
+// ── ESTADOS ──────────────────────────────────────────
+.loading {
+  font-size: 0.55rem;
+  color: $text-muted;
+  text-align: center;
+  padding: 2rem 1rem;
+  animation: blink 1s step-end infinite;
+}
+
+.empty-state {
+  font-size: 0.5rem;
+  color: $text-muted;
+  text-align: center;
+  padding: 2rem 0;
+  line-height: 2.2;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
