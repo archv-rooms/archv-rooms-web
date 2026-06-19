@@ -162,9 +162,13 @@ $red-alert:     #fb7185;
   letter-spacing: 6px; color: $text-bright; line-height: 0.9;
   padding: 8px 24px 0;
 }
+.profile-handle {
+  font-size: 13px; letter-spacing: 1.5px; color: $purple-dim;
+  padding: 4px 24px 0;
+}
 .profile-email {
   font-size: 11px; letter-spacing: 1.5px; color: $text-dim;
-  padding: 8px 24px 0;
+  padding: 4px 24px 0;
 }
 
 .score-bar {
