@@ -335,6 +335,19 @@
   }
 }
 
+.toggle-password {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 12px;
+  font-size: 14px;
+  color: var(--color-text-dim);
+  transition: color 0.2s;
+  line-height: 44px;
+
+  &:hover { color: var(--color-text); }
+}
+
 /* ERROR */
 
 .error-msg {
