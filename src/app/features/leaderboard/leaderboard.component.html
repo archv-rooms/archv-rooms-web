@@ -1,0 +1,108 @@
+<div class="leaderboard-page">
+
+  <header class="page-header">
+    <button class="btn-back" (click)="goBack()">← VOLTAR</button>
+    <h1 class="page-title">// PLACAR GLOBAL</h1>
+  </header>
+
+  <!-- FILTRO POR JOGO -->
+  <section class="filter-bar">
+    <label class="filter-label">▶ FILTRAR POR JOGO:</label>
+    <select
+      class="select-retro"
+      (change)="onGameFilterChange($event)"
+      [disabled]="isLoadingGames()"
+    >
+      <option value="">TODOS OS JOGOS</option>
+      <option *ngFor="let game of games()" [value]="game.id">
+        {{ game.title }}
+      </option>
+    </select>
+  </section>
+
+  <div class="leaderboard-layout">
+
+    <!-- RANKING -->
+    <section class="panel ranking-panel">
+      <h2 class="panel-title">🏆 RANKING — TOP 50</h2>
+
+      <div *ngIf="isLoadingRanking()" class="loading">Carregando ranking...</div>
+
+      <div *ngIf="!isLoadingRanking() && ranking().length === 0" class="empty-state">
+        Nenhum dado de ranking disponível.
+      </div>
+
+      <div class="ranking-list" *ngIf="!isLoadingRanking() && ranking().length > 0">
+
+        <!-- PÓDIO TOP 3 -->
+        <div class="podium" *ngIf="ranking().length >= 3">
+          <div class="podium-slot second">
+            <span class="medal">🥈</span>
+            <div class="podium-avatar">{{ ranking()[1]?.username?.charAt(0)?.toUpperCase() }}</div>
+            <span class="podium-name">{{ ranking()[1]?.username }}</span>
+            <span class="podium-time">{{ formatTime(ranking()[1]?.totalSeconds) }}</span>
+          </div>
+          <div class="podium-slot first">
+            <span class="medal">🥇</span>
+            <div class="podium-avatar gold">{{ ranking()[0]?.username?.charAt(0)?.toUpperCase() }}</div>
+            <span class="podium-name">{{ ranking()[0]?.username }}</span>
+            <span class="podium-time">{{ formatTime(ranking()[0]?.totalSeconds) }}</span>
+          </div>
+          <div class="podium-slot third">
+            <span class="medal">🥉</span>
+            <div class="podium-avatar">{{ ranking()[2]?.username?.charAt(0)?.toUpperCase() }}</div>
+            <span class="podium-name">{{ ranking()[2]?.username }}</span>
+            <span class="podium-time">{{ formatTime(ranking()[2]?.totalSeconds) }}</span>
+          </div>
+        </div>
+
+        <!-- RESTANTE DO RANKING -->
+        <div class="ranking-table">
+          <div
+            class="ranking-row"
+            *ngFor="let entry of ranking(); let i = index"
+            [class.highlight]="isCurrentUser(entry.userId)"
+            [class.top3]="i < 3"
+          >
+            <span class="rank-position">{{ getMedalIcon(i) }}</span>
+            <div class="rank-avatar">{{ entry.username?.charAt(0)?.toUpperCase() }}</div>
+            <div class="rank-info">
+              <span class="rank-username">
+                {{ entry.username }}
+                <span class="you-tag" *ngIf="isCurrentUser(entry.userId)">VOCÊ</span>
+              </span>
+              <span class="rank-game" *ngIf="entry.gameName">{{ entry.gameName }}</span>
+            </div>
+            <span class="rank-time">{{ formatTime(entry.totalSeconds) }}</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- HISTÓRICO DE PARTIDAS -->
+    <section class="panel history-panel">
+      <h2 class="panel-title">📼 PARTIDAS RECENTES</h2>
+
+      <div *ngIf="isLoadingHistory()" class="loading">Carregando histórico...</div>
+
+      <div *ngIf="!isLoadingHistory() && history().length === 0" class="empty-state">
+        Nenhuma partida registrada.
+      </div>
+
+      <div class="history-list" *ngIf="!isLoadingHistory() && history().length > 0">
+        <div class="history-card" *ngFor="let match of history()">
+          <div class="history-header">
+            <span class="history-game">{{ match.gameName || 'Jogo desconhecido' }}</span>
+            <span class="history-time">{{ formatTime(match.durationSeconds) }}</span>
+          </div>
+          <div class="history-footer">
+            <span class="history-user">{{ match.username }}</span>
+            <span class="history-date">{{ match.playedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
