@@ -29,6 +29,7 @@ export class LoginComponent implements OnInit {
   unverifiedEmail: boolean = false;
   sessionConflict: boolean = false;
   isLoading: boolean = false;
+  showPassword: boolean = false;
 
   ngOnInit(): void {
     const reason = this.route.snapshot.queryParamMap.get('reason');
