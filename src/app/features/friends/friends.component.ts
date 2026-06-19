@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -11,10 +11,22 @@ import { FriendService } from '../../core/services/friend.service';
   templateUrl: './friends.component.html',
   styleUrls: ['./friends.component.scss']
 })
-export class FriendsComponent implements OnInit {
+export class FriendsComponent implements OnInit, OnDestroy {
   private friendService = inject(FriendService);
   private router = inject(Router);
 
+  // ── Sidebar / Topbar ──
+  isLoggedIn = false;
+  userName = '';
+  isAdmin = false;
+
+  jumpscareActive = false;
+  jumpscareVideoUrl = '/videos/hihi.mp4';
+  private jumpscareTimer: any;
+  private eggClickCount = 0;
+  private eggClickTimer: any;
+
+  // ── Amigos ──
   friends = signal<any[]>([]);
   pendingRequests = signal<any[]>([]);
   searchResults = signal<any[]>([]);
@@ -29,10 +41,66 @@ export class FriendsComponent implements OnInit {
   currentUser = JSON.parse(localStorage.getItem('@archv:user') || '{}');
 
   ngOnInit(): void {
+    this.checkAuth();
     this.loadFriends();
     this.loadPending();
   }
 
+  ngOnDestroy(): void {
+    clearTimeout(this.jumpscareTimer);
+    clearTimeout(this.eggClickTimer);
+  }
+
+  private checkAuth(): void {
+    const token = localStorage.getItem('@archv:token');
+    const user = JSON.parse(localStorage.getItem('@archv:user') || '{}');
+    this.isLoggedIn = !!token;
+    this.userName = user?.username || user?.name || '';
+    this.isAdmin = user?.role === 'admin';
+  }
+
+  logout(): void {
+    localStorage.removeItem('@archv:token');
+    localStorage.removeItem('@archv:user');
+    this.isLoggedIn = false;
+    this.userName = '';
+    this.router.navigate(['/home']);
+  }
+
+  navigate(path: string): void {
+    this.router.navigate([path]);
+  }
+
+  isActive(path: string): boolean {
+    return this.router.url === path;
+  }
+
+  onHomeIconClick(): void {
+    this.eggClickCount++;
+    clearTimeout(this.eggClickTimer);
+    if (this.eggClickCount >= 3) {
+      this.eggClickCount = 0;
+      this.triggerJumpscare();
+      return;
+    }
+    this.eggClickTimer = setTimeout(() => {
+      this.eggClickCount = 0;
+      this.navigate('/home');
+    }, 300);
+  }
+
+  triggerJumpscare(): void {
+    if (this.jumpscareActive) return;
+    this.jumpscareActive = true;
+    this.jumpscareTimer = setTimeout(() => this.dismissJumpscare(), 24000);
+  }
+
+  dismissJumpscare(): void {
+    this.jumpscareActive = false;
+    clearTimeout(this.jumpscareTimer);
+  }
+
+  // ── Amigos ──
   loadFriends(): void {
     this.isLoadingFriends.set(true);
     this.friendService.getFriends().subscribe({
@@ -54,9 +122,7 @@ export class FriendsComponent implements OnInit {
         if (res.success) this.pendingRequests.set(res.data);
         this.isLoadingPending.set(false);
       },
-      error: () => {
-        this.isLoadingPending.set(false);
-      }
+      error: () => this.isLoadingPending.set(false)
     });
   }
 
@@ -104,9 +170,7 @@ export class FriendsComponent implements OnInit {
           if (status === 'accepted') this.loadFriends();
         }
       },
-      error: () => {
-        this.showFeedback('Erro ao responder convite.', 'error');
-      }
+      error: () => this.showFeedback('Erro ao responder convite.', 'error')
     });
   }
 
@@ -119,9 +183,7 @@ export class FriendsComponent implements OnInit {
           this.friends.update(list => list.filter(f => f.id !== friendId));
         }
       },
-      error: () => {
-        this.showFeedback('Erro ao remover amigo.', 'error');
-      }
+      error: () => this.showFeedback('Erro ao remover amigo.', 'error')
     });
   }
 
@@ -129,9 +191,5 @@ export class FriendsComponent implements OnInit {
     this.feedbackMessage.set(message);
     this.feedbackType.set(type);
     setTimeout(() => this.feedbackMessage.set(''), 3000);
-  }
-
-  goBack(): void {
-    this.router.navigate(['/']);
   }
 }
