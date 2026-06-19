@@ -4,7 +4,6 @@
 
   <div class="auth-terminal">
 
-    <!-- Header -->
     <div class="terminal-header">
       <button class="back-btn" routerLink="/">
         <span class="back-arrow">←</span>
@@ -13,7 +12,6 @@
       <span class="terminal-status">● OPEN</span>
     </div>
 
-    <!-- Auth box -->
     <div class="auth-body">
       <div class="auth-header">
         <div class="auth-icon">✦</div>
@@ -28,9 +26,19 @@
         <div class="field-group">
           <div class="field-wrapper" [class.field-error]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
             <span class="field-icon">▣</span>
-            <input type="text" formControlName="name" class="field-input" placeholder="nome" autocomplete="off">
+            <input type="text" formControlName="name" class="field-input" placeholder="nome completo" autocomplete="off">
           </div>
           <span class="error-msg" *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">⚠ mínimo 3 caracteres</span>
+        </div>
+
+        <div class="field-group">
+          <div class="field-wrapper" [class.field-error]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
+            <span class="field-icon">#</span>
+            <input type="text" formControlName="username" class="field-input" placeholder="username (ex: player_01)" autocomplete="off">
+          </div>
+          <span class="error-msg" *ngIf="registerForm.get('username')?.errors?.['required'] && registerForm.get('username')?.touched">⚠ username é obrigatório</span>
+          <span class="error-msg" *ngIf="registerForm.get('username')?.errors?.['minlength'] && registerForm.get('username')?.touched">⚠ mínimo 3 caracteres</span>
+          <span class="error-msg" *ngIf="registerForm.get('username')?.errors?.['pattern'] && registerForm.get('username')?.touched">⚠ apenas letras, números e _</span>
         </div>
 
         <div class="field-group">
@@ -58,30 +66,19 @@
         </div>
 
         <button type="submit" class="btn-submit" [disabled]="isLoading">
-          <span *ngIf="!isLoading">CRIAR CONTA </span>
+          <span *ngIf="!isLoading">CRIAR CONTA</span>
           <span *ngIf="isLoading" class="loading-text">CRIANDO<span class="dots">...</span></span>
         </button>
 
       </form>
 
       <div class="auth-footer">
-
-        <p class="footer-text">
-          já tem conta?
-        </p>
-
-        
-        <a routerLink="/login"
-          class="footer-link"
-        >
+        <p class="footer-text">já tem conta?</p>
+        <a routerLink="/login" class="footer-link">
           <span class="link-arrow">←</span>
           <span class="link-text">ENTRAR</span>
         </a>
-
-        <div class="auth-divider">
-          <span>── ou ──</span>
-        </div>
-
+        <div class="auth-divider"><span>── ou ──</span></div>
         <button class="btn-google" (click)="loginWithGoogle()">
           <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -91,7 +88,6 @@
           </svg>
           ENTRAR COM GOOGLE
         </button>
-
       </div>
     </div>
 
