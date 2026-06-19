@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -11,10 +11,22 @@ import { LeaderboardService } from '../../core/services/leaderboard.service';
   templateUrl: './leaderboard.component.html',
   styleUrls: ['./leaderboard.component.scss']
 })
-export class LeaderboardComponent implements OnInit {
+export class LeaderboardComponent implements OnInit, OnDestroy {
   private leaderboardService = inject(LeaderboardService);
   private router = inject(Router);
 
+  // ── Sidebar / Topbar ──
+  isLoggedIn = false;
+  userName = '';
+  isAdmin = false;
+
+  jumpscareActive = false;
+  jumpscareVideoUrl = '/videos/hihi.mp4';
+  private jumpscareTimer: any;
+  private eggClickCount = 0;
+  private eggClickTimer: any;
+
+  // ── Leaderboard ──
   ranking = signal<any[]>([]);
   history = signal<any[]>([]);
   games = signal<any[]>([]);
@@ -28,11 +40,67 @@ export class LeaderboardComponent implements OnInit {
   currentUser = JSON.parse(localStorage.getItem('@archv:user') || '{}');
 
   ngOnInit(): void {
+    this.checkAuth();
     this.loadGames();
     this.loadRanking();
     this.loadHistory();
   }
 
+  ngOnDestroy(): void {
+    clearTimeout(this.jumpscareTimer);
+    clearTimeout(this.eggClickTimer);
+  }
+
+  private checkAuth(): void {
+    const token = localStorage.getItem('@archv:token');
+    const user = JSON.parse(localStorage.getItem('@archv:user') || '{}');
+    this.isLoggedIn = !!token;
+    this.userName = user?.username || user?.name || '';
+    this.isAdmin = user?.role === 'admin';
+  }
+
+  logout(): void {
+    localStorage.removeItem('@archv:token');
+    localStorage.removeItem('@archv:user');
+    this.isLoggedIn = false;
+    this.userName = '';
+    this.router.navigate(['/home']);
+  }
+
+  navigate(path: string): void {
+    this.router.navigate([path]);
+  }
+
+  isActive(path: string): boolean {
+    return this.router.url === path;
+  }
+
+  onHomeIconClick(): void {
+    this.eggClickCount++;
+    clearTimeout(this.eggClickTimer);
+    if (this.eggClickCount >= 3) {
+      this.eggClickCount = 0;
+      this.triggerJumpscare();
+      return;
+    }
+    this.eggClickTimer = setTimeout(() => {
+      this.eggClickCount = 0;
+      this.navigate('/home');
+    }, 300);
+  }
+
+  triggerJumpscare(): void {
+    if (this.jumpscareActive) return;
+    this.jumpscareActive = true;
+    this.jumpscareTimer = setTimeout(() => this.dismissJumpscare(), 24000);
+  }
+
+  dismissJumpscare(): void {
+    this.jumpscareActive = false;
+    clearTimeout(this.jumpscareTimer);
+  }
+
+  // ── Leaderboard ──
   loadGames(): void {
     this.isLoadingGames.set(true);
     this.leaderboardService.getGames().subscribe({
@@ -90,9 +158,5 @@ export class LeaderboardComponent implements OnInit {
 
   isCurrentUser(userId: number): boolean {
     return this.currentUser?.id === userId;
-  }
-
-  goBack(): void {
-    this.router.navigate(['/']);
   }
 }
