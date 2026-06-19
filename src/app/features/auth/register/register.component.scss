@@ -1,0 +1,59 @@
+@import './../login/login.component.scss';
+
+/* ───────────────────────────────────────── */
+/* AJUSTES — CADASTRO COMPACTO (sem scroll)   */
+/* ───────────────────────────────────────── */
+
+.auth-wrapper {
+  height: 100vh;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.auth-terminal {
+  max-height: calc(100vh - 24px);
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-body {
+  padding: 20px 28px 18px;
+  overflow: hidden;
+}
+
+.auth-header {
+  margin-bottom: 16px;
+}
+
+.auth-title {
+  font-size: 30px;
+}
+
+.auth-form {
+  gap: 10px;
+}
+
+.field-wrapper {
+  .field-icon,
+  .field-input,
+  .toggle-password {
+    line-height: 36px;
+  }
+}
+
+.field-input {
+  padding: 9px 14px;
+}
+
+.auth-footer {
+  margin-top: 14px;
+  gap: 6px;
+}
+
+.footer-link {
+  padding: 8px 18px;
+}
+
+.btn-google {
+  padding: 9px 20px;
+}
