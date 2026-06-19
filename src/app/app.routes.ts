@@ -119,6 +119,16 @@ export const routes: Routes = [
     loadComponent: () => import('./features/games/games.component').then(m => m.GamesComponent)
   },
   {
+    path: 'friends',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./features/friends/friends.component').then(m => m.FriendsComponent)
+  },
+  {
+    path: 'leaderboard',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./features/leaderboard/leaderboard.component').then(m => m.LeaderboardComponent)
+  },
+  {
     path: '**',
     loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent),
     data: { code: 404 }
