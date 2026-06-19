@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environments';
 })
 export class FriendService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.apiUrl}/api/friends`;
+  private baseUrl = `${environment.apiUrl}/friends`;
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('@archv:token');
