@@ -1,0 +1,102 @@
+<div class="friends-page">
+
+  <header class="page-header">
+    <button class="btn-back" (click)="goBack()">← VOLTAR</button>
+    <h1 class="page-title">// AMIGOS</h1>
+  </header>
+
+  <div class="feedback-toast" *ngIf="feedbackMessage()" [class.success]="feedbackType() === 'success'" [class.error]="feedbackType() === 'error'">
+    {{ feedbackMessage() }}
+  </div>
+
+  <div class="friends-layout">
+
+    <!-- BUSCA DE USUÁRIOS -->
+    <section class="panel search-panel">
+      <h2 class="panel-title">▶ BUSCAR JOGADOR</h2>
+      <div class="search-bar">
+        <input
+          type="text"
+          class="input-retro"
+          placeholder="Digite o nome do usuário..."
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="onSearch()"
+        />
+        <button class="btn-primary" (click)="onSearch()" [disabled]="isSearching()">
+          {{ isSearching() ? '...' : 'BUSCAR' }}
+        </button>
+      </div>
+
+      <div class="search-results" *ngIf="searchResults().length > 0">
+        <div class="user-card" *ngFor="let user of searchResults()">
+          <div class="user-info">
+            <span class="user-avatar">{{ user.username?.charAt(0)?.toUpperCase() }}</span>
+            <span class="user-name">{{ user.username }}</span>
+          </div>
+          <button
+            class="btn-secondary"
+            (click)="sendRequest(user.id)"
+            [disabled]="user.requestSent || user.alreadyFriend"
+          >
+            {{ user.requestSent ? 'ENVIADO ✓' : user.alreadyFriend ? 'AMIGOS' : '+ ADICIONAR' }}
+          </button>
+        </div>
+      </div>
+
+      <p class="empty-state" *ngIf="searchQuery && searchResults().length === 0 && !isSearching()">
+        Nenhum jogador encontrado.
+      </p>
+    </section>
+
+    <!-- CONVITES PENDENTES -->
+    <section class="panel pending-panel">
+      <h2 class="panel-title">▶ CONVITES PENDENTES
+        <span class="badge" *ngIf="pendingRequests().length > 0">{{ pendingRequests().length }}</span>
+      </h2>
+
+      <div *ngIf="isLoadingPending()" class="loading">Carregando...</div>
+
+      <div *ngIf="!isLoadingPending() && pendingRequests().length === 0" class="empty-state">
+        Nenhum convite pendente.
+      </div>
+
+      <div class="user-card" *ngFor="let request of pendingRequests()">
+        <div class="user-info">
+          <span class="user-avatar">{{ request.sender?.username?.charAt(0)?.toUpperCase() }}</span>
+          <span class="user-name">{{ request.sender?.username }}</span>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-accept" (click)="respondRequest(request.id, 'accepted')">✓</button>
+          <button class="btn-reject" (click)="respondRequest(request.id, 'rejected')">✗</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LISTA DE AMIGOS -->
+    <section class="panel friends-panel">
+      <h2 class="panel-title">▶ MEUS AMIGOS
+        <span class="badge">{{ friends().length }}</span>
+      </h2>
+
+      <div *ngIf="isLoadingFriends()" class="loading">Carregando...</div>
+
+      <div *ngIf="!isLoadingFriends() && friends().length === 0" class="empty-state">
+        Você ainda não tem amigos adicionados.
+      </div>
+
+      <div class="user-card" *ngFor="let friend of friends()">
+        <div class="user-info">
+          <span class="user-avatar">{{ friend.username?.charAt(0)?.toUpperCase() }}</span>
+          <div class="user-details">
+            <span class="user-name">{{ friend.username }}</span>
+            <span class="user-email">{{ friend.email }}</span>
+          </div>
+        </div>
+        <button class="btn-danger" (click)="removeFriend(friend.id)" title="Remover amigo">
+          REMOVER
+        </button>
+      </div>
+    </section>
+
+  </div>
+</div>
