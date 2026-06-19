@@ -62,29 +62,22 @@
 
         <!-- PASSWORD -->
         <div class="field-group">
-
-          <div
-            class="field-wrapper"
-            [class.field-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-          >
+          <div class="field-wrapper" [class.field-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
             <span class="field-icon">▒</span>
-
             <input
-              type="password"
+              [type]="showPassword ? 'text' : 'password'"
               formControlName="password"
               class="field-input"
               placeholder="senha"
               autocomplete="current-password"
             >
+            <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+              {{ showPassword ? '🙈' : '👁' }}
+            </button>
           </div>
-
-          <span
-            class="error-msg"
-            *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-          >
+          <span class="error-msg" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
             ⚠ mínimo 6 caracteres
           </span>
-
         </div>
 
         <!-- SERVER ERROR -->
@@ -138,7 +131,7 @@
           novo na rede?
         </p>
 
-        <a
+        
           routerLink="/register"
           class="footer-link"
         >
