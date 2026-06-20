@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { environment } from '../../../environments/environments';
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
 
 interface Game {
   id: number;
@@ -40,6 +41,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   userName = '';
   isAdmin = false;
+  unreadCount = 0;
 
   games: Game[] = [];
   loadingGames = false;
@@ -70,7 +72,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private router: Router,
     private http: HttpClient,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -92,8 +95,17 @@ export class HomeComponent implements OnInit, OnDestroy {
       const token = this.authService.getToken();
       if (token) {
         this.loadGames(token);
+        this.loadUnreadCount();
       }
     }
+  }
+
+  private loadUnreadCount(): void {
+    this.notificationService.getUnreadCount().subscribe({
+      next: (res) => {
+        if (res.success) this.unreadCount = res.data.count;
+      }
+    });
   }
 
   logout(): void {
@@ -158,9 +170,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.carouselIndex = Math.min(max, this.carouselIndex + this.carouselVisible);
   }
 
-  get carouselHasPrev(): boolean {
-    return this.carouselIndex > 0;
-  }
+  get carouselHasPrev(): boolean { return this.carouselIndex > 0; }
 
   get carouselHasNext(): boolean {
     return this.carouselIndex + this.carouselVisible < this.games.length;

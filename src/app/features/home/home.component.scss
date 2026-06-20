@@ -1254,3 +1254,44 @@ $amber:     #fbbf24;
   height: 10px;
   width: 40%;
 }
+
+// ─────────────────────────────────────────────────────
+// NOTIFICAÇÕES — SINO
+// ─────────────────────────────────────────────────────
+.notif-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--color-border-glow);
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: var(--color-primary);
+    color: var(--color-text);
+    background: rgba(from var(--color-primary) r g b / 0.1);
+  }
+}
+
+.notif-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background: #fb7185;
+  color: #fff;
+  font-size: 9px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0;
+}
