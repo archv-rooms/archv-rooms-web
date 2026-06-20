@@ -26,103 +26,108 @@ export class PricingComponent implements OnInit {
 
   isLoggedIn = false;
   userName = '';
+  isAdmin = false;
 
   plans: (Plan & PlanVisuals)[] = [];
   isLoading = true;
   errorMessage = '';
 
-private visualMap: Record<string, PlanVisuals> = {
-  'Basic': {
-    icon: '▣',
-    benefits: [
-      'Acesso ao acervo 8-bit',
-      '1 dispositivo simultâneo',
-      'Download padrão',
-      'Atualizações mensais',
-    ],
-    buttonText: 'INITIALIZE BASIC',
-  },
-  'Pro': {
-    icon: '◈',
-    benefits: [
-      'Acesso completo 16-bit',
-      'Save states em nuvem',
-      'Prioridade de sinal',
-      '3 dispositivos simultâneos',
-    ],
-    buttonText: 'INITIALIZE PRO',
-  },
-  'Premium': {
-    icon: '◈',
-    benefits: [
-      'Acesso completo 16-bit',
-      'Save states em nuvem',
-      'Prioridade de sinal',
-      '3 dispositivos simultâneos',
-    ],
-    buttonText: 'INITIALIZE PRO',
-  },
-  'Ultra': {
-    icon: '⬢',
-    benefits: [
-      'Acesso total ao arquivo',
-      'Seu nome em algum easter egg do site!',
-      'Acesso antecipado',
-      'Downloads ilimitados',
-    ],
-    buttonText: 'INITIALIZE ULTIMATE',
-  },
-};
+  private visualMap: Record<string, PlanVisuals> = {
+    'Basic': {
+      icon: '▣',
+      benefits: [
+        'Acesso ao acervo 8-bit',
+        '1 dispositivo simultâneo',
+        'Download padrão',
+        'Atualizações mensais',
+      ],
+      buttonText: 'INITIALIZE BASIC',
+    },
+    'Pro': {
+      icon: '◈',
+      benefits: [
+        'Acesso completo 16-bit',
+        'Save states em nuvem',
+        'Prioridade de sinal',
+        '3 dispositivos simultâneos',
+      ],
+      buttonText: 'INITIALIZE PRO',
+    },
+    'Premium': {
+      icon: '◈',
+      benefits: [
+        'Acesso completo 16-bit',
+        'Save states em nuvem',
+        'Prioridade de sinal',
+        '3 dispositivos simultâneos',
+      ],
+      buttonText: 'INITIALIZE PRO',
+    },
+    'Ultra': {
+      icon: '⬢',
+      benefits: [
+        'Acesso total ao arquivo',
+        'Seu nome em algum easter egg do site!',
+        'Acesso antecipado',
+        'Downloads ilimitados',
+      ],
+      buttonText: 'INITIALIZE ULTIMATE',
+    },
+  };
 
   ngOnInit(): void {
     this.checkAuth();
     this.loadPlans();
   }
 
-private checkAuth(): void {
-  this.isLoggedIn = this.authService.isAuthenticated();
-  if (this.isLoggedIn) {
-    this.userName = this.authService.getUserName();
+  private checkAuth(): void {
+    this.isLoggedIn = this.authService.isAuthenticated();
+    if (this.isLoggedIn) {
+      this.userName = this.authService.getUserName();
+      this.isAdmin = this.authService.isAdmin();
+    }
   }
-}
 
-logout(): void {
-  this.authService.logout();
-  this.isLoggedIn = false;
-  this.userName = '';
-  this.router.navigate(['/login']);
-}
+  isActive(path: string): boolean {
+    return this.router.url === path;
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.isLoggedIn = false;
+    this.userName = '';
+    this.isAdmin = false;
+    this.router.navigate(['/login']);
+  }
 
   loadPlans(): void {
-  this.planService.getPlans().subscribe({
-    next: (response) => {
-      console.log('RESPONSE:', response);
-      const tierIcons   = ['▣', '◈', '⬢'];
-      const tierButtons = ['INITIALIZE BASIC', 'INITIALIZE PRO', 'INITIALIZE ULTIMATE'];
+    this.planService.getPlans().subscribe({
+      next: (response) => {
+        const tierIcons   = ['▣', '◈', '⬢'];
+        const tierButtons = ['INITIALIZE BASIC', 'INITIALIZE PRO', 'INITIALIZE ULTIMATE'];
 
-      this.plans = response.data.plans.map((plan, index) => {
-        const visual = this.visualMap[plan.name];
-        return {
-          ...plan,
-          ...(visual ?? {
-            icon: tierIcons[index] ?? '⬢',
-            benefits: ['Benefícios padrão'],
-            buttonText: tierButtons[index] ?? 'SELECT',
-          }),
-        };
-      });
+        this.plans = response.data.plans.map((plan, index) => {
+          const visual = this.visualMap[plan.name];
+          return {
+            ...plan,
+            ...(visual ?? {
+              icon: tierIcons[index] ?? '⬢',
+              benefits: ['Benefícios padrão'],
+              buttonText: tierButtons[index] ?? 'SELECT',
+            }),
+          };
+        });
 
-      this.isLoading = false;
-      this.cdr.detectChanges();
-    },
-    error: (err) => {
-      console.log('ERROR:', err);
-      this.errorMessage = 'FALHA AO CARREGAR PLANOS. VERIFIQUE O SINAL.';
-      this.isLoading = false;
-      this.cdr.detectChanges();
-    },
-  });
-}
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.errorMessage = 'FALHA AO CARREGAR PLANOS. VERIFIQUE O SINAL.';
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
 
   onSelectPlan(plan: Plan & PlanVisuals): void {
     if (this.isLoggedIn) {
