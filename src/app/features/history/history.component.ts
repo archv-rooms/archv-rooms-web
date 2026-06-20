@@ -19,6 +19,8 @@ export class HistoryComponent implements OnInit {
   loading = true
   error = false
   userName = ''
+  isLoggedIn = false
+  isAdmin = false
 
   ngOnInit() {
     this.checkAuth()
@@ -37,11 +39,14 @@ export class HistoryComponent implements OnInit {
   }
 
   checkAuth(): void {
+    const token = localStorage.getItem('@archv:token')
     const user = localStorage.getItem('@archv:user')
+    this.isLoggedIn = !!token
     if (user) {
       try {
         const parsed = JSON.parse(user)
         this.userName = parsed.name ?? parsed.email ?? 'USER'
+        this.isAdmin = parsed.role === 'admin'
       } catch {
         this.userName = 'USER'
       }
@@ -51,11 +56,17 @@ export class HistoryComponent implements OnInit {
   logout(): void {
     localStorage.removeItem('@archv:token')
     localStorage.removeItem('@archv:user')
+    this.isLoggedIn = false
+    this.isAdmin = false
     this.router.navigate(['/'])
   }
 
   navigate(path: string): void {
     this.router.navigate([path])
+  }
+
+  isActive(path: string): boolean {
+    return this.router.url === path
   }
 
   formatDuration(seconds: number): string {
