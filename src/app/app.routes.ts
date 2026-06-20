@@ -129,6 +129,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/leaderboard/leaderboard.component').then(m => m.LeaderboardComponent)
   },
   {
+  path: 'notifications',
+  canActivate: [AuthGuard],
+  loadComponent: () => import('./features/notifications/notifications.component').then(m => m.NotificationsComponent)
+  },
+  {
     path: '**',
     loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent),
     data: { code: 404 }
