@@ -319,7 +319,5 @@ export class LibraryComponent implements OnInit {
 
   navigate(path: string): void { this.router.navigate([path]); }
 
-  isActive(path: string): boolean { return this.router.url === path; }
-
   onGameClick(game: Game): void { this.router.navigate(['/rooms', game.id]); }
 }
