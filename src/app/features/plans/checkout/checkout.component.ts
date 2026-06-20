@@ -27,6 +27,7 @@ export class CheckoutComponent implements OnInit {
 
   isLoggedIn = false;
   userName = '';
+  isAdmin = false;
 
   ngOnInit(): void {
     this.checkAuth();
@@ -45,7 +46,11 @@ export class CheckoutComponent implements OnInit {
     const user = localStorage.getItem('@archv:user');
     this.isLoggedIn = !!token;
     if (user) {
-      try { this.userName = JSON.parse(user).name ?? 'USER'; }
+      try {
+        const parsed = JSON.parse(user);
+        this.userName = parsed.name ?? 'USER';
+        this.isAdmin = parsed.role === 'admin';
+      }
       catch { this.userName = 'USER'; }
     }
   }
@@ -55,6 +60,7 @@ export class CheckoutComponent implements OnInit {
     localStorage.removeItem('@archv:user');
     this.isLoggedIn = false;
     this.userName = '';
+    this.isAdmin = false;
     this.router.navigate(['/']);
   }
 
@@ -89,7 +95,6 @@ export class CheckoutComponent implements OnInit {
     this.checkoutService.createCheckout(this.planId).subscribe({
       next: (response) => {
         if (response.success && response.data.initPoint) {
-          // Redireciona para o Mercado Pago
           window.location.href = response.data.initPoint;
         } else {
           this.errorMessage = 'Erro ao iniciar pagamento. Tente novamente.';
