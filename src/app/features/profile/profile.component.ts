@@ -31,6 +31,7 @@ export class ProfileComponent implements AfterViewInit {
     signalPct:      0,
   };
 
+  isLoggedIn = false;
   isLoading    = true;
   errorMessage = '';
   isAdmin      = false;
@@ -90,6 +91,8 @@ export class ProfileComponent implements AfterViewInit {
           bio:       '',
           avatarUrl: '',
         };
+
+        this.isLoggedIn = this.authService.isAuthenticated();
 
         this.userStats = {
           gamesInLibrary: 0,
@@ -259,6 +262,7 @@ export class ProfileComponent implements AfterViewInit {
   navigate(path: string): void { this.router.navigate([path]); }
   logout(): void { this.authService.logout(); }
   openEditModal(): void { this.setTab('settings'); }
+  isActive(path: string): boolean { return this.router.url === path; }
 
   copyProfileLink(): void {
     const name = this.user?.name || 'user';

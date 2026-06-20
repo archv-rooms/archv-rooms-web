@@ -3,7 +3,6 @@
   <aside class="sidebar">
     <nav class="sidebar-nav">
 
-      <!-- Home -->
       <button class="nav-btn" title="Home" (click)="navigate('/home')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <rect x="3" y="3" width="7" height="7"/>
@@ -13,30 +12,26 @@
         </svg>
       </button>
 
-      <!-- Biblioteca -->
       <button class="nav-btn" title="Biblioteca" (click)="navigate('/library')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
         </svg>
       </button>
 
-      <!-- Pricing — active -->
-      <button class="nav-btn active" title="Planos" (click)="navigate('/pricing')">
+      <button class="nav-btn" [class.active]="isActive('/pricing')" title="Planos" (click)="navigate('/pricing')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="12" r="3"/>
           <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
         </svg>
       </button>
 
-      <!-- Apoiar -->
-<button class="nav-btn" title="Apoiar" (click)="navigate('/donate')">
-  <svg class="heart-glow" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
-    <path d="M12 21C12 21 3 14.5 3 8.5a4.5 4.5 0 0 1 9-0.5 4.5 4.5 0 0 1 9 .5c0 6-9 12.5-9 12.5z"/>
-  </svg>
-</button>
+      <button class="nav-btn" title="Apoiar" (click)="navigate('/donate')">
+        <svg class="heart-glow" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
+          <path d="M12 21C12 21 3 14.5 3 8.5a4.5 4.5 0 0 1 9-0.5 4.5 4.5 0 0 1 9 .5c0 6-9 12.5-9 12.5z"/>
+        </svg>
+      </button>
 
-      <!-- Perfil (só quando logado) -->
-      <button class="nav-btn" title="Perfil" *ngIf="isLoggedIn" (click)="navigate('/profile')">
+      <button class="nav-btn" [class.active]="isActive('/profile')" title="Perfil" *ngIf="isLoggedIn" (click)="navigate('/profile')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="8" r="4"/>
           <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -49,22 +44,21 @@
           <path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.85"/>
         </svg>
       </button>
-      
-      <button class="nav-btn" title="Histórico" *ngIf="isLoggedIn" (click)="navigate('/history')">
+
+      <button class="nav-btn" [class.active]="isActive('/history')" title="Histórico" *ngIf="isLoggedIn" (click)="navigate('/history')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
         </svg>
       </button>
-      
+
       <button class="nav-btn" title="Admin" *ngIf="isAdmin" (click)="navigate('/admin')">
-      <svg class="star-glow" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
+        <svg class="star-glow" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
           <path d="M12 2l3 7h7l-6 4.5 2.3 7L12 17l-6.3 3.5L8 13 2 8.5h7z"/>
         </svg>
       </button>
 
     </nav>
   </aside>
-
 
   <main class="main-content">
 
@@ -370,51 +364,47 @@
         </div>
 
         <!-- PAGAMENTOS -->
-<div class="tab-panel" *ngIf="activeTab === 'payments'">
-
-  <div class="loading-fullscreen" *ngIf="loadingPayments">
-    <div class="loading-row">
-      <span class="loading-dot"></span>
-      <span class="loading-dot"></span>
-      <span class="loading-dot"></span>
-      <span class="loading-text">CARREGANDO HISTÓRICO...</span>
-    </div>
-  </div>
-
-  <ng-container *ngIf="!loadingPayments">
-    <div class="panel" *ngIf="payments.length === 0">
-      <div class="empty-state">
-        <span class="empty-icon">◈</span>
-        <p>NENHUM PAGAMENTO REGISTRADO</p>
-      </div>
-    </div>
-
-    <div class="panel" *ngIf="payments.length > 0">
-      <div class="panel-header">
-        <span class="panel-label">HISTÓRICO DE PAGAMENTOS</span>
-        <span class="panel-dot green"></span>
-      </div>
-      <div class="terminal-lines">
-        <div class="t-line" style="opacity:0.5; font-size:10px; padding-bottom:8px;">
-          <span class="t-key" style="width:80px">DATA</span>
-          <span class="t-key" style="width:120px">PLANO</span>
-          <span class="t-key" style="width:80px">VALOR</span>
-          <span class="t-key" style="width:80px">MÉTODO</span>
-          <span class="t-key">STATUS</span>
+        <div class="tab-panel" *ngIf="activeTab === 'payments'">
+          <div class="loading-fullscreen" *ngIf="loadingPayments">
+            <div class="loading-row">
+              <span class="loading-dot"></span>
+              <span class="loading-dot"></span>
+              <span class="loading-dot"></span>
+              <span class="loading-text">CARREGANDO HISTÓRICO...</span>
+            </div>
+          </div>
+          <ng-container *ngIf="!loadingPayments">
+            <div class="panel" *ngIf="payments.length === 0">
+              <div class="empty-state">
+                <span class="empty-icon">◈</span>
+                <p>NENHUM PAGAMENTO REGISTRADO</p>
+              </div>
+            </div>
+            <div class="panel" *ngIf="payments.length > 0">
+              <div class="panel-header">
+                <span class="panel-label">HISTÓRICO DE PAGAMENTOS</span>
+                <span class="panel-dot green"></span>
+              </div>
+              <div class="terminal-lines">
+                <div class="t-line" style="opacity:0.5; font-size:10px; padding-bottom:8px;">
+                  <span class="t-key" style="width:80px">DATA</span>
+                  <span class="t-key" style="width:120px">PLANO</span>
+                  <span class="t-key" style="width:80px">VALOR</span>
+                  <span class="t-key" style="width:80px">MÉTODO</span>
+                  <span class="t-key">STATUS</span>
+                </div>
+                <div class="t-line" *ngFor="let p of payments">
+                  <span class="t-prompt">&gt;</span>
+                  <span class="t-key">{{ p.createdAt | date:'dd/MM/yyyy' }}</span>
+                  <span class="t-val purple">{{ p.subscription?.plan?.name | uppercase }}</span>
+                  <span class="t-val">R$ {{ p.amount | number:'1.2-2' }}</span>
+                  <span class="t-val" style="opacity:0.6">{{ p.method || '—' }}</span>
+                  <span class="t-val green">[ {{ p.status | uppercase }} ]</span>
+                </div>
+              </div>
+            </div>
+          </ng-container>
         </div>
-        <div class="t-line" *ngFor="let p of payments">
-          <span class="t-prompt">&gt;</span>
-          <span class="t-key">{{ p.createdAt | date:'dd/MM/yyyy' }}</span>
-          <span class="t-val purple">{{ p.subscription?.plan?.name | uppercase }}</span>
-          <span class="t-val">R$ {{ p.amount | number:'1.2-2' }}</span>
-          <span class="t-val" style="opacity:0.6">{{ p.method || '—' }}</span>
-          <span class="t-val green">[ {{ p.status | uppercase }} ]</span>
-        </div>
-      </div>
-    </div>
-  </ng-container>
-
-</div>
 
         <footer class="site-footer">
           <span>ARCHV.ROOMS OS v2.4.1</span>
