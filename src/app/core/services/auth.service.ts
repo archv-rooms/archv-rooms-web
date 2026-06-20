@@ -57,6 +57,10 @@ export class AuthService {
     return 'user';
   }
 
+  isAdmin(): boolean {
+    return this.getUserRole() === 'admin';
+  }
+
   login(credentials: { email: string; password: string }): Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.post(`${this.apiUrl}/auth/login`, credentials, { headers }).pipe(

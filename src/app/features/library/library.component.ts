@@ -27,6 +27,7 @@ export class LibraryComponent implements OnInit {
 
   isLoggedIn = false;
   userName = '';
+  isAdmin = false;
 
   games: Game[] = [];
   filteredGames: Game[] = [];
@@ -63,13 +64,16 @@ export class LibraryComponent implements OnInit {
 
     if (this.isLoggedIn) {
       this.userName = this.authService.getUserName();
+      this.isAdmin = this.authService.isAdmin();
       this.loadGames();
       this.loadFavorites();
       this.showWelcomeBack();
     }
   }
 
-  // ── WELCOME BACK ─────────────────────────────────────
+  isActive(path: string): boolean {
+    return this.router.url === path;
+  }
 
   private showWelcomeBack(): void {
     const shouldShow = sessionStorage.getItem('show-welcome');
@@ -314,6 +318,8 @@ export class LibraryComponent implements OnInit {
   }
 
   navigate(path: string): void { this.router.navigate([path]); }
+
+  isActive(path: string): boolean { return this.router.url === path; }
 
   onGameClick(game: Game): void { this.router.navigate(['/rooms', game.id]); }
 }
