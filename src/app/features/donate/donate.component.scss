@@ -269,3 +269,32 @@ $pink:         #f472b6;
     &::-webkit-inner-spin-button { -webkit-appearance: none; }
   }
 }
+
+$amber: #fbbf24;
+
+.star-glow {
+  width: 22px; height: 22px;
+  color: $amber;
+  fill: none;
+  animation: starPulse 2s ease-in-out infinite;
+  display: block;
+  cursor: pointer;
+  transition: fill 0.3s ease, filter 0.3s ease;
+
+  &:hover, &:active {
+    fill: $amber;
+    filter: drop-shadow(0 0 8px rgba($amber, 1));
+    animation: starbeat 0.4s ease-in-out;
+  }
+}
+
+@keyframes starPulse {
+  0%, 100% { opacity: 0.4; filter: drop-shadow(0 0 4px rgba($amber, 0.4)); transform: scale(1); }
+  50%       { opacity: 1;   filter: drop-shadow(0 0 12px rgba($amber, 0.9)); transform: scale(1.15); }
+}
+
+@keyframes starbeat {
+  0%, 100% { transform: scale(1); }
+  25%       { transform: scale(1.3); }
+  50%       { transform: scale(1.1); }
+}

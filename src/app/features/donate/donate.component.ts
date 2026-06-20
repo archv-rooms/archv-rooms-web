@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environments';
 
 @Component({
@@ -19,6 +19,7 @@ export class DonateComponent implements OnInit {
   isLoggedIn = false;
   userName = '';
   userEmail = '';
+  isAdmin = false;
 
   donorName = '';
   donorEmail = '';
@@ -42,6 +43,7 @@ export class DonateComponent implements OnInit {
         this.userEmail = parsed.email ?? '';
         this.donorName = this.userName;
         this.donorEmail = this.userEmail;
+        this.isAdmin = parsed.role === 'admin';
       } catch {
         this.userName = '';
       }
@@ -53,6 +55,7 @@ export class DonateComponent implements OnInit {
     localStorage.removeItem('@archv:user');
     this.isLoggedIn = false;
     this.userName = '';
+    this.isAdmin = false;
     this.router.navigate(['/']);
   }
 
