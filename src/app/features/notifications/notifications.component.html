@@ -50,12 +50,6 @@
         </svg>
       </button>
 
-      <button class="nav-btn" [class.active]="isActive('/history')" title="Histórico" *ngIf="isLoggedIn" (click)="navigate('/history')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
-        </svg>
-      </button>
-
       <button class="nav-btn" title="Admin" *ngIf="isAdmin" (click)="navigate('/admin')">
         <svg class="star-glow" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
           <path d="M12 2l3 7h7l-6 4.5 2.3 7L12 17l-6.3 3.5L8 13 2 8.5h7z"/>
