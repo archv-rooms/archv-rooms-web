@@ -34,9 +34,8 @@
       <div class="corner corner-br"></div>
       <div class="scanlines"></div>
 
-      <div class="pixel-stage" id="pixel-stage">
-        <div class="pixel-grid" id="pixel-grid" aria-hidden="true"></div>
-        <span class="sr-only">ARCHV ROOMS</span>
+      <div class="pixel-stage">
+        <div class="title-main">ARCHV <span>ROOMS</span></div>
         <span class="title-sub" id="logo-sub">your space &mdash; your game</span>
       </div>
 
@@ -123,44 +122,32 @@
     .corner-bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; }
     .corner-br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
 
-    .sr-only {
-      position: absolute;
-      width: 1px; height: 1px;
-      padding: 0; margin: -1px;
-      overflow: hidden;
-      clip: rect(0,0,0,0);
-      white-space: nowrap;
-      border: 0;
-    }
-
     .pixel-stage {
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
-      margin-bottom: 22px;
-      min-height: 110px;
+      gap: 12px;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 2;
     }
 
-    .pixel-grid {
-      display: grid;
-      gap: 1px;
-      justify-content: center;
+    .title-main {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 22px;
+      color: #7c3aed;
+      letter-spacing: 2px;
+      text-align: center;
+      line-height: 1.4;
+      text-shadow:
+        0 0 18px rgba(124,58,237,0.5),
+        0 0 4px rgba(212,83,126,0.3);
+      animation: glitch 4s infinite;
     }
-
-    .pixel-cell {
-      opacity: 0;
-      transform: scale(0.4);
-      border-radius: 1px;
-    }
-    .pixel-cell.show {
-      animation: pixelPop 0.25s ease forwards;
-    }
-
-    .pixel-grid.settle {
-      animation: settleFlicker 0.4s ease;
+    .title-main span {
+      color: #d4537e;
     }
 
     .title-sub {
@@ -229,16 +216,25 @@
       animation: blink-cursor 0.7s step-start infinite;
     }
 
-    @keyframes pixelPop {
-      from { opacity: 0; transform: scale(0.4); }
-      to { opacity: 1; transform: scale(1); }
+    @keyframes glitch {
+      0%, 90%, 100% {
+        text-shadow: 0 0 18px rgba(124,58,237,0.5), 0 0 4px rgba(212,83,126,0.3);
+        transform: none;
+      }
+      92% {
+        text-shadow: -2px 0 #d4537e, 2px 0 #7c3aed;
+        transform: skewX(-1deg);
+      }
+      94% {
+        text-shadow: 2px 0 #d4537e, -2px 0 #7c3aed;
+        transform: skewX(1deg);
+      }
+      96% {
+        text-shadow: 0 0 18px rgba(124,58,237,0.5);
+        transform: none;
+      }
     }
-    @keyframes settleFlicker {
-      0% { opacity: 1; transform: none; }
-      30% { opacity: 0.7; transform: skewX(-2deg); }
-      60% { opacity: 1; transform: skewX(2deg); }
-      100% { opacity: 1; transform: none; }
-    }
+
     @keyframes blink-cursor {
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }
@@ -251,68 +247,9 @@ if (window.location.pathname !== '/') {
   document.querySelector('app-root').style.visibility = 'visible';
 }
 
-(function buildPixelLogo() {
-  const FONT = {
-    A: ['01110','10001','10001','11111','10001','10001','10001'],
-    C: ['01111','10000','10000','10000','10000','10000','01111'],
-    H: ['10001','10001','10001','11111','10001','10001','10001'],
-    M: ['10001','11011','10101','10101','10001','10001','10001'],
-    O: ['01110','10001','10001','10001','10001','10001','01110'],
-    R: ['11110','10001','10001','11110','10100','10010','10001'],
-    S: ['01111','10000','10000','01110','00001','00001','11110'],
-    V: ['10001','10001','10001','10001','10001','01010','00100']
-  };
-
-  const word = 'ARCHV ROOMS';
-  const rows = 7;
-  const matrix = Array.from({ length: rows }, () => []);
-
-  word.split('').forEach((ch) => {
-    if (ch === ' ') {
-      for (let r = 0; r < rows; r++) matrix[r].push(0, 0, 0);
-      return;
-    }
-    const glyph = FONT[ch];
-    for (let r = 0; r < rows; r++) {
-      glyph[r].split('').forEach((bit) => matrix[r].push(bit === '1' ? 1 : 0));
-      matrix[r].push(0);
-    }
-  });
-
-  const cols = matrix[0].length;
-  const grid = document.getElementById('pixel-grid');
-  const cellSize = Math.max(4, Math.min(8, Math.floor((440 - (cols - 1)) / cols)));
-
-  grid.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
-  grid.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
-
-  const litCells = [];
-
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const cell = document.createElement('div');
-      cell.style.width = cellSize + 'px';
-      cell.style.height = cellSize + 'px';
-      if (matrix[r][c]) {
-        cell.className = 'pixel-cell';
-        cell.style.background = Math.random() < 0.18 ? '#d4537e' : '#7c3aed';
-        litCells.push({ el: cell, col: c });
-      }
-      grid.appendChild(cell);
-    }
-  }
-
-  let maxCol = 0;
-  litCells.forEach(({ el, col }) => {
-    if (col > maxCol) maxCol = col;
-    setTimeout(() => el.classList.add('show'), col * 13);
-  });
-
-  setTimeout(() => {
-    grid.classList.add('settle');
-    document.getElementById('logo-sub').classList.add('show');
-  }, maxCol * 13 + 380);
-})();
+setTimeout(() => {
+  document.getElementById('logo-sub').classList.add('show');
+}, 400);
 
 const messages = [
   'INICIALIZANDO SISTEMA...',
