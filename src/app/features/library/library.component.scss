@@ -187,13 +187,11 @@ $red-alert: #fb7185;
   text-transform: uppercase;
 }
 
-  .status-val {
-    color: $red-alert;
-
-    &.stable {
-      color: $green-ok;
-    }
-  }
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
 .topbar-user {
   font-size: 13px;
