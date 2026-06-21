@@ -201,7 +201,7 @@ $red-alert: #fb7185;
 
   padding: 4px 12px;
 
-  border: 1px solid rgba($purple-dim, 0.5);
+  border: 1px solid $purple-dim;
   border-radius: 4px;
 
   cursor: pointer;
