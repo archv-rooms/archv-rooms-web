@@ -33,11 +33,13 @@ export class FriendsComponent implements OnInit, OnDestroy {
   friends = signal<any[]>([]);
   pendingRequests = signal<any[]>([]);
   searchResults = signal<any[]>([]);
+  friendsActivity = signal<any[]>([]);
 
   searchQuery = '';
   isLoadingFriends = signal(false);
   isLoadingPending = signal(false);
   isSearching = signal(false);
+  isLoadingActivity = signal(false);
   feedbackMessage = signal('');
   feedbackType = signal<'success' | 'error'>('success');
 
@@ -56,6 +58,7 @@ export class FriendsComponent implements OnInit, OnDestroy {
     this.checkAuth();
     this.loadFriends();
     this.loadPending();
+    this.loadFriendsActivity();
     this.chatService.connect();
   }
 
@@ -140,6 +143,19 @@ export class FriendsComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadFriendsActivity(): void {
+    this.isLoadingActivity.set(true);
+    this.friendService.getFriendsActivity().subscribe({
+      next: (res) => {
+        this.friendsActivity.set(Array.isArray(res) ? res : (res.data || []));
+        this.isLoadingActivity.set(false);
+      },
+      error: () => {
+        this.isLoadingActivity.set(false);
+      }
+    });
+  }
+
   onSearch(): void {
     if (!this.searchQuery.trim()) {
       this.searchResults.set([]);
@@ -205,6 +221,20 @@ export class FriendsComponent implements OnInit, OnDestroy {
     this.feedbackMessage.set(message);
     this.feedbackType.set(type);
     setTimeout(() => this.feedbackMessage.set(''), 3000);
+  }
+
+  // ── ACTIVITY HELPERS ──────────────────────────────
+  timeSince(dateStr: string | null): string {
+    if (!dateStr) return '';
+    const diffMs = Date.now() - new Date(dateStr).getTime();
+    const hours = Math.floor(diffMs / 3600000);
+    if (hours < 1) {
+      const minutes = Math.floor(diffMs / 60000);
+      return `${minutes}min`;
+    }
+    if (hours < 24) return `${hours}h`;
+    const days = Math.floor(hours / 24);
+    return `${days}d`;
   }
 
   // ── CHAT ──────────────────────────────────────────
