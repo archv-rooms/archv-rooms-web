@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { environment } from '../../../environments/environments';
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
 
 interface Game {
   id: number;
@@ -28,6 +29,7 @@ export class LibraryComponent implements OnInit {
   isLoggedIn = false;
   userName = '';
   isAdmin = false;
+  unreadCount = 0;
 
   games: Game[] = [];
   filteredGames: Game[] = [];
@@ -56,7 +58,8 @@ export class LibraryComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
-    private authService: AuthService
+    private authService: AuthService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -67,8 +70,25 @@ export class LibraryComponent implements OnInit {
       this.isAdmin = this.authService.isAdmin();
       this.loadGames();
       this.loadFavorites();
+      this.loadUnreadCount();
       this.showWelcomeBack();
     }
+  }
+
+  private loadUnreadCount(): void {
+    this.notificationService.getUnreadCount().subscribe({
+      next: (res) => {
+        if (res.success) this.unreadCount = res.data.count;
+      }
+    });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.isLoggedIn = false;
+    this.userName = '';
+    this.games = [];
+    this.filteredGames = [];
   }
 
   isActive(path: string): boolean {
