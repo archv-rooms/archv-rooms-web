@@ -1266,7 +1266,7 @@ $amber:     #fbbf24;
   width: 36px;
   height: 36px;
   background: transparent;
-  border: 1px solid var(--color-border-glow);
+  border: 1px solid transparent;
   border-radius: 4px;
   color: var(--color-text-muted);
   cursor: pointer;
@@ -1281,17 +1281,11 @@ $amber:     #fbbf24;
 
 .notif-badge {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  padding: 0;
   background: #fb7185;
-  color: #fff;
-  font-size: 9px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  letter-spacing: 0;
+  border-radius: 50%;
 }
