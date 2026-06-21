@@ -1,8 +1,10 @@
-import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { FriendService } from '../../core/services/friend.service';
+import { ChatService, ChatMessage } from '../../core/services/chat.service';
 
 @Component({
   selector: 'app-friends',
@@ -13,7 +15,10 @@ import { FriendService } from '../../core/services/friend.service';
 })
 export class FriendsComponent implements OnInit, OnDestroy {
   private friendService = inject(FriendService);
+  private chatService = inject(ChatService);
   private router = inject(Router);
+
+  @ViewChild('chatMessages') chatMessagesEl!: ElementRef;
 
   isLoggedIn = false;
   userName = '';
@@ -38,15 +43,27 @@ export class FriendsComponent implements OnInit, OnDestroy {
 
   currentUser = JSON.parse(localStorage.getItem('@archv:user') || '{}');
 
+  // ── CHAT ──
+  chatOpen = false;
+  activeFriend: any = null;
+  messages: ChatMessage[] = [];
+  newMessage = '';
+  isLoadingMessages = false;
+  private activeConversationId: number | null = null;
+  private msgSubscription?: Subscription;
+
   ngOnInit(): void {
     this.checkAuth();
     this.loadFriends();
     this.loadPending();
+    this.chatService.connect();
   }
 
   ngOnDestroy(): void {
     clearTimeout(this.jumpscareTimer);
     clearTimeout(this.eggClickTimer);
+    this.msgSubscription?.unsubscribe();
+    this.chatService.disconnect();
   }
 
   private checkAuth(): void {
@@ -171,21 +188,88 @@ export class FriendsComponent implements OnInit, OnDestroy {
     });
   }
 
-removeFriend(friendshipId: number): void {
-  if (!confirm('Remover este amigo?')) return;
-  this.friendService.removeFriend(friendshipId).subscribe({
-    next: (res) => {
-      if (res.success) {
-        this.showFeedback('Amigo removido.', 'success');
-        this.friends.update(list => list.filter(f => f.friendshipId !== friendshipId));
-      }
-    },
-    error: () => this.showFeedback('Erro ao remover amigo.', 'error')
-  });
-}
+  removeFriend(friendshipId: number): void {
+    if (!confirm('Remover este amigo?')) return;
+    this.friendService.removeFriend(friendshipId).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.showFeedback('Amigo removido.', 'success');
+          this.friends.update(list => list.filter(f => f.friendshipId !== friendshipId));
+        }
+      },
+      error: () => this.showFeedback('Erro ao remover amigo.', 'error')
+    });
+  }
+
   showFeedback(message: string, type: 'success' | 'error'): void {
     this.feedbackMessage.set(message);
     this.feedbackType.set(type);
     setTimeout(() => this.feedbackMessage.set(''), 3000);
+  }
+
+  // ── CHAT ──────────────────────────────────────────
+  openChat(friend: any): void {
+    this.activeFriend = friend;
+    this.chatOpen = true;
+    this.messages = [];
+    this.isLoadingMessages = true;
+
+    this.chatService.getOrCreateDirectConversation(friend.id).subscribe({
+      next: (res) => {
+        if (!res.success) return;
+        const convId = res.data.conversation.id;
+        this.activeConversationId = convId;
+        this.chatService.joinConversation(convId);
+
+        this.msgSubscription?.unsubscribe();
+        this.msgSubscription = this.chatService.onNewMessage().subscribe(msg => {
+          if (msg && msg.conversationId === this.activeConversationId) {
+            this.messages.push(msg);
+            this.scrollToBottom();
+          }
+        });
+
+        this.chatService.getMessages(convId).subscribe({
+          next: (r) => {
+            if (r.success) {
+              this.messages = r.data.messages;
+              this.isLoadingMessages = false;
+              this.scrollToBottom();
+            }
+          },
+          error: () => { this.isLoadingMessages = false; }
+        });
+      },
+      error: () => { this.isLoadingMessages = false; }
+    });
+  }
+
+  closeChat(): void {
+    if (this.activeConversationId !== null) {
+      this.chatService.leaveConversation(this.activeConversationId);
+    }
+    this.msgSubscription?.unsubscribe();
+    this.chatOpen = false;
+    this.activeFriend = null;
+    this.messages = [];
+    this.activeConversationId = null;
+  }
+
+  sendMessage(): void {
+    const content = this.newMessage.trim();
+    if (!content || !this.activeConversationId) return;
+
+    this.newMessage = '';
+
+    this.chatService.sendMessage(this.activeConversationId, content).subscribe({
+      error: () => this.showFeedback('Erro ao enviar mensagem.', 'error')
+    });
+  }
+
+  private scrollToBottom(): void {
+    setTimeout(() => {
+      const el = this.chatMessagesEl?.nativeElement;
+      if (el) el.scrollTop = el.scrollHeight;
+    }, 50);
   }
 }
