@@ -77,113 +77,178 @@
       </div>
     </header>
 
-    <!-- CONTEÚDO -->
-    <div class="scroll-body">
+    <!-- CORPO -->
+    <div class="body-with-chat">
 
-      <div class="feedback-toast" *ngIf="feedbackMessage()"
-        [class.success]="feedbackType() === 'success'"
-        [class.error]="feedbackType() === 'error'">
-        {{ feedbackMessage() }}
-      </div>
+      <!-- CONTEÚDO PRINCIPAL -->
+      <div class="scroll-body">
 
-      <section class="section">
-        <div class="section-header">
-          <span class="section-label">amigos</span>
+        <div class="feedback-toast" *ngIf="feedbackMessage()"
+          [class.success]="feedbackType() === 'success'"
+          [class.error]="feedbackType() === 'error'">
+          {{ feedbackMessage() }}
         </div>
 
-        <div class="friends-layout">
+        <section class="section">
+          <div class="section-header">
+            <span class="section-label">amigos</span>
+          </div>
 
-          <!-- BUSCAR JOGADOR -->
-          <div class="panel search-panel">
-            <h3 class="panel-title">▶ buscar jogador</h3>
-            <div class="search-bar">
-              <input
-                type="text"
-                class="input-retro"
-                placeholder="Digite o nome do usuário..."
-                [(ngModel)]="searchQuery"
-                (keyup.enter)="onSearch()"
-              />
-              <button class="btn-primary" (click)="onSearch()" [disabled]="isSearching()">
-                {{ isSearching() ? '...' : 'buscar' }}
-              </button>
-            </div>
+          <div class="friends-layout">
 
-            <div class="search-results">
-              <p class="loading" *ngIf="isSearching()">buscando...</p>
-
-              <div class="user-card" *ngFor="let user of searchResults()">
-                <div class="user-info">
-                  <div class="user-avatar">{{ user.username?.charAt(0)?.toUpperCase() }}</div>
-                  <div class="user-details">
-                    <span class="user-name">{{ user.username }}</span>
-                    <span class="user-email">{{ user.email }}</span>
-                  </div>
-                </div>
-                <button class="btn-secondary" (click)="sendRequest(user.id)"
-                  [disabled]="user.requestSent || user.alreadyFriend">
-                  {{ user.requestSent ? 'enviado ✓' : user.alreadyFriend ? 'amigos' : '+ adicionar' }}
+            <!-- BUSCAR JOGADOR -->
+            <div class="panel search-panel">
+              <h3 class="panel-title">▶ buscar jogador</h3>
+              <div class="search-bar">
+                <input
+                  type="text"
+                  class="input-retro"
+                  placeholder="Digite o nome do usuário..."
+                  [(ngModel)]="searchQuery"
+                  (keyup.enter)="onSearch()"
+                />
+                <button class="btn-primary" (click)="onSearch()" [disabled]="isSearching()">
+                  {{ isSearching() ? '...' : 'buscar' }}
                 </button>
               </div>
 
-              <p class="empty-state" *ngIf="!isSearching() && searchQuery && searchResults().length === 0">
-                Nenhum jogador encontrado.
+              <div class="search-results">
+                <p class="loading" *ngIf="isSearching()">buscando...</p>
+
+                <div class="user-card" *ngFor="let user of searchResults()">
+                  <div class="user-info">
+                    <div class="user-avatar">{{ user.username?.charAt(0)?.toUpperCase() }}</div>
+                    <div class="user-details">
+                      <span class="user-name">{{ user.username }}</span>
+                      <span class="user-email">{{ user.email }}</span>
+                    </div>
+                  </div>
+                  <button class="btn-secondary" (click)="sendRequest(user.id)"
+                    [disabled]="user.requestSent || user.alreadyFriend">
+                    {{ user.requestSent ? 'enviado ✓' : user.alreadyFriend ? 'amigos' : '+ adicionar' }}
+                  </button>
+                </div>
+
+                <p class="empty-state" *ngIf="!isSearching() && searchQuery && searchResults().length === 0">
+                  Nenhum jogador encontrado.
+                </p>
+              </div>
+            </div>
+
+            <!-- CONVITES PENDENTES -->
+            <div class="panel pending-panel">
+              <h3 class="panel-title">
+                ▶ convites pendentes
+                <span class="badge" *ngIf="pendingRequests().length > 0">{{ pendingRequests().length }}</span>
+              </h3>
+
+              <p class="loading" *ngIf="isLoadingPending()">carregando...</p>
+              <p class="empty-state" *ngIf="!isLoadingPending() && pendingRequests().length === 0">
+                Nenhum convite pendente.
               </p>
-            </div>
-          </div>
 
-          <!-- CONVITES PENDENTES -->
-          <div class="panel pending-panel">
-            <h3 class="panel-title">
-              ▶ convites pendentes
-              <span class="badge" *ngIf="pendingRequests().length > 0">{{ pendingRequests().length }}</span>
-            </h3>
-
-            <p class="loading" *ngIf="isLoadingPending()">carregando...</p>
-            <p class="empty-state" *ngIf="!isLoadingPending() && pendingRequests().length === 0">
-              Nenhum convite pendente.
-            </p>
-
-            <div class="user-card" *ngFor="let request of pendingRequests()">
-              <div class="user-info">
-                <div class="user-avatar">{{ request.sender?.username?.charAt(0)?.toUpperCase() }}</div>
-                <div class="user-details">
-                  <span class="user-name">{{ request.sender?.username }}</span>
+              <div class="user-card" *ngFor="let request of pendingRequests()">
+                <div class="user-info">
+                  <div class="user-avatar">{{ request.sender?.username?.charAt(0)?.toUpperCase() }}</div>
+                  <div class="user-details">
+                    <span class="user-name">{{ request.sender?.username }}</span>
+                  </div>
+                </div>
+                <div class="action-buttons">
+                  <button class="btn-accept" (click)="respondRequest(request.id, 'accepted')">✓</button>
+                  <button class="btn-reject" (click)="respondRequest(request.id, 'rejected')">✗</button>
                 </div>
               </div>
-              <div class="action-buttons">
-                <button class="btn-accept" (click)="respondRequest(request.id, 'accepted')">✓</button>
-                <button class="btn-reject" (click)="respondRequest(request.id, 'rejected')">✗</button>
-              </div>
             </div>
-          </div>
 
-          <!-- MEUS AMIGOS -->
-          <div class="panel friends-panel">
-            <h3 class="panel-title">
-              ▶ meus amigos
-              <span class="badge">{{ friends().length }}</span>
-            </h3>
+            <!-- MEUS AMIGOS -->
+            <div class="panel friends-panel">
+              <h3 class="panel-title">
+                ▶ meus amigos
+                <span class="badge">{{ friends().length }}</span>
+              </h3>
 
-            <p class="loading" *ngIf="isLoadingFriends()">carregando...</p>
-            <p class="empty-state" *ngIf="!isLoadingFriends() && friends().length === 0">
-              Você ainda não tem amigos adicionados.
-            </p>
+              <p class="loading" *ngIf="isLoadingFriends()">carregando...</p>
+              <p class="empty-state" *ngIf="!isLoadingFriends() && friends().length === 0">
+                Você ainda não tem amigos adicionados.
+              </p>
 
-            <div class="user-card" *ngFor="let friend of friends()">
-              <div class="user-info">
-                <div class="user-avatar">{{ friend.username?.charAt(0)?.toUpperCase() }}</div>
-                <div class="user-details">
-                  <span class="user-name">{{ friend.username }}</span>
-                  <span class="user-email">{{ friend.email }}</span>
+              <div class="user-card" *ngFor="let friend of friends()">
+                <div class="user-info">
+                  <div class="user-avatar">{{ friend.username?.charAt(0)?.toUpperCase() }}</div>
+                  <div class="user-details">
+                    <span class="user-name">{{ friend.username }}</span>
+                    <span class="user-email">{{ friend.email }}</span>
+                  </div>
+                </div>
+                <div class="action-buttons">
+                  <button class="btn-chat" (click)="openChat(friend)" title="Abrir chat">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                  </button>
+                  <button class="btn-danger" (click)="removeFriend(friend.friendshipId)">remover</button>
                 </div>
               </div>
-              <button class="btn-danger" (click)="removeFriend(friend.friendshipId)">remover</button>
+            </div>
+
+          </div>
+        </section>
+      </div>
+
+      <!-- PAINEL DE CHAT -->
+      <div class="chat-panel" [class.open]="chatOpen">
+
+        <div class="chat-header">
+          <div class="chat-header-info">
+            <div class="chat-avatar">{{ activeFriend?.username?.charAt(0)?.toUpperCase() }}</div>
+            <div>
+              <div class="chat-friend-name">{{ activeFriend?.username }}</div>
+              <div class="chat-status">
+                <span class="chat-status-dot"></span>
+                online
+              </div>
             </div>
           </div>
-
+          <button class="chat-close" (click)="closeChat()">✕</button>
         </div>
-      </section>
+
+        <div class="chat-messages" #chatMessages>
+          <div class="chat-loading" *ngIf="isLoadingMessages">
+            <span></span><span></span><span></span>
+          </div>
+
+          <p class="chat-empty" *ngIf="!isLoadingMessages && messages.length === 0">
+            nenhuma mensagem ainda.<br/>diga olá!
+          </p>
+
+          <div
+            class="chat-msg"
+            *ngFor="let msg of messages"
+            [class.mine]="msg.senderId === currentUser.id">
+            <div class="chat-bubble">{{ msg.content }}</div>
+            <div class="chat-time">{{ msg.createdAt | date:'HH:mm' }}</div>
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <input
+            class="chat-input"
+            type="text"
+            placeholder="mensagem..."
+            [(ngModel)]="newMessage"
+            (keyup.enter)="sendMessage()"
+          />
+          <button class="chat-send" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+
     </div>
   </main>
 
