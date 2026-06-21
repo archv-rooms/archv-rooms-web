@@ -34,22 +34,15 @@
       <div class="corner corner-br"></div>
       <div class="scanlines"></div>
 
-      <div class="title-wrap">
-        <span class="title-main" id="glitch-title">ARCHV ROOMS</span>
-        <span class="title-sub">your space &mdash; your game</span>
+      <div class="pixel-stage" id="pixel-stage">
+        <div class="pixel-grid" id="pixel-grid"></div>
+        <div class="logo-reveal" id="logo-reveal">
+          <span class="title-main" id="glitch-title">ARCHV ROOMS</span>
+          <span class="title-sub">your space &mdash; your game</span>
+        </div>
       </div>
 
       <div class="divider"></div>
-
-      <canvas id="game-canvas" width="480" height="200"></canvas>
-
-      <div class="hud">
-        <span class="hud-label">SCORE</span>
-        <span class="hud-val" id="score">000000</span>
-        <div class="lives" id="lives"></div>
-        <span class="hud-label">WAVE</span>
-        <span class="hud-val" id="wave">01</span>
-      </div>
 
       <div class="loading-area">
         <div class="progress-track">
@@ -132,9 +125,48 @@
     .corner-bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; }
     .corner-br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
 
-    .title-wrap {
+    .pixel-stage {
+      position: relative;
+      width: 100%;
+      min-height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+
+    .pixel-grid {
+      display: grid;
+      grid-template-columns: repeat(18, 10px);
+      grid-template-rows: repeat(6, 10px);
+      gap: 3px;
+      transition: opacity 0.5s ease;
+    }
+
+    .pixel-cell {
+      width: 10px;
+      height: 10px;
+      border-radius: 1px;
+      opacity: 0;
+      transform: scale(0.4);
+    }
+    .pixel-cell.show {
+      animation: pixelPop 0.3s ease forwards;
+    }
+
+    .logo-reveal {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      margin-bottom: 24px;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .logo-reveal.show {
+      opacity: 1;
     }
 
     .title-main {
@@ -182,45 +214,9 @@
       margin-bottom: 20px;
     }
 
-    #game-canvas {
-      display: block;
-      width: 100%;
-      image-rendering: pixelated;
-      border: 1px solid #1a1030;
-      background: #08090f;
-      box-shadow: 0 0 20px rgba(124,58,237,0.08) inset;
-    }
-
-    .hud {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      margin-top: 8px;
-      padding: 6px 2px;
-      border-bottom: 1px solid #1a1030;
-    }
-    .hud-label {
-      font-family: 'VT323', monospace;
-      font-size: 16px;
-      color: #4b3d72;
-      letter-spacing: 2px;
-    }
-    .hud-val {
-      font-family: 'VT323', monospace;
-      font-size: 16px;
-      color: #7c3aed;
-      letter-spacing: 2px;
-    }
-    .lives {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-
     .loading-area {
       width: 100%;
-      margin-top: 16px;
+      margin-top: 4px;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -264,6 +260,10 @@
       animation: blink-cursor 0.7s step-start infinite;
     }
 
+    @keyframes pixelPop {
+      from { opacity: 0; transform: scale(0.4); }
+      to { opacity: 1; transform: scale(1); }
+    }
     @keyframes glitch {
       0%, 90%, 100% { transform: none; }
       92% { transform: skewX(-2deg); }
@@ -292,326 +292,211 @@ if (window.location.pathname !== '/') {
   document.getElementById('loading-screen').style.display = 'none';
   document.querySelector('app-root').style.visibility = 'visible';
 }
-    const canvas = document.getElementById('game-canvas');
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width, H = canvas.height;
 
-    const ship = { x: W/2, y: H-22, dir: 1 };
-    const bullets = [], enemies = [], particles = [];
-    const stars = Array.from({length: 55}, () => ({
-      x: Math.random()*W, y: Math.random()*H,
-      s: Math.random()*1.2+0.3,
-      speed: Math.random()*0.8+0.2,
-      bright: Math.random()*0.5+0.2
-    }));
+(function buildPixelLogo() {
+  const grid = document.getElementById('pixel-grid');
+  const reveal = document.getElementById('logo-reveal');
+  const cols = 18, rows = 6;
+  const colors = ['#7c3aed', '#d4537e', '#a78bfa'];
+  const cells = [];
 
-    let score = 0, wave = 1, enemyTimer = 0, bulletTimer = 0;
+  for (let i = 0; i < cols * rows; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'pixel-cell';
+    cell.style.background = colors[Math.floor(Math.random() * colors.length)];
+    grid.appendChild(cell);
+    cells.push(cell);
+  }
 
-    function spawnWave() {
-      const cols = 7, rows = 2;
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          enemies.push({
-            x: 30 + c*62, y: 18 + r*24,
-            vx: (Math.random()-0.5)*0.3,
-            vy: 0.18 + wave*0.04,
-            hp: 1
-          });
-        }
-      }
-    }
-    spawnWave();
+  const order = cells.map((_, i) => i).sort(() => Math.random() - 0.5);
+  order.forEach((idx, n) => {
+    setTimeout(() => cells[idx].classList.add('show'), n * 16);
+  });
 
-    function drawShip(x, y) {
-      ctx.fillStyle = '#7c3aed';
-      ctx.fillRect(x-1, y-8, 3, 4);
-      ctx.fillRect(x-5, y-4, 11, 4);
-      ctx.fillRect(x-8, y,   17, 4);
-      ctx.fillRect(x-8, y+4,  4, 4);
-      ctx.fillRect(x+5, y+4,  4, 4);
-      ctx.fillStyle = '#fbbf24';
-      ctx.fillRect(x-1, y+4,  3, 4);
-    }
+  setTimeout(() => {
+    grid.style.opacity = '0';
+    reveal.classList.add('show');
+  }, order.length * 16 + 350);
+})();
 
-    function drawEnemy(e) {
-      ctx.fillStyle = '#e879a0';
-      ctx.fillRect(e.x-1, e.y,   3, 3);
-      ctx.fillRect(e.x-6, e.y+3, 13, 3);
-      ctx.fillRect(e.x-4, e.y+6,  9, 3);
-      ctx.fillStyle = '#f472b6';
-      ctx.fillRect(e.x-6, e.y+3,  3, 6);
-      ctx.fillRect(e.x+4, e.y+3,  3, 6);
-    }
+const messages = [
+  'INICIALIZANDO SISTEMA...',
+  'CARREGANDO CARTUCHOS...',
+  'BUSCANDO SAVES ANTIGOS...',
+  'LIGANDO O FLIPERAMA...',
+  'PRONTO JOGADOR 1.',
+];
 
-    function gameLoop() {
-      ctx.clearRect(0, 0, W, H);
+let msgIndex = 0, charIndex = 0;
+const textEl = document.getElementById('loading-text');
+const progEl = document.getElementById('loading-progress');
 
-      stars.forEach(s => {
-        s.y += s.speed;
-        if (s.y > H) { s.y = 0; s.x = Math.random()*W; }
-        ctx.fillStyle = `rgba(160,140,220,${s.bright})`;
-        ctx.fillRect(s.x, s.y, s.s, s.s);
-      });
+function showWelcomeMessage() {
+  const isFirstVisit = !localStorage.getItem('archv-visited');
+  if (!isFirstVisit) {
+    document.querySelector('app-root').style.visibility = 'visible';
+    return;
+  }
+  localStorage.setItem('archv-visited', '1');
 
-      ship.x += ship.dir * 0.7;
-      if (ship.x > W-30 || ship.x < 30) ship.dir *= -1;
+  const screen = document.createElement('div');
+  screen.id = 'welcome-screen';
+  screen.style.cssText = `
+    position: fixed; inset: 0;
+    background: #0a0b10;
+    z-index: 99998;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'VT323', monospace;
+    transition: opacity 0.8s ease;
+  `;
 
-      bulletTimer++;
-      if (bulletTimer > 18) {
-        bullets.push({ x: ship.x, y: ship.y-10, vy: -5 });
-        bulletTimer = 0;
-      }
+  screen.innerHTML = `
+    <div style="
+      position: relative;
+      width: 520px;
+      background: #0d0e16;
+      border: 1px solid #2a1f4e;
+      border-radius: 4px;
+      padding: 40px;
+      box-shadow: 0 0 40px rgba(124,58,237,0.2), inset 0 0 60px rgba(124,58,237,0.03);
+      overflow: hidden;
+    ">
+      <div style="
+        position: absolute; inset: 0;
+        background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
+        pointer-events: none; z-index: 10;
+      "></div>
+      <div style="position:absolute;top:10px;left:10px;width:14px;height:14px;border:2px solid #6d28d9;border-right:none;border-bottom:none;opacity:0.7"></div>
+      <div style="position:absolute;top:10px;right:10px;width:14px;height:14px;border:2px solid #6d28d9;border-left:none;border-bottom:none;opacity:0.7"></div>
+      <div style="position:absolute;bottom:10px;left:10px;width:14px;height:14px;border:2px solid #6d28d9;border-right:none;border-top:none;opacity:0.7"></div>
+      <div style="position:absolute;bottom:10px;right:10px;width:14px;height:14px;border:2px solid #6d28d9;border-left:none;border-top:none;opacity:0.7"></div>
 
-      enemyTimer++;
-      if (enemyTimer > 80) {
-        enemyTimer = 0;
-        if (enemies.length === 0) { wave++; spawnWave(); }
-        else if (enemies.length < 8) {
-          enemies.push({
-            x: Math.random()*(W-40)+20, y: -10,
-            vx: (Math.random()-0.5)*0.5,
-            vy: 0.3 + wave*0.05,
-            hp: 1
-          });
-        }
-      }
-
-      for (let i = bullets.length-1; i >= 0; i--) {
-        bullets[i].y += bullets[i].vy;
-        if (bullets[i].y < 0) bullets.splice(i, 1);
-      }
-
-      for (let i = enemies.length-1; i >= 0; i--) {
-        enemies[i].x += enemies[i].vx;
-        enemies[i].y += enemies[i].vy;
-        if (enemies[i].x < 10 || enemies[i].x > W-10) enemies[i].vx *= -1;
-        if (enemies[i].y > H+20) enemies.splice(i, 1);
-      }
-
-      outer: for (let bi = bullets.length-1; bi >= 0; bi--) {
-        const b = bullets[bi];
-        for (let ei = enemies.length-1; ei >= 0; ei--) {
-          const e = enemies[ei];
-          if (Math.abs(b.x-e.x) < 12 && Math.abs(b.y-e.y) < 10) {
-            bullets.splice(bi, 1);
-            enemies.splice(ei, 1);
-            score += 10;
-            for (let p = 0; p < 8; p++) {
-              particles.push({
-                x: e.x, y: e.y,
-                vx: (Math.random()-0.5)*3,
-                vy: (Math.random()-0.5)*3,
-                life: 18, maxLife: 18
-              });
-            }
-            document.getElementById('score').textContent = String(score).padStart(6,'0');
-            document.getElementById('wave').textContent  = String(wave).padStart(2,'0');
-            continue outer;
-          }
-        }
-      }
-
-      for (let i = particles.length-1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx; p.y += p.vy; p.life--;
-        if (p.life <= 0) { particles.splice(i, 1); continue; }
-        ctx.fillStyle = `rgba(248,113,168,${p.life/p.maxLife})`;
-        ctx.fillRect(p.x, p.y, 2, 2);
-      }
-
-      ctx.fillStyle = '#a78bfa';
-      bullets.forEach(b => ctx.fillRect(b.x-1, b.y, 2, 5));
-      enemies.forEach(e => drawEnemy(e));
-      drawShip(ship.x, ship.y);
-    }
-
-    setInterval(gameLoop, 1000/30);
-
-    const livesEl = document.getElementById('lives');
-    for (let i = 0; i < 3; i++) {
-      const s = document.createElement('span');
-      s.style.cssText = 'display:inline-block;width:8px;height:8px;background:#7c3aed;clip-path:polygon(50% 0%,100% 60%,100% 100%,50% 80%,0 100%,0 60%)';
-      livesEl.appendChild(s);
-    }
-
-    const messages = [
-      'INICIALIZANDO SISTEMA...',
-      'CARREGANDO CARTUCHOS...',
-      'BUSCANDO SAVES ANTIGOS...',
-      'LIGANDO O FLIPERAMA...',
-      'PRONTO JOGADOR 1.',
-    ];
-
-    let msgIndex = 0, charIndex = 0;
-    const textEl = document.getElementById('loading-text');
-    const progEl = document.getElementById('loading-progress');
-
-    function showWelcomeMessage() {
-      const isFirstVisit = !localStorage.getItem('archv-visited');
-      if (!isFirstVisit) {
-        document.querySelector('app-root').style.visibility = 'visible';
-        return;
-      }
-      localStorage.setItem('archv-visited', '1');
-
-      const screen = document.createElement('div');
-      screen.id = 'welcome-screen';
-      screen.style.cssText = `
-        position: fixed; inset: 0;
-        background: #0a0b10;
-        z-index: 99998;
-        display: flex; align-items: center; justify-content: center;
-        font-family: 'VT323', monospace;
-        transition: opacity 0.8s ease;
-      `;
-
-      screen.innerHTML = `
+      <div style="position:relative;z-index:2;text-align:center;">
         <div style="
-          position: relative;
-          width: 520px;
-          background: #0d0e16;
-          border: 1px solid #2a1f4e;
-          border-radius: 4px;
-          padding: 40px;
-          box-shadow: 0 0 40px rgba(124,58,237,0.2), inset 0 0 60px rgba(124,58,237,0.03);
-          overflow: hidden;
-        ">
-          <div style="
-            position: absolute; inset: 0;
-            background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
-            pointer-events: none; z-index: 10;
-          "></div>
-          <div style="position:absolute;top:10px;left:10px;width:14px;height:14px;border:2px solid #6d28d9;border-right:none;border-bottom:none;opacity:0.7"></div>
-          <div style="position:absolute;top:10px;right:10px;width:14px;height:14px;border:2px solid #6d28d9;border-left:none;border-bottom:none;opacity:0.7"></div>
-          <div style="position:absolute;bottom:10px;left:10px;width:14px;height:14px;border:2px solid #6d28d9;border-right:none;border-top:none;opacity:0.7"></div>
-          <div style="position:absolute;bottom:10px;right:10px;width:14px;height:14px;border:2px solid #6d28d9;border-left:none;border-top:none;opacity:0.7"></div>
+          font-size: 13px; letter-spacing: 4px;
+          color: #f59e0b; margin-bottom: 6px;
+          animation: wcBlink 1s step-start infinite;
+        ">★ INSERT COIN TO CONTINUE ★</div>
 
-          <div style="position:relative;z-index:2;text-align:center;">
-            <div style="
-              font-size: 13px; letter-spacing: 4px;
-              color: #f59e0b; margin-bottom: 6px;
-              animation: wcBlink 1s step-start infinite;
-            ">★ INSERT COIN TO CONTINUE ★</div>
+        <div style="width:100%;height:1px;background:linear-gradient(to right,transparent,#7c3aed,transparent);margin:16px 0;"></div>
 
-            <div style="width:100%;height:1px;background:linear-gradient(to right,transparent,#7c3aed,transparent);margin:16px 0;"></div>
+        <div style="font-size:28px;letter-spacing:6px;color:#fff;margin-bottom:4px;">ARCHV ROOMS</div>
+        <div style="font-size:14px;letter-spacing:3px;color:#4b3d72;margin-bottom:24px;">YOUR SPACE — YOUR GAME</div>
 
-            <div style="font-size:28px;letter-spacing:6px;color:#fff;margin-bottom:4px;">ARCHV ROOMS</div>
-            <div style="font-size:14px;letter-spacing:3px;color:#4b3d72;margin-bottom:24px;">YOUR SPACE — YOUR GAME</div>
+        <div style="width:100%;height:1px;background:linear-gradient(to right,transparent,#7c3aed,transparent);margin-bottom:24px;"></div>
 
-            <div style="width:100%;height:1px;background:linear-gradient(to right,transparent,#7c3aed,transparent);margin-bottom:24px;"></div>
+        <div id="wc-lines" style="
+          text-align: left;
+          font-size: 17px;
+          letter-spacing: 2px;
+          color: #9d8ec9;
+          line-height: 1.8;
+          min-height: 160px;
+        "></div>
 
-            <div id="wc-lines" style="
-              text-align: left;
-              font-size: 17px;
-              letter-spacing: 2px;
-              color: #9d8ec9;
-              line-height: 1.8;
-              min-height: 160px;
-            "></div>
+        <div style="width:100%;height:1px;background:linear-gradient(to right,transparent,#7c3aed,transparent);margin:24px 0 20px;"></div>
 
-            <div style="width:100%;height:1px;background:linear-gradient(to right,transparent,#7c3aed,transparent);margin:24px 0 20px;"></div>
+        <button id="wc-start" style="
+          display: none;
+          background: #7c3aed; border: none;
+          color: #fff; font-family: 'VT323', monospace;
+          font-size: 20px; letter-spacing: 4px;
+          padding: 12px 40px; cursor: pointer;
+          animation: wcBlink 0.8s step-start infinite;
+        ">▶ PRESSIONE START</button>
+      </div>
+    </div>
 
-            <button id="wc-start" style="
-              display: none;
-              background: #7c3aed; border: none;
-              color: #fff; font-family: 'VT323', monospace;
-              font-size: 20px; letter-spacing: 4px;
-              padding: 12px 40px; cursor: pointer;
-              animation: wcBlink 0.8s step-start infinite;
-            ">▶ PRESSIONE START</button>
-          </div>
-        </div>
-
-        <style>
-          @keyframes wcBlink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-          }
-        </style>
-      `;
-
-      document.body.appendChild(screen);
-
-      const lines = [
-        { text: '> BEM-VINDO, JOGADOR.', color: '#a78bfa' },
-        { text: '', color: '' },
-        { text: '  ARCHV ROOMS É UMA PLATAFORMA', color: '#9d8ec9' },
-        { text: '  DE JOGOS CLÁSSICOS DOS ANOS', color: '#9d8ec9' },
-        { text: '  80 E 90 DIRETO NO NAVEGADOR.', color: '#9d8ec9' },
-        { text: '', color: '' },
-        { text: '  + 40 TÍTULOS DISPONÍVEIS', color: '#4ade80' },
-        { text: '  CRIE SUA CONTA E COMECE', color: '#4ade80' },
-        { text: '  A JOGAR AGORA MESMO.', color: '#4ade80' },
-      ];
-
-      const linesEl = document.getElementById('wc-lines');
-      const startBtn = document.getElementById('wc-start');
-      let lineIndex = 0;
-
-      function typeLine() {
-        if (lineIndex >= lines.length) {
-          startBtn.style.display = 'inline-block';
-          startBtn.onclick = () => {
-            document.querySelector('app-root').style.visibility = 'visible';
-            screen.style.opacity = '0';
-            setTimeout(() => screen.remove(), 800);
-          };
-          return;
-        }
-        const { text, color } = lines[lineIndex];
-        const lineEl = document.createElement('div');
-        lineEl.style.color = color;
-        linesEl.appendChild(lineEl);
-
-        if (!text) {
-          lineIndex++;
-          setTimeout(typeLine, 100);
-          return;
-        }
-
-        let i = 0;
-        const type = setInterval(() => {
-          lineEl.textContent += text[i++];
-          if (i >= text.length) {
-            clearInterval(type);
-            lineIndex++;
-            setTimeout(typeLine, 200);
-          }
-        }, 35);
+    <style>
+      @keyframes wcBlink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
       }
+    </style>
+  `;
 
-      setTimeout(typeLine, 400);
+  document.body.appendChild(screen);
+
+  const lines = [
+    { text: '> BEM-VINDO, JOGADOR.', color: '#a78bfa' },
+    { text: '', color: '' },
+    { text: '  ARCHV ROOMS É UMA PLATAFORMA', color: '#9d8ec9' },
+    { text: '  DE JOGOS CLÁSSICOS DOS ANOS', color: '#9d8ec9' },
+    { text: '  80 E 90 DIRETO NO NAVEGADOR.', color: '#9d8ec9' },
+    { text: '', color: '' },
+    { text: '  + 40 TÍTULOS DISPONÍVEIS', color: '#4ade80' },
+    { text: '  CRIE SUA CONTA E COMECE', color: '#4ade80' },
+    { text: '  A JOGAR AGORA MESMO.', color: '#4ade80' },
+  ];
+
+  const linesEl = document.getElementById('wc-lines');
+  const startBtn = document.getElementById('wc-start');
+  let lineIndex = 0;
+
+  function typeLine() {
+    if (lineIndex >= lines.length) {
+      startBtn.style.display = 'inline-block';
+      startBtn.onclick = () => {
+        document.querySelector('app-root').style.visibility = 'visible';
+        screen.style.opacity = '0';
+        setTimeout(() => screen.remove(), 800);
+      };
+      return;
+    }
+    const { text, color } = lines[lineIndex];
+    const lineEl = document.createElement('div');
+    lineEl.style.color = color;
+    linesEl.appendChild(lineEl);
+
+    if (!text) {
+      lineIndex++;
+      setTimeout(typeLine, 100);
+      return;
     }
 
-    function typeNext() {
-      if (msgIndex >= messages.length) {
-        progEl.style.width = '100%';
-        setTimeout(() => {
-          const screen = document.getElementById('loading-screen');
-          screen.classList.add('fade-out');
-          setTimeout(() => {
-            screen.remove();
-            showWelcomeMessage();
-          }, 800);
-        }, 400);
-        return;
+    let i = 0;
+    const type = setInterval(() => {
+      lineEl.textContent += text[i++];
+      if (i >= text.length) {
+        clearInterval(type);
+        lineIndex++;
+        setTimeout(typeLine, 200);
       }
-      progEl.style.width = ((msgIndex / messages.length) * 100) + '%';
-      const msg = messages[msgIndex];
-      if (charIndex < msg.length) {
-        textEl.textContent += msg[charIndex++];
-        setTimeout(typeNext, 45);
-      } else {
-        setTimeout(() => {
-          textEl.textContent = '';
-          charIndex = 0;
-          msgIndex++;
-          typeNext();
-        }, 700);
-      }
-    }
+    }, 35);
+  }
 
-    typeNext();
-  </script>
+  setTimeout(typeLine, 400);
+}
+
+function typeNext() {
+  if (msgIndex >= messages.length) {
+    progEl.style.width = '100%';
+    setTimeout(() => {
+      const screen = document.getElementById('loading-screen');
+      screen.classList.add('fade-out');
+      setTimeout(() => {
+        screen.remove();
+        showWelcomeMessage();
+      }, 800);
+    }, 400);
+    return;
+  }
+  progEl.style.width = ((msgIndex / messages.length) * 100) + '%';
+  const msg = messages[msgIndex];
+  if (charIndex < msg.length) {
+    textEl.textContent += msg[charIndex++];
+    setTimeout(typeNext, 45);
+  } else {
+    setTimeout(() => {
+      textEl.textContent = '';
+      charIndex = 0;
+      msgIndex++;
+      typeNext();
+    }, 700);
+  }
+}
+
+typeNext();
+</script>
 </body>
 </html>
