@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy, signal, ViewChild, ElementRef } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal, ViewChild, ElementRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -27,6 +27,7 @@ export class FriendsComponent implements OnInit, OnDestroy {
   jumpscareActive = false;
   jumpscareVideoUrl = '/videos/hihi.mp4';
   private jumpscareTimer: any;
+  private activityPollInterval: any;
   private eggClickCount = 0;
   private eggClickTimer: any;
 
@@ -54,17 +55,22 @@ export class FriendsComponent implements OnInit, OnDestroy {
   private activeConversationId: number | null = null;
   private msgSubscription?: Subscription;
 
-  ngOnInit(): void {
+ngOnInit(): void {
     this.checkAuth();
     this.loadFriends();
     this.loadPending();
     this.loadFriendsActivity();
     this.chatService.connect();
+
+    this.activityPollInterval = setInterval(() => {
+      this.loadFriendsActivity();
+    }, 30000); 
   }
 
-  ngOnDestroy(): void {
+ngOnDestroy(): void {
     clearTimeout(this.jumpscareTimer);
     clearTimeout(this.eggClickTimer);
+    clearInterval(this.activityPollInterval);
     this.msgSubscription?.unsubscribe();
     this.chatService.disconnect();
   }
