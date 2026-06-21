@@ -30,6 +30,12 @@ export class FriendService {
     });
   }
 
+  getFriendsActivity(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/activity`, {
+      headers: this.getHeaders()
+    });
+  }
+
   searchUsers(query: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/search?q=${encodeURIComponent(query)}`, {
       headers: this.getHeaders()
