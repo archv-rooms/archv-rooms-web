@@ -161,6 +161,38 @@
               </div>
             </div>
 
+            <!-- ATIVIDADE DOS AMIGOS -->
+            <div class="panel activity-panel">
+              <h3 class="panel-title">▶ atividade dos amigos</h3>
+
+              <p class="loading" *ngIf="isLoadingActivity()">carregando...</p>
+              <p class="empty-state" *ngIf="!isLoadingActivity() && friendsActivity().length === 0">
+                Nenhuma atividade para mostrar.
+              </p>
+
+              <div class="user-card" *ngFor="let item of friendsActivity()">
+                <div class="user-info">
+                  <div class="user-avatar">{{ item.user?.username?.charAt(0)?.toUpperCase() }}</div>
+                  <div class="user-details">
+                    <span class="user-name">{{ item.user?.username }}</span>
+
+                    <span class="activity-status playing" *ngIf="item.status === 'playing'">
+                      <span class="status-dot"></span>
+                      jogando agora: {{ item.game?.title }} ({{ item.game?.console }})
+                    </span>
+
+                    <span class="activity-status" *ngIf="item.status === 'last_played'">
+                      jogou {{ item.game?.title }} há {{ timeSince(item.since) }}
+                    </span>
+
+                    <span class="activity-status inactive" *ngIf="item.status === 'inactive'">
+                      nenhuma atividade recente
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- MEUS AMIGOS -->
             <div class="panel friends-panel">
               <h3 class="panel-title">
