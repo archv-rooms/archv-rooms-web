@@ -280,19 +280,20 @@ $amber:    #fbbf24;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 
-  .search-panel  { grid-column: 1; }
-  .pending-panel { grid-column: 2; }
-  .friends-panel { grid-column: 1 / 3; }
+  .search-panel   { grid-column: 1; }
+  .pending-panel  { grid-column: 2; }
+  .activity-panel { grid-column: 1 / 3; }
+  .friends-panel  { grid-column: 1 / 3; }
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
 
     .search-panel,
     .pending-panel,
+    .activity-panel,
     .friends-panel { grid-column: 1; }
   }
 }
-
 // ─────────────────────────────────────────────────────
 // PANEL
 // ─────────────────────────────────────────────────────
@@ -683,10 +684,11 @@ $amber:    #fbbf24;
 
   .topbar-brand { font-size: 11px; letter-spacing: 2px; }
 
-  .friends-layout {
-    grid-template-columns: 1fr;
-    .friends-panel { grid-column: 1; }
-  }
+.friends-layout {
+  grid-template-columns: 1fr;
+  .activity-panel,
+  .friends-panel { grid-column: 1; }
+}
 }
 
 // ─────────────────────────────────────────────────────
@@ -921,4 +923,40 @@ $amber:    #fbbf24;
     opacity: 0.3;
     cursor: not-allowed;
   }
+}
+
+// ─────────────────────────────────────────────────────
+// ATIVIDADE DOS AMIGOS
+// ─────────────────────────────────────────────────────
+.activity-status {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--color-text-dim);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &.playing {
+    color: $green-ok;
+  }
+
+  &.inactive {
+    color: var(--color-text-dim);
+    font-style: italic;
+  }
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: $green-ok;
+  box-shadow: 0 0 4px rgba($green-ok, 0.6);
+  flex-shrink: 0;
+  animation: statusPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.5; transform: scale(1.3); }
 }
