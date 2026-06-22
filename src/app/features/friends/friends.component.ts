@@ -1,10 +1,11 @@
-import { Component, inject, OnInit, OnDestroy, signal, ViewChild, ElementRef, NgZone } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FriendService } from '../../core/services/friend.service';
 import { ChatService, ChatMessage } from '../../core/services/chat.service';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-friends',
@@ -16,6 +17,7 @@ import { ChatService, ChatMessage } from '../../core/services/chat.service';
 export class FriendsComponent implements OnInit, OnDestroy {
   private friendService = inject(FriendService);
   private chatService = inject(ChatService);
+  private notificationService = inject(NotificationService);
   private router = inject(Router);
 
   @ViewChild('chatMessages') chatMessagesEl!: ElementRef;
@@ -23,11 +25,11 @@ export class FriendsComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   userName = '';
   isAdmin = false;
+  unreadCount = 0;
 
   jumpscareActive = false;
   jumpscareVideoUrl = '/videos/hihi.mp4';
   private jumpscareTimer: any;
-  private activityPollInterval: any;
   private eggClickCount = 0;
   private eggClickTimer: any;
 
@@ -55,19 +57,23 @@ export class FriendsComponent implements OnInit, OnDestroy {
   private activeConversationId: number | null = null;
   private msgSubscription?: Subscription;
 
-ngOnInit(): void {
+  // ── ACTIVITY POLLING ──
+  private activityPollInterval: any;
+
+  ngOnInit(): void {
     this.checkAuth();
     this.loadFriends();
     this.loadPending();
     this.loadFriendsActivity();
+    this.loadUnreadCount();
     this.chatService.connect();
 
     this.activityPollInterval = setInterval(() => {
       this.loadFriendsActivity();
-    }, 30000); 
+    }, 30000); // atualiza a cada 30s
   }
 
-ngOnDestroy(): void {
+  ngOnDestroy(): void {
     clearTimeout(this.jumpscareTimer);
     clearTimeout(this.eggClickTimer);
     clearInterval(this.activityPollInterval);
@@ -162,6 +168,14 @@ ngOnDestroy(): void {
     });
   }
 
+  private loadUnreadCount(): void {
+    this.notificationService.getUnreadCount().subscribe({
+      next: (res) => {
+        if (res.success) this.unreadCount = res.data.count;
+      }
+    });
+  }
+
   onSearch(): void {
     if (!this.searchQuery.trim()) {
       this.searchResults.set([]);
@@ -233,14 +247,20 @@ ngOnDestroy(): void {
   timeSince(dateStr: string | null): string {
     if (!dateStr) return '';
     const diffMs = Date.now() - new Date(dateStr).getTime();
+    const minutes = Math.floor(diffMs / 60000);
+    if (minutes < 60) return `${minutes}min`;
+
     const hours = Math.floor(diffMs / 3600000);
-    if (hours < 1) {
-      const minutes = Math.floor(diffMs / 60000);
-      return `${minutes}min`;
-    }
     if (hours < 24) return `${hours}h`;
+
     const days = Math.floor(hours / 24);
-    return `${days}d`;
+    if (days < 7) return `${days}d`;
+
+    const weeks = Math.floor(days / 7);
+    if (weeks < 4) return `${weeks}sem`;
+
+    const months = Math.floor(days / 30);
+    return `${months}mês${months > 1 ? 'es' : ''}`;
   }
 
   // ── CHAT ──────────────────────────────────────────
