@@ -278,158 +278,184 @@ $green:  #4ade80;
 
 // ── PÓDIO ────────────────────────────────────────────
 .podium {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 1rem;
   margin-bottom: 1.5rem;
   padding-bottom: 1.25rem;
   border-bottom: 1px solid var(--color-border);
+  position: relative;
+}
+
+.podium-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: flex-end;
+  gap: 0;
 }
 
 .podium-slot {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.35rem;
   cursor: pointer;
-  transition: transform 0.2s;
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(20px);
 
-  &.first  {
-    order: 2;
-    animation: podiumEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
-  }
-  &.second {
-    order: 1;
-    animation: podiumEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards;
-  }
-  &.third  {
-    order: 3;
-    animation: podiumEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards;
-  }
+  &.c1 { animation: podiumEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.05s forwards; }
+  &.c2 { animation: podiumEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards; }
+  &.c3 { animation: podiumEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.38s forwards; }
 
-  &:hover {
-    transform: translateY(-4px);
+  &:hover .block { filter: brightness(1.18); }
+  &:hover .podium-name { letter-spacing: 2px; color: var(--color-primary); }
+}
 
-    .podium-name { color: var(--color-primary); }
+.block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px 6px 12px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+  border-right: 1px solid;
+  position: relative;
+  transition: filter 0.2s;
 
-    .podium-avatar {
-      &.gold   { animation: none; box-shadow: 0 0 32px rgba(251, 191, 36, 0.8); }
-      &.silver { box-shadow: 0 0 20px rgba(148, 163, 184, 0.6); }
-      &.bronze { box-shadow: 0 0 20px rgba(194, 119, 58, 0.6); }
-    }
-  }
-
-  &.first .podium-avatar {
-    animation: goldPulse 2.5s ease-in-out infinite;
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 0; right: 0;
+    height: 1px;
   }
 }
 
-// medalha sem emoji — substituída por texto estilizado no HTML
-.medal {
-  font-size: 0.75rem;
-  letter-spacing: 2px;
-  color: var(--color-text-dim);
+.b1 {
+  height: 190px;
+  background: rgba(251, 191, 36, 0.05);
+  border-color: rgba(251, 191, 36, 0.35);
+  &::before { background: $gold; }
 }
+.b2 {
+  height: 140px;
+  background: rgba(148, 163, 184, 0.04);
+  border-color: rgba(148, 163, 184, 0.25);
+  &::before { background: $silver; }
+}
+.b3 {
+  height: 100px;
+  background: rgba(194, 119, 58, 0.04);
+  border-color: rgba(194, 119, 58, 0.25);
+  &::before { background: $bronze; }
+}
+
+.corner {
+  position: absolute;
+  width: 6px; height: 6px;
+}
+.corner-tl { top: -1px; left: -1px; border-top: 1px solid; border-left: 1px solid; }
+.corner-tr { top: -1px; right: -1px; border-top: 1px solid; border-right: 1px solid; }
+
+.c1 .corner { border-color: $gold; }
+.c2 .corner { border-color: $silver; }
+.c3 .corner { border-color: $bronze; }
 
 .podium-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
-  background: rgba(from var(--color-primary) r g b / 0.15);
-  border: 1px solid rgba(from var(--color-border-glow) r g b / 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  color: var(--color-primary);
+  width: 32px; height: 32px;
+  border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  margin-bottom: 8px;
   position: relative;
-  transition: box-shadow 0.3s;
 
   &.gold {
-    width: 52px;
-    height: 52px;
-    background: rgba(251, 191, 36, 0.12);
-    border: 1px solid $gold;
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.6);
     color: $gold;
-    font-size: 20px;
-
-    // borda giratória no 1º lugar
-    &::before {
-      content: '';
-      position: absolute;
-      inset: -3px;
-      border-radius: 6px;
-      background: conic-gradient(
-        from 0deg,
-        transparent 0%,
-        rgba(251, 191, 36, 0.6) 20%,
-        transparent 40%
-      );
-      animation: spinBorder 3s linear infinite;
-      z-index: -1;
-    }
+    font-size: 13px;
 
     &::after {
       content: '';
       position: absolute;
-      inset: -2px;
-      border-radius: 5px;
-      background: var(--color-bg-card);
-      z-index: -1;
+      inset: -4px;
+      border-radius: 4px;
+      border: 1px solid rgba(251, 191, 36, 0.2);
+      animation: pingAv 2s ease-in-out infinite;
     }
   }
-
   &.silver {
-    width: 42px; height: 42px;
-    background: rgba(148, 163, 184, 0.12);
-    border-color: $silver;
+    background: rgba(148, 163, 184, 0.08);
+    border: 1px solid rgba(148, 163, 184, 0.5);
     color: $silver;
-    box-shadow: 0 0 10px rgba(148, 163, 184, 0.2);
   }
-
   &.bronze {
-    width: 36px; height: 36px;
-    background: rgba(194, 119, 58, 0.12);
-    border-color: $bronze;
+    background: rgba(194, 119, 58, 0.08);
+    border: 1px solid rgba(194, 119, 58, 0.5);
     color: $bronze;
-    box-shadow: 0 0 10px rgba(194, 119, 58, 0.2);
   }
 }
 
 .podium-name {
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 1px;
-  color: var(--color-text);
+  color: var(--color-text-muted);
   text-align: center;
-  max-width: 5rem;
+  max-width: 90px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transition: color 0.2s;
+  transition: letter-spacing 0.2s, color 0.2s;
 }
 
 .podium-time {
   font-size: 11px;
   color: var(--color-primary);
   letter-spacing: 1px;
+  margin-top: 4px;
   font-variant-numeric: tabular-nums;
 }
 
-.time-digit {
-  display: inline-block;
-  animation: digitDrop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
-  @keyframes digitDrop {
-    from { opacity: 0; transform: translateY(-8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+.c1 .podium-time { color: $gold; }
+.c2 .podium-time { color: $silver; }
+.c3 .podium-time { color: $bronze; }
+
+.podium-floor {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(148, 163, 184, 0.08) 20%,
+    rgba(148, 163, 184, 0.25) 50%,
+    rgba(148, 163, 184, 0.08) 80%,
+    transparent 100%
+  );
 }
 
-.time-sep {
-  opacity: 0.4;
-  display: inline-block;
+.podium-base-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin-bottom: 0.5rem;
+}
+
+.podium-base {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 6px;
+  gap: 1px;
+}
+
+.medal {
+  font-size: 9px;
+  letter-spacing: 4px;
+  &.gold   { color: rgba(251, 191, 36, 0.7); }
+  &.silver { color: rgba(148, 163, 184, 0.6); }
+  &.bronze { color: rgba(194, 119, 58, 0.6); }
+}
+
+.medal-label {
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: var(--color-border);
+  text-transform: uppercase;
 }
 
 // ── RANKING TABLE ────────────────────────────────────
@@ -756,4 +782,10 @@ $green:  #4ade80;
 @keyframes jumpscare-flash {
   0%   { opacity: 0; transform: scale(1.05); }
   100% { opacity: 1; transform: scale(1); }
+}
+
+// ── KEYFRAMES novos ──
+@keyframes pingAv {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%       { opacity: 0;   transform: scale(1.3); }
 }
