@@ -37,7 +37,9 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
   isLoadingHistory = signal(false);
   isLoadingGames = signal(false);
 
-  // Lê o usuário atual de forma segura
+  // Controla se o contador já animou por posição
+  private animatedPositions = new Set<number>();
+
   currentUser: any = this.parseCurrentUser();
 
   private parseCurrentUser(): any {
@@ -119,55 +121,35 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
     this.isLoadingGames.set(true);
     this.leaderboardService.getGames().subscribe({
       next: (res) => {
-        if (res.success && res.data.length > 0) {
-          this.games.set(res.data);
-        } else {
-          this.games.set([]);
-        }
+        this.games.set(res.success && res.data.length > 0 ? res.data : []);
         this.isLoadingGames.set(false);
       },
-      error: () => {
-        this.games.set([]);
-        this.isLoadingGames.set(false);
-      }
+      error: () => { this.games.set([]); this.isLoadingGames.set(false); }
     });
   }
 
   loadRanking(): void {
     this.isLoadingRanking.set(true);
-    this.ranking.set([]); // limpa antes de recarregar
+    this.ranking.set([]);
+    this.animatedPositions.clear();
     this.leaderboardService.getRanking(this.selectedGameId()).subscribe({
       next: (res) => {
-        if (res.success && res.data.length > 0) {
-          this.ranking.set(res.data);
-        } else {
-          this.ranking.set([]);
-        }
+        this.ranking.set(res.success && res.data.length > 0 ? res.data : []);
         this.isLoadingRanking.set(false);
       },
-      error: () => {
-        this.ranking.set([]);
-        this.isLoadingRanking.set(false);
-      }
+      error: () => { this.ranking.set([]); this.isLoadingRanking.set(false); }
     });
   }
 
   loadHistory(): void {
     this.isLoadingHistory.set(true);
-    this.history.set([]); // limpa antes de recarregar
+    this.history.set([]);
     this.leaderboardService.getHistory(this.selectedGameId()).subscribe({
       next: (res) => {
-        if (res.success && res.data.length > 0) {
-          this.history.set(res.data);
-        } else {
-          this.history.set([]);
-        }
+        this.history.set(res.success && res.data.length > 0 ? res.data : []);
         this.isLoadingHistory.set(false);
       },
-      error: () => {
-        this.history.set([]);
-        this.isLoadingHistory.set(false);
-      }
+      error: () => { this.history.set([]); this.isLoadingHistory.set(false); }
     });
   }
 
@@ -186,10 +168,27 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
     return [h, m, s].map(v => String(v).padStart(2, '0')).join(':');
   }
 
-  getMedalIcon(index: number): string {
-    if (index === 0) return '🥇';
-    if (index === 1) return '🥈';
-    if (index === 2) return '🥉';
+  // Retorna HTML com cada dígito em <span> para animação CSS
+  // A animação só dispara uma vez por posição (evita re-trigger no change detection)
+  getAnimatedTime(seconds: number, position: number): string {
+    const formatted = this.formatTime(seconds);
+    const alreadyAnimated = this.animatedPositions.has(position);
+
+    if (!alreadyAnimated) {
+      this.animatedPositions.add(position);
+    }
+
+    return formatted
+      .split('')
+      .map((char, i) => {
+        if (char === ':') return `<span class="time-sep">:</span>`;
+        const delay = alreadyAnimated ? 0 : (i * 60);
+        return `<span class="time-digit" style="animation-delay:${delay}ms">${char}</span>`;
+      })
+      .join('');
+  }
+
+  getRankLabel(index: number): string {
     return `#${index + 1}`;
   }
 
@@ -198,11 +197,11 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
   }
 
   navigateToProfile(username: string, event?: Event): void {
-  if (event) event.stopPropagation();
-  if (username) this.router.navigate(['/profile', username]);
-}
+    if (event) event.stopPropagation();
+    if (username) this.router.navigate(['/profile', username]);
+  }
 
   navigateToGame(gameId: number): void {
-  if (gameId) this.router.navigate(['/rooms', gameId]);
- }
+    if (gameId) this.router.navigate(['/rooms', gameId]);
+  }
 }
