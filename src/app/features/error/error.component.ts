@@ -2,7 +2,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service'; // ajuste o caminho conforme seu projeto
+import { AuthService } from '../../core/services/auth.service'; // ajuste o caminho
 
 // Mapa de códigos de erro → título + descrição
 const ERROR_MAP: Record<number, { title: string; desc: string }> = {
@@ -62,7 +62,6 @@ export class ErrorComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Aceita o código via queryParam (?code=404) ou route data ({ data: { code: 404 } })
     const paramCode = this.route.snapshot.queryParamMap.get('code');
     const dataCode  = this.route.snapshot.data?.['code'];
 
@@ -85,5 +84,9 @@ export class ErrorComponent implements OnInit {
 
   goBack(): void {
     window.history.back();
+  }
+
+  isActive(path: string): boolean {
+    return this.currentPath === path;
   }
 }
