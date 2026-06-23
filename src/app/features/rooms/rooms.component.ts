@@ -39,6 +39,7 @@ export class RoomsComponent implements OnInit {
   accessDenied = false;
 
   isLoggedIn = false;
+  isAdmin = false;
   userName = '';
 
   // Emulador
