@@ -1,7 +1,8 @@
 // error.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service'; // ajuste o caminho conforme seu projeto
 
 // Mapa de códigos de erro → título + descrição
 const ERROR_MAP: Record<number, { title: string; desc: string }> = {
@@ -45,11 +46,15 @@ const DEFAULT_ERROR = {
 })
 export class ErrorComponent implements OnInit {
 
-  errorCode  = 0;
-  errorTitle = '';
-  errorDesc  = '';
+  private authService = inject(AuthService);
+
+  errorCode   = 0;
+  errorTitle  = '';
+  errorDesc   = '';
   currentPath = '';
   timestamp   = '';
+  isLoggedIn  = false;
+  isAdmin     = false;
 
   constructor(
     private router: Router,
@@ -69,6 +74,9 @@ export class ErrorComponent implements OnInit {
 
     this.currentPath = window.location.pathname;
     this.timestamp   = new Date().toISOString().replace('T', ' ').split('.')[0];
+
+    this.isLoggedIn = this.authService.isAuthenticated();
+    this.isAdmin    = this.authService.isAdmin();
   }
 
   navigate(path: string): void {
