@@ -21,30 +21,52 @@ export class LeaderboardService {
     return new HttpHeaders(headers);
   }
 
-  // Normaliza qualquer formato de resposta da API para sempre retornar { success, data }
-  private normalize(res: any): { success: boolean; data: any[] } {
-    // Array direto: [...]
-    if (Array.isArray(res)) {
-      return { success: true, data: res };
+  // API retorna { success, data: { ranking|sessions|games: [...] } }
+  // Normaliza tudo para { success, data: [...] } com campos padronizados
+  private normalizeRanking(res: any): { success: boolean; data: any[] } {
+    try {
+      const raw = res?.data?.ranking ?? res?.data ?? res ?? [];
+      const arr = Array.isArray(raw) ? raw : [];
+      const data = arr.map((entry: any) => ({
+        userId:       entry.user?.id       ?? entry.userId,
+        username:     entry.user?.name     ?? entry.username ?? entry.user?.username ?? '—',
+        avatar:       entry.user?.avatar   ?? entry.avatar,
+        gameName:     entry.game?.title    ?? entry.gameName,
+        totalSeconds: entry.totalDuration  ?? entry.totalSeconds ?? 0,
+        position:     entry.position
+      }));
+      return { success: true, data };
+    } catch {
+      return { success: false, data: [] };
     }
-    // { data: [...] }
-    if (res && Array.isArray(res.data)) {
-      return { success: true, data: res.data };
+  }
+
+  private normalizeHistory(res: any): { success: boolean; data: any[] } {
+    try {
+      const raw = res?.data?.sessions ?? res?.data ?? res ?? [];
+      const arr = Array.isArray(raw) ? raw : [];
+      const data = arr.map((entry: any) => ({
+        userId:          entry.user?.id       ?? entry.userId,
+        username:        entry.user?.name     ?? entry.username ?? '—',
+        avatar:          entry.user?.avatar   ?? entry.avatar,
+        gameName:        entry.game?.title    ?? entry.gameName ?? 'jogo desconhecido',
+        durationSeconds: entry.duration       ?? entry.durationSeconds ?? 0,
+        playedAt:        entry.startedAt      ?? entry.playedAt ?? entry.createdAt
+      }));
+      return { success: true, data };
+    } catch {
+      return { success: false, data: [] };
     }
-    // { success: true, data: [...] }
-    if (res && res.success !== undefined) {
-      return { success: !!res.success, data: Array.isArray(res.data) ? res.data : [] };
+  }
+
+  private normalizeGames(res: any): { success: boolean; data: any[] } {
+    try {
+      const raw = res?.data?.games ?? res?.data ?? res ?? [];
+      const arr = Array.isArray(raw) ? raw : [];
+      return { success: true, data: arr };
+    } catch {
+      return { success: false, data: [] };
     }
-    // { items: [...] }
-    if (res && Array.isArray(res.items)) {
-      return { success: true, data: res.items };
-    }
-    // { results: [...] }
-    if (res && Array.isArray(res.results)) {
-      return { success: true, data: res.results };
-    }
-    // fallback
-    return { success: false, data: [] };
   }
 
   getRanking(gameId?: number): Observable<{ success: boolean; data: any[] }> {
@@ -52,7 +74,7 @@ export class LeaderboardService {
     return this.http
       .get(`${this.baseUrl}/ranking${params}`, { headers: this.getHeaders() })
       .pipe(
-        map(res => this.normalize(res)),
+        map(res => this.normalizeRanking(res)),
         catchError(err => {
           console.error('[LeaderboardService] getRanking error:', err);
           return of({ success: false, data: [] });
@@ -65,7 +87,7 @@ export class LeaderboardService {
     return this.http
       .get(`${this.baseUrl}/history${params}`, { headers: this.getHeaders() })
       .pipe(
-        map(res => this.normalize(res)),
+        map(res => this.normalizeHistory(res)),
         catchError(err => {
           console.error('[LeaderboardService] getHistory error:', err);
           return of({ success: false, data: [] });
@@ -77,7 +99,7 @@ export class LeaderboardService {
     return this.http
       .get(`${this.baseUrl}/games`, { headers: this.getHeaders() })
       .pipe(
-        map(res => this.normalize(res)),
+        map(res => this.normalizeGames(res)),
         catchError(err => {
           console.error('[LeaderboardService] getGames error:', err);
           return of({ success: false, data: [] });
