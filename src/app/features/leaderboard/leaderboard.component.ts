@@ -37,7 +37,16 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
   isLoadingHistory = signal(false);
   isLoadingGames = signal(false);
 
-  currentUser = JSON.parse(localStorage.getItem('@archv:user') || '{}');
+  // Lê o usuário atual de forma segura
+  currentUser: any = this.parseCurrentUser();
+
+  private parseCurrentUser(): any {
+    try {
+      return JSON.parse(localStorage.getItem('@archv:user') || '{}');
+    } catch {
+      return {};
+    }
+  }
 
   ngOnInit(): void {
     this.checkAuth();
@@ -52,11 +61,16 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
   }
 
   private checkAuth(): void {
-    const token = localStorage.getItem('@archv:token');
-    const user = JSON.parse(localStorage.getItem('@archv:user') || '{}');
-    this.isLoggedIn = !!token;
-    this.userName = user?.username || user?.name || '';
-    this.isAdmin = user?.role === 'admin';
+    try {
+      const token = localStorage.getItem('@archv:token');
+      const user = JSON.parse(localStorage.getItem('@archv:user') || '{}');
+      this.isLoggedIn = !!token;
+      this.userName = user?.username || user?.name || '';
+      this.isAdmin = user?.role === 'admin';
+      this.currentUser = user;
+    } catch {
+      this.isLoggedIn = false;
+    }
   }
 
   logout(): void {
@@ -105,32 +119,55 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
     this.isLoadingGames.set(true);
     this.leaderboardService.getGames().subscribe({
       next: (res) => {
-        if (res.success) this.games.set(res.data);
+        if (res.success && res.data.length > 0) {
+          this.games.set(res.data);
+        } else {
+          this.games.set([]);
+        }
         this.isLoadingGames.set(false);
       },
-      error: () => this.isLoadingGames.set(false)
+      error: () => {
+        this.games.set([]);
+        this.isLoadingGames.set(false);
+      }
     });
   }
 
   loadRanking(): void {
     this.isLoadingRanking.set(true);
+    this.ranking.set([]); // limpa antes de recarregar
     this.leaderboardService.getRanking(this.selectedGameId()).subscribe({
       next: (res) => {
-        if (res.success) this.ranking.set(res.data);
+        if (res.success && res.data.length > 0) {
+          this.ranking.set(res.data);
+        } else {
+          this.ranking.set([]);
+        }
         this.isLoadingRanking.set(false);
       },
-      error: () => this.isLoadingRanking.set(false)
+      error: () => {
+        this.ranking.set([]);
+        this.isLoadingRanking.set(false);
+      }
     });
   }
 
   loadHistory(): void {
     this.isLoadingHistory.set(true);
+    this.history.set([]); // limpa antes de recarregar
     this.leaderboardService.getHistory(this.selectedGameId()).subscribe({
       next: (res) => {
-        if (res.success) this.history.set(res.data);
+        if (res.success && res.data.length > 0) {
+          this.history.set(res.data);
+        } else {
+          this.history.set([]);
+        }
         this.isLoadingHistory.set(false);
       },
-      error: () => this.isLoadingHistory.set(false)
+      error: () => {
+        this.history.set([]);
+        this.isLoadingHistory.set(false);
+      }
     });
   }
 
@@ -157,6 +194,6 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
   }
 
   isCurrentUser(userId: number): boolean {
-    return this.currentUser?.id === userId;
+    return !!(this.currentUser?.id && this.currentUser.id === userId);
   }
 }
