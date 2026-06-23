@@ -321,8 +321,12 @@ export class RoomsComponent implements OnInit {
     return id.toString().padStart(6, '0');
   }
 
-  navigate(path: string): void {
+navigate(path: string): void {
     this.router.navigate([path]);
+  }
+
+  isActive(path: string): boolean {
+    return this.router.url === path;
   }
 
   onImgError(event: Event): void {
