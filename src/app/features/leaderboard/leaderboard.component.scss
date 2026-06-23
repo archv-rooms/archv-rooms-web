@@ -593,3 +593,74 @@ $green:  #4ade80;
   .sidebar { display: none; }
   .leaderboard-layout { grid-template-columns: 1fr; }
 }
+
+// ── PÓDIO MELHORADO ──────────────────────────────────
+.podium-slot {
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  &:hover { transform: translateY(-3px); }
+
+  &.first .podium-avatar {
+    animation: goldPulse 2s ease-in-out infinite;
+  }
+}
+
+.podium-avatar {
+  &.silver {
+    width: 40px; height: 40px;
+    background: rgba(148, 163, 184, 0.15);
+    border-color: $silver;
+    color: $silver;
+    box-shadow: 0 0 10px rgba(148, 163, 184, 0.25);
+  }
+
+  &.bronze {
+    width: 36px; height: 36px;
+    background: rgba(194, 119, 58, 0.15);
+    border-color: $bronze;
+    color: $bronze;
+    box-shadow: 0 0 10px rgba(194, 119, 58, 0.25);
+  }
+}
+
+@keyframes goldPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(251, 191, 36, 0.3); }
+  50%       { box-shadow: 0 0 24px rgba(251, 191, 36, 0.6); }
+}
+
+// ── HISTORY CARD INTERATIVO ──────────────────────────
+.history-card {
+  cursor: pointer;
+
+  &:hover .history-play-btn { opacity: 1; transform: translateX(0); }
+}
+
+.history-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.history-user {
+  cursor: pointer;
+  transition: color 0.2s;
+
+  &:hover { color: var(--color-primary); text-decoration: underline; }
+}
+
+.history-play-btn {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--color-primary);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.2s, transform 0.2s;
+  white-space: nowrap;
+}
