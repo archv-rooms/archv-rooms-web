@@ -996,3 +996,215 @@ $amber:    #fbbf24;
   box-shadow: 0 0 6px rgba($red-err, 0.8);
   border: 1px solid var(--color-bg-panel);
 }
+
+// ─────────────────────────────────────────────────────
+// PRESENCE GRID — mini mapa de jogadores
+// ─────────────────────────────────────────────────────
+.presence-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(from var(--color-border-glow) r g b / 0.15);
+  border-radius: 4px;
+}
+
+.presence-node {
+  width: 28px;
+  height: 28px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  letter-spacing: 0;
+  font-weight: bold;
+  background: rgba(from var(--color-border-glow) r g b / 0.08);
+  border: 1px solid rgba(from var(--color-border-glow) r g b / 0.2);
+  color: var(--color-text-dim);
+  transition: all 0.3s ease;
+  cursor: default;
+
+  &.online {
+    background: rgba($green-ok, 0.15);
+    border-color: $green-ok;
+    color: $green-ok;
+    box-shadow: 0 0 6px rgba($green-ok, 0.4);
+    animation: nodeGlow 1.6s ease-in-out infinite;
+  }
+
+  &.recent {
+    background: rgba(from var(--color-primary) r g b / 0.12);
+    border-color: var(--color-primary-dim);
+    color: var(--color-text-muted);
+  }
+}
+
+@keyframes nodeGlow {
+  0%, 100% { box-shadow: 0 0 4px rgba($green-ok, 0.3); }
+  50%       { box-shadow: 0 0 10px rgba($green-ok, 0.7); }
+}
+
+// ─────────────────────────────────────────────────────
+// ACTIVITY ROW
+// ─────────────────────────────────────────────────────
+.activity-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: rgba(from var(--color-bg-card) r g b / 0.95);
+  margin-bottom: 6px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    border-color: var(--color-border-glow);
+    box-shadow: 0 0 12px rgba(from var(--color-primary) r g b / 0.12);
+  }
+}
+
+// ─────────────────────────────────────────────────────
+// LIVE AVATAR
+// ─────────────────────────────────────────────────────
+.activity-avatar {
+  position: relative;
+
+  &.live {
+    border-color: $green-ok !important;
+    box-shadow: 0 0 8px rgba($green-ok, 0.5);
+  }
+}
+
+.live-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 6px;
+  border: 1px solid $green-ok;
+  animation: liveRing 1.4s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes liveRing {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+
+// ─────────────────────────────────────────────────────
+// LIVE TAG + CONSOLE TAG
+// ─────────────────────────────────────────────────────
+.live-tag {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background: rgba($green-ok, 0.15);
+  border: 1px solid $green-ok;
+  color: $green-ok;
+  padding: 1px 5px;
+  border-radius: 2px;
+  animation: blink 1.2s step-end infinite;
+}
+
+.console-tag {
+  font-size: 9px;
+  letter-spacing: 1px;
+  background: rgba(from var(--color-primary) r g b / 0.12);
+  border: 1px solid var(--color-primary-dim);
+  color: var(--color-text-muted);
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+// ─────────────────────────────────────────────────────
+// PENDING LABEL
+// ─────────────────────────────────────────────────────
+.pending-label {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--color-text-dim);
+  font-style: italic;
+}
+
+.pending-card {
+  border-color: rgba(from var(--color-primary) r g b / 0.2) !important;
+
+  &:hover {
+    border-color: var(--color-primary-dim) !important;
+  }
+}
+
+// ─────────────────────────────────────────────────────
+// FRIENDS GRID — estilo ranking
+// ─────────────────────────────────────────────────────
+.friends-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.friend-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: rgba(from var(--color-bg-card) r g b / 0.95);
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    border-color: var(--color-border-glow);
+    box-shadow: 0 0 12px rgba(from var(--color-primary) r g b / 0.12);
+  }
+
+  &:first-child {
+    border-color: rgba(251, 191, 36, 0.35);
+    .friend-rank-num { color: $amber; }
+
+    &:hover {
+      border-color: rgba($amber, 0.6);
+      box-shadow: 0 0 12px rgba($amber, 0.15);
+    }
+  }
+
+  &:nth-child(2) {
+    border-color: rgba(from var(--color-border-glow) r g b / 0.3);
+    .friend-rank-num { color: #c0c0c0; }
+  }
+
+  &:nth-child(3) {
+    border-color: rgba(205, 127, 50, 0.25);
+    .friend-rank-num { color: #cd7f32; }
+  }
+}
+
+.friend-rank-num {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--color-text-dim);
+  min-width: 24px;
+  text-align: center;
+}
+
+.friend-avatar {
+  flex-shrink: 0;
+}
+
+.friend-info {
+  flex: 1;
+  min-width: 0;
+}
+
+// ─────────────────────────────────────────────────────
+// PANEL META
+// ─────────────────────────────────────────────────────
+.panel-meta {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--color-text-dim);
+  margin-left: auto;
+  font-style: italic;
+}
