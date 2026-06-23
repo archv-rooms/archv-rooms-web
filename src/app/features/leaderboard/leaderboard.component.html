@@ -111,24 +111,28 @@
 
             <!-- PÓDIO -->
             <div class="podium" *ngIf="ranking().length >= 3">
-              <div class="podium-slot second">
+
+              <div class="podium-slot second" (click)="navigateToProfile(ranking()[1]?.username)">
                 <span class="medal">🥈</span>
-                <div class="podium-avatar">{{ ranking()[1]?.username?.charAt(0)?.toUpperCase() }}</div>
+                <div class="podium-avatar silver">{{ ranking()[1]?.username?.charAt(0)?.toUpperCase() }}</div>
                 <span class="podium-name">{{ ranking()[1]?.username }}</span>
                 <span class="podium-time">{{ formatTime(ranking()[1]?.totalSeconds) }}</span>
               </div>
-              <div class="podium-slot first">
+
+              <div class="podium-slot first" (click)="navigateToProfile(ranking()[0]?.username)">
                 <span class="medal">🥇</span>
                 <div class="podium-avatar gold">{{ ranking()[0]?.username?.charAt(0)?.toUpperCase() }}</div>
                 <span class="podium-name">{{ ranking()[0]?.username }}</span>
                 <span class="podium-time">{{ formatTime(ranking()[0]?.totalSeconds) }}</span>
               </div>
-              <div class="podium-slot third">
+
+              <div class="podium-slot third" (click)="navigateToProfile(ranking()[2]?.username)">
                 <span class="medal">🥉</span>
-                <div class="podium-avatar">{{ ranking()[2]?.username?.charAt(0)?.toUpperCase() }}</div>
+                <div class="podium-avatar bronze">{{ ranking()[2]?.username?.charAt(0)?.toUpperCase() }}</div>
                 <span class="podium-name">{{ ranking()[2]?.username }}</span>
                 <span class="podium-time">{{ formatTime(ranking()[2]?.totalSeconds) }}</span>
               </div>
+
             </div>
 
             <!-- TABELA -->
@@ -163,17 +167,23 @@
           </p>
 
           <div class="history-list" *ngIf="!isLoadingHistory() && history().length > 0">
-            <div class="history-card" *ngFor="let match of history()">
+            <div class="history-card" *ngFor="let match of history()" (click)="navigateToGame(match.gameId)">
               <div class="history-header">
                 <span class="history-game">{{ match.gameName || 'jogo desconhecido' }}</span>
                 <span class="history-time">{{ formatTime(match.durationSeconds) }}</span>
               </div>
               <div class="history-footer">
-                <span class="history-user">{{ match.username }}</span>
-                <span class="history-date">{{ match.playedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                <span class="history-user" (click)="navigateToProfile(match.username, $event)">
+                  {{ match.username }}
+                </span>
+                <div class="history-footer-right">
+                  <span class="history-date">{{ match.playedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                  <span class="history-play-btn">▶ JOGAR</span>
+                </div>
               </div>
             </div>
           </div>
+
         </div>
 
       </div>
