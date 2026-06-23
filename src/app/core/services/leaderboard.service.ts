@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environments';
 })
 export class LeaderboardService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.apiUrl}/api/leaderboard`;
+  private baseUrl = `${environment.apiUrl}/leaderboard`;
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('@archv:token');
