@@ -34,7 +34,7 @@
         </svg>
       </button>
 
-      <!-- Perfil (só quando logado) -->
+      <!-- Perfil -->
       <button class="nav-btn" title="Perfil" *ngIf="isLoggedIn" (click)="navigate('/profile')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="8" r="4"/>
@@ -42,7 +42,8 @@
         </svg>
       </button>
 
-      <button class="nav-btn active" [class.active]="isActive('/friends')" title="Amigos" *ngIf="isLoggedIn" (click)="navigate('/friends')">
+      <!-- Amigos -->
+      <button class="nav-btn" [class.active]="isActive('/friends')" title="Amigos" *ngIf="isLoggedIn" (click)="navigate('/friends')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
           <path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.85"/>
@@ -50,18 +51,18 @@
       </button>
 
       <!-- Leaderboard -->
-<button class="nav-btn" [class.active]="isActive('/leaderboard')" title="Leaderboard" *ngIf="isLoggedIn" (click)="navigate('/leaderboard')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-  <path d="M3 20h18M8 20V10m4 10V4m4 16v-6"/>
-</svg>
-</button>
+      <button class="nav-btn" [class.active]="isActive('/leaderboard')" title="Leaderboard" *ngIf="isLoggedIn" (click)="navigate('/leaderboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 20h18M8 20V10m4 10V4m4 16v-6"/>
+        </svg>
+      </button>
 
+      <!-- Histórico -->
       <button class="nav-btn" title="Histórico" *ngIf="isLoggedIn" (click)="navigate('/history')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
         </svg>
       </button>
-
 
       <!-- Admin -->
       <button class="nav-btn" title="Admin" *ngIf="isAdmin" (click)="navigate('/admin')">
@@ -168,11 +169,12 @@
                 Nenhum convite pendente.
               </p>
 
-              <div class="user-card" *ngFor="let request of pendingRequests()">
+              <div class="user-card pending-card" *ngFor="let request of pendingRequests()">
                 <div class="user-info">
                   <div class="user-avatar">{{ request.sender?.username?.charAt(0)?.toUpperCase() }}</div>
                   <div class="user-details">
                     <span class="user-name">{{ request.sender?.username }}</span>
+                    <span class="pending-label">▸ quer ser seu amigo</span>
                   </div>
                 </div>
                 <div class="action-buttons">
@@ -186,23 +188,39 @@
             <div class="panel activity-panel">
               <h3 class="panel-title">▶ atividade dos amigos</h3>
 
+              <!-- GRADE DE PRESENÇA -->
+              <div class="presence-grid" *ngIf="friendsActivity().length > 0">
+                <div
+                  class="presence-node"
+                  *ngFor="let item of friendsActivity()"
+                  [class.online]="item.status === 'playing'"
+                  [class.recent]="item.status === 'last_played'"
+                  [title]="item.user?.username"
+                >
+                  <span>{{ item.user?.username?.charAt(0)?.toUpperCase() }}</span>
+                </div>
+              </div>
+
               <p class="loading" *ngIf="isLoadingActivity()">carregando...</p>
               <p class="empty-state" *ngIf="!isLoadingActivity() && friendsActivity().length === 0">
                 Nenhuma atividade para mostrar.
               </p>
 
-              <div class="user-card" *ngFor="let item of friendsActivity()">
+              <div class="activity-row" *ngFor="let item of friendsActivity()">
                 <div class="user-info">
-                  <div class="user-avatar">
+                  <div class="user-avatar activity-avatar" [class.live]="item.status === 'playing'">
                     <img *ngIf="item.user?.avatar" [src]="item.user.avatar" [alt]="item.user.username" />
                     <span *ngIf="!item.user?.avatar">{{ item.user?.username?.charAt(0)?.toUpperCase() }}</span>
+                    <span class="live-ring" *ngIf="item.status === 'playing'"></span>
                   </div>
                   <div class="user-details">
                     <span class="user-name">{{ item.user?.username }}</span>
 
                     <span class="activity-status playing" *ngIf="item.status === 'playing'">
                       <span class="status-dot"></span>
-                      jogando agora: {{ item.game?.title }} ({{ item.game?.console }})
+                      <span class="live-tag">ao vivo</span>
+                      {{ item.game?.title }}
+                      <span class="console-tag">{{ item.game?.console }}</span>
                     </span>
 
                     <span class="activity-status" *ngIf="item.status === 'last_played'">
@@ -222,6 +240,9 @@
               <h3 class="panel-title">
                 ▶ meus amigos
                 <span class="badge">{{ friends().length }}</span>
+                <span class="panel-meta" *ngIf="friends().length > 0">
+                  {{ friends().length }} jogador{{ friends().length !== 1 ? 'es' : '' }} na lista
+                </span>
               </h3>
 
               <p class="loading" *ngIf="isLoadingFriends()">carregando...</p>
@@ -229,21 +250,22 @@
                 Você ainda não tem amigos adicionados.
               </p>
 
-              <div class="user-card" *ngFor="let friend of friends()">
-                <div class="user-info">
-                  <div class="user-avatar">{{ friend.username?.charAt(0)?.toUpperCase() }}</div>
-                  <div class="user-details">
+              <div class="friends-grid">
+                <div class="friend-card" *ngFor="let friend of friends(); let i = index">
+                  <div class="friend-rank-num">#{{ i + 1 }}</div>
+                  <div class="user-avatar friend-avatar">{{ friend.username?.charAt(0)?.toUpperCase() }}</div>
+                  <div class="user-details friend-info">
                     <span class="user-name">{{ friend.username }}</span>
                     <span class="user-email">{{ friend.email }}</span>
                   </div>
-                </div>
-                <div class="action-buttons">
-                  <button class="btn-chat" (click)="openChat(friend)" title="Abrir chat">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14">
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    </svg>
-                  </button>
-                  <button class="btn-danger" (click)="removeFriend(friend.friendshipId)">remover</button>
+                  <div class="action-buttons">
+                    <button class="btn-chat" (click)="openChat(friend)" title="Abrir chat">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                      </svg>
+                    </button>
+                    <button class="btn-danger" (click)="removeFriend(friend.friendshipId)">remover</button>
+                  </div>
                 </div>
               </div>
             </div>
