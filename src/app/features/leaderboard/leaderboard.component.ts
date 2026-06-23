@@ -196,4 +196,13 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
   isCurrentUser(userId: number): boolean {
     return !!(this.currentUser?.id && this.currentUser.id === userId);
   }
+
+  navigateToProfile(username: string, event?: Event): void {
+  if (event) event.stopPropagation();
+  if (username) this.router.navigate(['/profile', username]);
+}
+
+  navigateToGame(gameId: number): void {
+  if (gameId) this.router.navigate(['/rooms', gameId]);
+ }
 }
