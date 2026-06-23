@@ -292,13 +292,47 @@ $green:  #4ade80;
   flex-direction: column;
   align-items: center;
   gap: 0.35rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+  opacity: 0;
+  transform: translateY(30px);
 
-  &.first  { order: 2; }
-  &.second { order: 1; }
-  &.third  { order: 3; }
+  &.first  {
+    order: 2;
+    animation: podiumEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+  }
+  &.second {
+    order: 1;
+    animation: podiumEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards;
+  }
+  &.third  {
+    order: 3;
+    animation: podiumEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+
+    .podium-name { color: var(--color-primary); }
+
+    .podium-avatar {
+      &.gold   { animation: none; box-shadow: 0 0 32px rgba(251, 191, 36, 0.8); }
+      &.silver { box-shadow: 0 0 20px rgba(148, 163, 184, 0.6); }
+      &.bronze { box-shadow: 0 0 20px rgba(194, 119, 58, 0.6); }
+    }
+  }
+
+  &.first .podium-avatar {
+    animation: goldPulse 2.5s ease-in-out infinite;
+  }
 }
 
-.medal { font-size: 1.2rem; }
+// medalha sem emoji — substituída por texto estilizado no HTML
+.medal {
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  color: var(--color-text-dim);
+}
 
 .podium-avatar {
   width: 40px;
@@ -311,15 +345,57 @@ $green:  #4ade80;
   justify-content: center;
   font-size: 14px;
   color: var(--color-primary);
+  position: relative;
+  transition: box-shadow 0.3s;
 
   &.gold {
-    width: 48px;
-    height: 48px;
-    background: rgba(251, 191, 36, 0.15);
-    border-color: $gold;
+    width: 52px;
+    height: 52px;
+    background: rgba(251, 191, 36, 0.12);
+    border: 1px solid $gold;
     color: $gold;
-    box-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
-    font-size: 18px;
+    font-size: 20px;
+
+    // borda giratória no 1º lugar
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 6px;
+      background: conic-gradient(
+        from 0deg,
+        transparent 0%,
+        rgba(251, 191, 36, 0.6) 20%,
+        transparent 40%
+      );
+      animation: spinBorder 3s linear infinite;
+      z-index: -1;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 5px;
+      background: var(--color-bg-card);
+      z-index: -1;
+    }
+  }
+
+  &.silver {
+    width: 42px; height: 42px;
+    background: rgba(148, 163, 184, 0.12);
+    border-color: $silver;
+    color: $silver;
+    box-shadow: 0 0 10px rgba(148, 163, 184, 0.2);
+  }
+
+  &.bronze {
+    width: 36px; height: 36px;
+    background: rgba(194, 119, 58, 0.12);
+    border-color: $bronze;
+    color: $bronze;
+    box-shadow: 0 0 10px rgba(194, 119, 58, 0.2);
   }
 }
 
@@ -332,12 +408,28 @@ $green:  #4ade80;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: color 0.2s;
 }
 
 .podium-time {
   font-size: 11px;
   color: var(--color-primary);
   letter-spacing: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.time-digit {
+  display: inline-block;
+  animation: digitDrop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  @keyframes digitDrop {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+}
+
+.time-sep {
+  opacity: 0.4;
+  display: inline-block;
 }
 
 // ── RANKING TABLE ────────────────────────────────────
@@ -362,10 +454,20 @@ $green:  #4ade80;
   border-radius: 4px;
   background: rgba(0, 0, 0, 0.2);
   transition: all 0.2s;
+  opacity: 0;
+  animation: rowSlideIn 0.4s ease forwards;
+
+  @for $i from 1 through 50 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{0.05 * $i}s;
+    }
+  }
 
   &:hover {
     border-color: var(--color-border);
     background: rgba(from var(--color-primary) r g b / 0.04);
+
+    .rank-username { animation: glitchText 0.3s ease; }
   }
 
   &.highlight {
@@ -412,6 +514,7 @@ $green:  #4ade80;
   display: flex;
   align-items: center;
   gap: 6px;
+  position: relative;
 }
 
 .you-tag {
@@ -456,11 +559,23 @@ $green:  #4ade80;
   border: 1px solid var(--color-border);
   border-radius: 4px;
   background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
+  opacity: 0;
+  animation: rowSlideIn 0.4s ease forwards;
+
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{0.06 * $i}s;
+    }
+  }
 
   &:hover {
     border-color: var(--color-border-glow);
     background: rgba(from var(--color-primary) r g b / 0.04);
+
+    .history-play-btn { opacity: 1; transform: translateX(0); }
+    .history-game     { animation: glitchText 0.25s ease; }
   }
 }
 
@@ -476,6 +591,7 @@ $green:  #4ade80;
   letter-spacing: 1px;
   color: var(--color-text);
   text-transform: uppercase;
+  position: relative;
 }
 
 .history-time {
@@ -491,16 +607,36 @@ $green:  #4ade80;
   align-items: center;
 }
 
+.history-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .history-user {
   font-size: 11px;
   letter-spacing: 1px;
   color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+
+  &:hover { color: var(--color-primary); text-decoration: underline; }
 }
 
 .history-date {
   font-size: 10px;
   letter-spacing: 1px;
   color: var(--color-text-dim);
+}
+
+.history-play-btn {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--color-primary);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.2s, transform 0.2s;
+  white-space: nowrap;
 }
 
 // ── ESTADOS ──────────────────────────────────────────
@@ -520,11 +656,6 @@ $green:  #4ade80;
   text-align: center;
   padding: 2rem 0;
   line-height: 1.8;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.3; }
 }
 
 // ── CRT ──────────────────────────────────────────────
@@ -567,7 +698,51 @@ $green:  #4ade80;
   pointer-events: none;
 }
 
-// ── ANIMATIONS ───────────────────────────────────────
+// ── RESPONSIVO ───────────────────────────────────────
+@media (max-width: 768px) {
+  .sidebar { width: 60px; }
+  .nav-btn { width: 44px; height: 44px; svg { width: 18px; height: 18px; } }
+}
+
+@media (max-width: 480px) {
+  .sidebar { display: none; }
+  .leaderboard-layout { grid-template-columns: 1fr; }
+}
+
+// ── KEYFRAMES ────────────────────────────────────────
+@keyframes podiumEnter {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes rowSlideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes goldPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(251, 191, 36, 0.3); }
+  50%       { box-shadow: 0 0 28px rgba(251, 191, 36, 0.7), 0 0 48px rgba(251, 191, 36, 0.2); }
+}
+
+@keyframes spinBorder {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes glitchText {
+  0%   { transform: translateX(0);   clip-path: inset(0 0 0 0); }
+  20%  { transform: translateX(-2px); clip-path: inset(10% 0 60% 0); color: #4ade80; }
+  40%  { transform: translateX(2px);  clip-path: inset(50% 0 20% 0); }
+  60%  { transform: translateX(-1px); clip-path: inset(20% 0 40% 0); color: var(--color-text); }
+  80%  { transform: translateX(1px);  clip-path: inset(0 0 0 0); }
+  100% { transform: translateX(0);   clip-path: inset(0 0 0 0); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
 @keyframes pulse {
   0%, 100% { opacity: 0.4; transform: scale(1); }
   50%       { opacity: 1;   transform: scale(1.15); }
@@ -581,86 +756,4 @@ $green:  #4ade80;
 @keyframes jumpscare-flash {
   0%   { opacity: 0; transform: scale(1.05); }
   100% { opacity: 1; transform: scale(1); }
-}
-
-// ── RESPONSIVO ───────────────────────────────────────
-@media (max-width: 768px) {
-  .sidebar { width: 60px; }
-  .nav-btn { width: 44px; height: 44px; svg { width: 18px; height: 18px; } }
-}
-
-@media (max-width: 480px) {
-  .sidebar { display: none; }
-  .leaderboard-layout { grid-template-columns: 1fr; }
-}
-
-// ── PÓDIO MELHORADO ──────────────────────────────────
-.podium-slot {
-  cursor: pointer;
-  transition: transform 0.2s;
-
-  &:hover { transform: translateY(-3px); }
-
-  &.first .podium-avatar {
-    animation: goldPulse 2s ease-in-out infinite;
-  }
-}
-
-.podium-avatar {
-  &.silver {
-    width: 40px; height: 40px;
-    background: rgba(148, 163, 184, 0.15);
-    border-color: $silver;
-    color: $silver;
-    box-shadow: 0 0 10px rgba(148, 163, 184, 0.25);
-  }
-
-  &.bronze {
-    width: 36px; height: 36px;
-    background: rgba(194, 119, 58, 0.15);
-    border-color: $bronze;
-    color: $bronze;
-    box-shadow: 0 0 10px rgba(194, 119, 58, 0.25);
-  }
-}
-
-@keyframes goldPulse {
-  0%, 100% { box-shadow: 0 0 12px rgba(251, 191, 36, 0.3); }
-  50%       { box-shadow: 0 0 24px rgba(251, 191, 36, 0.6); }
-}
-
-// ── HISTORY CARD INTERATIVO ──────────────────────────
-.history-card {
-  cursor: pointer;
-
-  &:hover .history-play-btn { opacity: 1; transform: translateX(0); }
-}
-
-.history-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.history-footer-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.history-user {
-  cursor: pointer;
-  transition: color 0.2s;
-
-  &:hover { color: var(--color-primary); text-decoration: underline; }
-}
-
-.history-play-btn {
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--color-primary);
-  opacity: 0;
-  transform: translateX(-6px);
-  transition: opacity 0.2s, transform 0.2s;
-  white-space: nowrap;
 }
