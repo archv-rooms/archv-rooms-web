@@ -113,24 +113,24 @@
             <div class="podium" *ngIf="ranking().length >= 3">
 
               <div class="podium-slot second" (click)="navigateToProfile(ranking()[1]?.username)">
-                <span class="medal">🥈</span>
+                <span class="medal">02</span>
                 <div class="podium-avatar silver">{{ ranking()[1]?.username?.charAt(0)?.toUpperCase() }}</div>
                 <span class="podium-name">{{ ranking()[1]?.username }}</span>
-                <span class="podium-time">{{ formatTime(ranking()[1]?.totalSeconds) }}</span>
+                <span class="podium-time" [innerHTML]="getAnimatedTime(ranking()[1]?.totalSeconds, 1)"></span>
               </div>
 
               <div class="podium-slot first" (click)="navigateToProfile(ranking()[0]?.username)">
-                <span class="medal">🥇</span>
+                <span class="medal">01</span>
                 <div class="podium-avatar gold">{{ ranking()[0]?.username?.charAt(0)?.toUpperCase() }}</div>
                 <span class="podium-name">{{ ranking()[0]?.username }}</span>
-                <span class="podium-time">{{ formatTime(ranking()[0]?.totalSeconds) }}</span>
+                <span class="podium-time" [innerHTML]="getAnimatedTime(ranking()[0]?.totalSeconds, 0)"></span>
               </div>
 
               <div class="podium-slot third" (click)="navigateToProfile(ranking()[2]?.username)">
-                <span class="medal">🥉</span>
+                <span class="medal">03</span>
                 <div class="podium-avatar bronze">{{ ranking()[2]?.username?.charAt(0)?.toUpperCase() }}</div>
                 <span class="podium-name">{{ ranking()[2]?.username }}</span>
-                <span class="podium-time">{{ formatTime(ranking()[2]?.totalSeconds) }}</span>
+                <span class="podium-time" [innerHTML]="getAnimatedTime(ranking()[2]?.totalSeconds, 2)"></span>
               </div>
 
             </div>
@@ -141,7 +141,7 @@
                 *ngFor="let entry of ranking(); let i = index"
                 [class.highlight]="isCurrentUser(entry.userId)"
                 [class.top3]="i < 3">
-                <span class="rank-position">{{ getMedalIcon(i) }}</span>
+                <span class="rank-position">{{ getRankLabel(i) }}</span>
                 <div class="rank-avatar">{{ entry.username?.charAt(0)?.toUpperCase() }}</div>
                 <div class="rank-info">
                   <span class="rank-username">
@@ -178,7 +178,7 @@
                 </span>
                 <div class="history-footer-right">
                   <span class="history-date">{{ match.playedAt | date:'dd/MM/yyyy HH:mm' }}</span>
-                  <span class="history-play-btn">▶ JOGAR</span>
+                  <span class="history-play-btn">▶ jogar</span>
                 </div>
               </div>
             </div>
