@@ -328,4 +328,9 @@ export class FriendsComponent implements OnInit, OnDestroy {
       if (el) el.scrollTop = el.scrollHeight;
     }, 50);
   }
+
+  getFriendStatus(friendId: number): string {
+  const activity = this.friendsActivity().find(a => a.user?.id === friendId);
+  return activity?.status ?? 'inactive';
+  }
 }
