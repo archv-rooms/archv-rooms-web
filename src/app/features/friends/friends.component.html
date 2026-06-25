@@ -137,7 +137,10 @@
                 <div class="ranking-row search-result-row"
                   *ngFor="let user of searchResults(); let i = index"
                   [style.animation-delay]="(i * 0.05) + 's'">
-                  <div class="rank-avatar">{{ user.username?.charAt(0)?.toUpperCase() }}</div>
+                  <div class="rank-avatar">
+  <img *ngIf="user.avatar" [src]="user.avatar" [alt]="user.username" class="avatar-img" />
+  <span *ngIf="!user.avatar">{{ user.username?.charAt(0)?.toUpperCase() }}</span>
+</div>
                   <div class="rank-info">
                     <span class="rank-username">{{ user.username }}</span>
                     <span class="rank-game">{{ user.email }}</span>
@@ -228,7 +231,10 @@
               <div class="ranking-row pending-row"
                 *ngFor="let request of pendingRequests(); let i = index"
                 [style.animation-delay]="(i * 0.05) + 's'">
-                <div class="rank-avatar">{{ request.sender?.username?.charAt(0)?.toUpperCase() }}</div>
+                <div class="rank-avatar">
+  <img *ngIf="request.sender?.avatar" [src]="request.sender.avatar" [alt]="request.sender.username" class="avatar-img" />
+  <span *ngIf="!request.sender?.avatar">{{ request.sender?.username?.charAt(0)?.toUpperCase() }}</span>
+</div>
                 <div class="rank-info">
                   <span class="rank-username">{{ request.sender?.username }}</span>
                   <span class="rank-game">▸ quer ser seu amigo</span>
@@ -261,7 +267,9 @@
                   [class.bronze-row]="i === 2">
                   <span class="rank-position">{{ '#' + (i + 1) }}</span>
                   <div class="rank-avatar" [class.gold-av]="i===0" [class.silver-av]="i===1" [class.bronze-av]="i===2">
-                    {{ friend.username?.charAt(0)?.toUpperCase() }}
+  <img *ngIf="friend.avatar" [src]="friend.avatar" [alt]="friend.username" class="avatar-img" />
+  <span *ngIf="!friend.avatar">{{ friend.username?.charAt(0)?.toUpperCase() }}</span>
+</div>
                   </div>
                   <div class="rank-info">
                     <span class="rank-username">{{ friend.username }}</span>
