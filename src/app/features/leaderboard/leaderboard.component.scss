@@ -811,9 +811,9 @@ $green:  #4ade80;
   animation: slideUp 0.22s cubic-bezier(0.22, 1, 0.36, 1);
   font-family: 'Share Tech Mono', monospace;
   box-shadow:
-    0 0 0 1px rgba(from var(--color-primary) r g b / 0.08),
-    0 0 60px rgba(from var(--color-primary) r g b / 0.12),
-    0 24px 48px rgba(0, 0, 0, 0.6);
+    0 0 0 1px rgba(from var(--color-primary) r g b / 0.15),
+    0 0 40px rgba(from var(--color-primary) r g b / 0.08),
+    0 32px 64px rgba(0, 0, 0, 0.7);
 
   &::-webkit-scrollbar { width: 2px; }
   &::-webkit-scrollbar-thumb { background: var(--color-primary-dim); }
@@ -927,22 +927,23 @@ $green:  #4ade80;
 .mp-avatar-wrap { position: relative; flex-shrink: 0; }
 
 .mp-avatar {
-  width: 58px; height: 58px;
-  border-radius: 4px;
-  background: rgba(from var(--color-primary) r g b / 0.08);
-  border: 1px solid rgba(from var(--color-primary) r g b / 0.3);
+  width: 64px; height: 64px;
+  border-radius: 6px;
+  background: rgba(from var(--color-primary) r g b / 0.1);
+  border: 1px solid rgba(from var(--color-primary) r g b / 0.35);
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px;
+  font-size: 26px;
   color: var(--color-primary);
   position: relative;
   letter-spacing: 0;
+  box-shadow: 0 0 20px rgba(from var(--color-primary) r g b / 0.15);
 
   &::after {
     content: '';
     position: absolute;
-    inset: -4px;
-    border-radius: 6px;
-    border: 1px solid rgba(from var(--color-primary) r g b / 0.12);
+    inset: -5px;
+    border-radius: 8px;
+    border: 1px solid rgba(from var(--color-primary) r g b / 0.1);
     animation: pingAv 3s ease-in-out infinite;
   }
 }
