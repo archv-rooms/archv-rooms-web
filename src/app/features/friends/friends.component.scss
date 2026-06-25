@@ -370,6 +370,7 @@ $red:    #fb7185;
 }
 
 .rank-avatar {
+  overflow: hidden;
   width: 28px; height: 28px;
   border-radius: 4px;
   background: rgba(from var(--color-primary) r g b / 0.12);
@@ -385,6 +386,13 @@ $red:    #fb7185;
   &.silver-av { background: rgba($silver, 0.08); border-color: rgba($silver, 0.4); color: $silver; }
   &.bronze-av { background: rgba($bronze, 0.08); border-color: rgba($bronze, 0.4); color: $bronze; }
 }
+
+ .avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 3px;
+    display: block;}
 
 .rank-info {
   flex: 1;
