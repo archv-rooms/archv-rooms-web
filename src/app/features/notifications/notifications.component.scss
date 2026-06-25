@@ -66,13 +66,19 @@ $gold:          #fbbf24;
 
 // ── SCROLL ───────────────────────────────────────────
 .scroll-body {
-  flex: 1; overflow-y: auto; padding: 28px 28px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   &::-webkit-scrollbar { width: 5px; }
   &::-webkit-scrollbar-track { background: $bg; }
   &::-webkit-scrollbar-thumb { background: $border-glow; border-radius: 4px; }
 }
 
-.section { max-width: 680px; }
+.section { max-width: 680px; width: 100%; }
 
 // ── PAGE HEADER ──────────────────────────────────────
 .page-header {
