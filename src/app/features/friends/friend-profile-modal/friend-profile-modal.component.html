@@ -1,0 +1,112 @@
+<div class="modal-overlay" *ngIf="friend" (click)="onOverlayClick($event)">
+  <div class="modal" role="dialog">
+
+    <div class="modal-header">
+      <span class="modal-label">perfil do jogador</span>
+      <button class="btn-close" (click)="close.emit()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- TOPO -->
+      <div class="profile-top">
+        <div class="big-avatar">
+          <img *ngIf="friend.avatar" [src]="friend.avatar" [alt]="friend.username" class="avatar-img" />
+          <span *ngIf="!friend.avatar">{{ friend.username?.charAt(0)?.toUpperCase() }}</span>
+          <span class="status-dot"
+            [class.playing]="status === 'playing'"
+            [class.online]="status === 'last_played'"
+            [class.offline]="status === 'inactive' || !status">
+          </span>
+        </div>
+        <div>
+          <div class="profile-name">{{ friend.username }}</div>
+          <div class="profile-status">
+            <span class="status-pulse"
+              [style.background]="status === 'playing' ? '#7b6fe8' : status === 'last_played' ? '#3bba6f' : '#3d3d58'">
+            </span>
+            <span *ngIf="status === 'playing'">jogando agora</span>
+            <span *ngIf="status === 'last_played'">jogou recentemente</span>
+            <span *ngIf="status === 'inactive' || !status">sem atividade</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AO VIVO -->
+      <div class="now-playing" *ngIf="activity && status === 'playing'">
+        <span class="np-dot"></span>
+        <div class="np-info">
+          <div class="np-title">{{ activity.game?.title }}</div>
+          <div class="np-sub">ao vivo · {{ activity.game?.console }}</div>
+        </div>
+        <span class="live-tag">ao vivo</span>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-box">
+          <span class="stat-n">{{ friend.totalGames ?? '—' }}</span>
+          <span class="stat-l">jogos</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-n">{{ friend.totalHours ?? '—' }}</span>
+          <span class="stat-l">horas</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-n">{{ friend.friendCount ?? '—' }}</span>
+          <span class="stat-l">amigos</span>
+        </div>
+      </div>
+
+      <!-- JOGOS RECENTES -->
+      <div class="recent-games" *ngIf="recentGames.length > 0">
+        <div class="section-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12">
+            <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
+          </svg>
+          jogos recentes
+        </div>
+        <div class="game-row" *ngFor="let g of recentGames">
+          <div class="game-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14">
+              <rect x="2" y="6" width="20" height="12" rx="2"/>
+              <path d="M6 12h4M8 10v4M15 12h.01M17 10h.01"/>
+            </svg>
+          </div>
+          <div class="game-info">
+            <div class="game-title">{{ g.game?.title }}</div>
+            <div class="game-time">{{ timeSince(g.since) }} · {{ g.game?.console }}</div>
+          </div>
+          <span class="active-tag" *ngIf="g.status === 'playing'">ativo</span>
+        </div>
+      </div>
+
+      <div class="empty-games" *ngIf="recentGames.length === 0">
+        <span>nenhum jogo registrado ainda</span>
+      </div>
+
+      <!-- AÇÕES -->
+      <div class="actions-row">
+        <button class="act-btn btn-msg" (click)="onMessage()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          mensagem
+        </button>
+        <button class="act-btn btn-rm" (click)="onRemove()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <line x1="17" y1="8" x2="23" y2="14"/><line x1="23" y1="8" x2="17" y2="14"/>
+          </svg>
+          remover
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
