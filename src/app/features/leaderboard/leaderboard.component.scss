@@ -492,7 +492,6 @@ $green:  #4ade80;
   &:hover {
     border-color: var(--color-border);
     background: rgba(from var(--color-primary) r g b / 0.04);
-
     .rank-username { animation: glitchText 0.3s ease; }
   }
 
@@ -599,7 +598,6 @@ $green:  #4ade80;
   &:hover {
     border-color: var(--color-border-glow);
     background: rgba(from var(--color-primary) r g b / 0.04);
-
     .history-play-btn { opacity: 1; transform: translateX(0); }
     .history-game     { animation: glitchText 0.25s ease; }
   }
@@ -645,7 +643,6 @@ $green:  #4ade80;
   color: var(--color-text-muted);
   cursor: pointer;
   transition: color 0.2s;
-
   &:hover { color: var(--color-primary); text-decoration: underline; }
 }
 
@@ -756,12 +753,12 @@ $green:  #4ade80;
 }
 
 @keyframes glitchText {
-  0%   { transform: translateX(0);   clip-path: inset(0 0 0 0); }
+  0%   { transform: translateX(0);    clip-path: inset(0 0 0 0); }
   20%  { transform: translateX(-2px); clip-path: inset(10% 0 60% 0); color: #4ade80; }
   40%  { transform: translateX(2px);  clip-path: inset(50% 0 20% 0); }
   60%  { transform: translateX(-1px); clip-path: inset(20% 0 40% 0); color: var(--color-text); }
   80%  { transform: translateX(1px);  clip-path: inset(0 0 0 0); }
-  100% { transform: translateX(0);   clip-path: inset(0 0 0 0); }
+  100% { transform: translateX(0);    clip-path: inset(0 0 0 0); }
 }
 
 @keyframes blink {
@@ -804,8 +801,8 @@ $green:  #4ade80;
 }
 
 .profile-modal {
-  background: var(--color-bg);
-  border: 1px solid rgba(from var(--color-border-glow) r g b / 0.4);
+  background: #0f0f1a;
+  border: 1px solid rgba(from var(--color-border-glow) r g b / 0.5);
   border-radius: 2px;
   width: 100%;
   max-width: 560px;
@@ -822,7 +819,6 @@ $green:  #4ade80;
   &::-webkit-scrollbar-thumb { background: var(--color-primary-dim); }
 }
 
-// ── TOPBAR ───────────────────────────────────────────
 .modal-topbar {
   display: flex;
   align-items: center;
@@ -894,8 +890,8 @@ $green:  #4ade80;
   position: relative;
   background: linear-gradient(
     135deg,
-    rgba(from var(--color-primary) r g b / 0.04) 0%,
-    transparent 60%
+    rgba(from var(--color-primary) r g b / 0.08) 0%,
+    rgba(from var(--color-primary) r g b / 0.02) 100%
   );
 }
 
@@ -979,7 +975,6 @@ $green:  #4ade80;
   color: var(--color-text-dim);
   letter-spacing: 0.05em;
   line-height: 1.6;
-
   span { color: var(--color-primary); }
 }
 
@@ -1025,7 +1020,7 @@ $green:  #4ade80;
 }
 
 .mp-stat-num {
-  font-size: 18px;
+  font-size: 20px;
   color: var(--color-primary);
   letter-spacing: 0.02em;
   line-height: 1;
