@@ -283,8 +283,8 @@
           <div class="mp-section-header">histórico de jogos</div>
           <div class="mp-games">
             <div class="mp-game-row"
-  *ngFor="let g of playerProfile().recentMatches; let i = index"
-  (click)="navigateToGame(g.gameId); closeProfileModal()">
+              *ngFor="let g of playerProfile().recentMatches; let i = index"
+              (click)="navigateToGame(g.gameId); closeProfileModal()">
               <span class="mp-game-pos">{{ (i + 1) < 10 ? '0' + (i + 1) : (i + 1) }}</span>
               <span class="mp-game-name">{{ g.gameName }}</span>
               <span class="mp-game-fav" *ngIf="g.gameName === playerProfile().favoriteGame">favorito</span>
@@ -296,6 +296,11 @@
 
         <div class="mp-section" *ngIf="isLoggedIn && !isCurrentUser(playerProfile().userId)">
           <div class="mp-section-header">comparar com você</div>
+
+          <div class="mp-empty-compare" *ngIf="!playerProfile().commonGames?.length">
+            nenhum jogo em comum ainda
+          </div>
+
           <div class="mp-compare-row" *ngFor="let g of playerProfile().commonGames">
             <div class="mp-compare-side">
               <div class="mp-compare-game">{{ g.gameName }}</div>
