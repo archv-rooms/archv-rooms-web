@@ -200,6 +200,7 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
   }
 
   navigateToGame(gameId: number): void {
+     console.log('gameId:', gameId); // adiciona isso
     if (gameId) this.router.navigate(['/rooms', gameId]);
   }
 
