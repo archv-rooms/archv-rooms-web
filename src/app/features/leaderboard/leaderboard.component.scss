@@ -1190,3 +1190,12 @@ $green:  #4ade80;
     border-color: var(--color-primary);
   }
 }
+
+.mp-empty-compare {
+  padding: 16px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--color-text-dim);
+  text-align: center;
+  text-transform: uppercase;
+}
