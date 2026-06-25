@@ -141,7 +141,8 @@
 
                 <div class="search-result-row"
                   *ngFor="let user of searchResults(); let i = index"
-                  [style.animation-delay]="(i * 0.05) + 's'">
+                  [style.animation-delay]="(i * 0.05) + 's'"
+                  (click)="openProfile(user)">
                   <div class="user-avatar">
                     <img *ngIf="user.avatar" [src]="user.avatar" [alt]="user.username" class="avatar-img" />
                     <span *ngIf="!user.avatar">{{ user.username?.charAt(0)?.toUpperCase() }}</span>
@@ -150,7 +151,7 @@
                     <span class="user-name">{{ user.username }}</span>
                   </div>
                   <button class="btn-add"
-                    (click)="sendRequest(user.id)"
+                    (click)="sendRequest(user.id); $event.stopPropagation()"
                     [disabled]="user.requestSent || user.alreadyFriend">
                     <svg *ngIf="!user.requestSent && !user.alreadyFriend" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M12 5v14M5 12h14"/></svg>
                     {{ user.requestSent ? 'enviado' : user.alreadyFriend ? 'amigos' : 'add' }}
@@ -182,7 +183,9 @@
 
               <div class="activity-item"
                 *ngFor="let item of friendsActivity(); let i = index"
-                [style.animation-delay]="(i * 0.06) + 's'">
+                [style.animation-delay]="(i * 0.06) + 's'"
+                (click)="openProfile(item.user)"
+                style="cursor: pointer;">
                 <div class="activity-avatar-wrap">
                   <div class="user-avatar sm">
                     <img *ngIf="item.user?.avatar" [src]="item.user.avatar" [alt]="item.user.username" class="avatar-img" />
@@ -237,11 +240,11 @@
               <div class="pending-row"
                 *ngFor="let request of pendingRequests(); let i = index"
                 [style.animation-delay]="(i * 0.05) + 's'">
-                <div class="user-avatar">
+                <div class="user-avatar" (click)="openProfile(request.sender)" style="cursor:pointer">
                   <img *ngIf="request.sender?.avatar" [src]="request.sender.avatar" [alt]="request.sender.username" class="avatar-img" />
                   <span *ngIf="!request.sender?.avatar">{{ request.sender?.username?.charAt(0)?.toUpperCase() }}</span>
                 </div>
-                <div class="user-info">
+                <div class="user-info" (click)="openProfile(request.sender)" style="cursor:pointer">
                   <span class="user-name">{{ request.sender?.username }}</span>
                   <span class="user-sub">quer ser seu amigo</span>
                 </div>
@@ -283,7 +286,9 @@
               <div class="friend-list" *ngIf="!isLoadingFriends() && friends().length > 0">
                 <div class="friend-row"
                   *ngFor="let friend of friends(); let i = index"
-                  [style.animation-delay]="(i * 0.05) + 's'">
+                  [style.animation-delay]="(i * 0.05) + 's'"
+                  (click)="openProfile(friend)"
+                  style="cursor: pointer;">
 
                   <div class="friend-avatar-wrap">
                     <div class="user-avatar md">
@@ -309,7 +314,7 @@
                     </span>
                   </div>
 
-                  <div class="friend-actions">
+                  <div class="friend-actions" (click)="$event.stopPropagation()">
                     <button class="btn-icon" (click)="openChat(friend)" title="mensagem">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -381,6 +386,16 @@
 
     </div>
   </main>
+
+  <!-- MODAL DE PERFIL -->
+  <app-friend-profile-modal
+    *ngIf="selectedFriend"
+    [friend]="selectedFriend"
+    [allActivity]="friendsActivity()"
+    (close)="selectedFriend = null"
+    (message)="openChat($event)"
+    (remove)="removeFriend($event)">
+  </app-friend-profile-modal>
 
   <div class="crt-overlay"></div>
   <div class="scanlines"></div>
