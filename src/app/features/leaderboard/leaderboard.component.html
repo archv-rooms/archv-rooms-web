@@ -311,6 +311,19 @@
           </div>
         </div>
 
+        <!-- BOTÃO ADICIONAR AMIGO -->
+        <div class="mp-actions" *ngIf="isLoggedIn && !isCurrentUser(playerProfile().userId)">
+          <button
+            class="mp-btn mp-btn-friend"
+            (click)="sendFriendRequest()"
+            [disabled]="friendRequestStatus() === 'loading' || friendRequestStatus() === 'sent'">
+            <span *ngIf="friendRequestStatus() === 'idle'">+ adicionar amigo</span>
+            <span *ngIf="friendRequestStatus() === 'loading'">enviando...</span>
+            <span *ngIf="friendRequestStatus() === 'sent'">✓ convite enviado</span>
+            <span *ngIf="friendRequestStatus() === 'error'">erro — tentar novamente</span>
+          </button>
+        </div>
+
       </ng-container>
 
     </div>
