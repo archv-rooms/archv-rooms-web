@@ -237,12 +237,17 @@
 
       <ng-container *ngIf="!isLoadingProfile() && playerProfile()">
 
-<div class="mp-rank-badge"
-  [class.rank-1]="playerProfile().rank === 1"
-  [class.rank-2]="playerProfile().rank === 2"
-  [class.rank-3]="playerProfile().rank === 3">
-  # {{ playerProfile().rank < 10 ? '0' + playerProfile().rank : playerProfile().rank }} GLOBAL
-</div>
+        <div class="mp-header">
+          <div class="mp-rank-badge"
+            [class.rank-1]="playerProfile().rank === 1"
+            [class.rank-2]="playerProfile().rank === 2"
+            [class.rank-3]="playerProfile().rank === 3">
+            # {{ playerProfile().rank < 10 ? '0' + playerProfile().rank : playerProfile().rank }} GLOBAL
+          </div>
+          <div class="mp-avatar-wrap">
+            <div class="mp-avatar">{{ playerProfile().username?.charAt(0)?.toUpperCase() }}</div>
+            <div class="mp-avatar-rank">{{ playerProfile().rank }}</div>
+          </div>
           <div class="mp-info">
             <div class="mp-name">{{ playerProfile().username }}</div>
             <div class="mp-meta">
