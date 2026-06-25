@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LeaderboardService } from '../../core/services/leaderboard.service';
+import { FriendService } from '../../core/services/friend.service';
 
 @Component({
   selector: 'app-leaderboard',
@@ -13,6 +14,7 @@ import { LeaderboardService } from '../../core/services/leaderboard.service';
 })
 export class LeaderboardComponent implements OnInit, OnDestroy {
   private leaderboardService = inject(LeaderboardService);
+  private friendService = inject(FriendService);
   private router = inject(Router);
 
   // ── Sidebar / Topbar ──
@@ -45,6 +47,7 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
   playerProfile = signal<any>(null);
   isLoadingProfile = signal(false);
   showProfileModal = signal(false);
+  friendRequestStatus = signal<'idle' | 'loading' | 'sent' | 'error'>('idle');
 
   private parseCurrentUser(): any {
     try {
@@ -207,6 +210,7 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
     this.showProfileModal.set(true);
     this.isLoadingProfile.set(true);
     this.playerProfile.set(null);
+    this.friendRequestStatus.set('idle');
     this.leaderboardService.getPlayerProfile(username).subscribe({
       next: (res) => {
         this.playerProfile.set(res.success ? res.data : null);
@@ -221,6 +225,18 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
   closeProfileModal(): void {
     this.showProfileModal.set(false);
     this.playerProfile.set(null);
+    this.friendRequestStatus.set('idle');
+  }
+
+  sendFriendRequest(): void {
+    const profile = this.playerProfile();
+    if (!profile?.userId || !this.isLoggedIn) return;
+
+    this.friendRequestStatus.set('loading');
+    this.friendService.sendRequest(profile.userId).subscribe({
+      next: () => this.friendRequestStatus.set('sent'),
+      error: () => this.friendRequestStatus.set('error')
+    });
   }
 
   @HostListener('document:keydown.escape')
