@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../core/services/notification.service';
+import { FriendService } from '../../core/services/friend.service';
 
 @Component({
   selector: 'app-notifications',
@@ -12,6 +13,7 @@ import { NotificationService } from '../../core/services/notification.service';
 })
 export class NotificationsComponent implements OnInit {
   private notificationService = inject(NotificationService);
+  private friendService = inject(FriendService);
   private router = inject(Router);
 
   isLoggedIn = false;
@@ -22,6 +24,7 @@ export class NotificationsComponent implements OnInit {
   isLoading = signal(false);
   feedbackMessage = signal('');
   feedbackType = signal<'success' | 'error'>('success');
+  activeFilter = signal<'all' | 'unread'>('all');
 
   ngOnInit(): void {
     this.checkAuth();
@@ -64,6 +67,43 @@ export class NotificationsComponent implements OnInit {
     });
   }
 
+  setFilter(filter: 'all' | 'unread'): void {
+    this.activeFilter.set(filter);
+  }
+
+  filteredNotifications(): any[] {
+    const all = this.notifications();
+    if (this.activeFilter() === 'unread') return all.filter(n => !n.read);
+    return all;
+  }
+
+  groupedNotifications(): { label: string; items: any[] }[] {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const groups: Record<string, any[]> = { hoje: [], ontem: [], antigas: [] };
+
+    for (const n of this.filteredNotifications()) {
+      const d = new Date(n.createdAt);
+      d.setHours(0, 0, 0, 0);
+      if (d.getTime() === today.getTime()) groups['hoje'].push(n);
+      else if (d.getTime() === yesterday.getTime()) groups['ontem'].push(n);
+      else groups['antigas'].push(n);
+    }
+
+    return [
+      { label: 'hoje', items: groups['hoje'] },
+      { label: 'ontem', items: groups['ontem'] },
+      { label: 'anteriores', items: groups['antigas'] },
+    ].filter(g => g.items.length > 0);
+  }
+
+  unreadCount(): number {
+    return this.notifications().filter(n => !n.read).length;
+  }
+
   markAsRead(id: number): void {
     this.notificationService.markAsRead(id).subscribe({
       next: () => {
@@ -91,14 +131,23 @@ export class NotificationsComponent implements OnInit {
     });
   }
 
-  getTypeIcon(type: string): string {
-    const icons: Record<string, string> = {
-      friend_request: '👤',
-      friend_accepted: '✓',
-      challenge: '⚔',
-      activity: '▶'
-    };
-    return icons[type] ?? '●';
+  respondFriendRequest(n: any, status: 'accepted' | 'rejected'): void {
+    const friendshipId = n.data?.friendshipId;
+    if (!friendshipId) return;
+
+    this.friendService.respondRequest(friendshipId, status).subscribe({
+      next: () => {
+        const msg = status === 'accepted' ? 'Amizade aceita!' : 'Convite recusado.';
+        this.showFeedback(msg, 'success');
+        this.notifications.update(list =>
+          list.map(item => item.id === n.id
+            ? { ...item, read: true, _responded: true }
+            : item
+          )
+        );
+      },
+      error: () => this.showFeedback('Erro ao responder convite.', 'error')
+    });
   }
 
   showFeedback(message: string, type: 'success' | 'error'): void {
