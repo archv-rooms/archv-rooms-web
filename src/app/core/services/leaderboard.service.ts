@@ -21,8 +21,6 @@ export class LeaderboardService {
     return new HttpHeaders(headers);
   }
 
-  // API retorna { success, data: { ranking|sessions|games: [...] } }
-  // Normaliza tudo para { success, data: [...] } com campos padronizados
   private normalizeRanking(res: any): { success: boolean; data: any[] } {
     try {
       const raw = res?.data?.ranking ?? res?.data ?? res ?? [];
@@ -50,6 +48,7 @@ export class LeaderboardService {
         username:        entry.user?.name     ?? entry.username ?? '—',
         avatar:          entry.user?.avatar   ?? entry.avatar,
         gameName:        entry.game?.title    ?? entry.gameName ?? 'jogo desconhecido',
+        gameId:          entry.game?.id       ?? entry.gameId,
         durationSeconds: entry.duration       ?? entry.durationSeconds ?? 0,
         playedAt:        entry.startedAt      ?? entry.playedAt ?? entry.createdAt
       }));
@@ -66,6 +65,15 @@ export class LeaderboardService {
       return { success: true, data: arr };
     } catch {
       return { success: false, data: [] };
+    }
+  }
+
+  private normalizeProfile(res: any): { success: boolean; data: any } {
+    try {
+      const d = res?.data ?? res;
+      return { success: true, data: d };
+    } catch {
+      return { success: false, data: null };
     }
   }
 
@@ -103,6 +111,18 @@ export class LeaderboardService {
         catchError(err => {
           console.error('[LeaderboardService] getGames error:', err);
           return of({ success: false, data: [] });
+        })
+      );
+  }
+
+  getPlayerProfile(username: string): Observable<{ success: boolean; data: any }> {
+    return this.http
+      .get(`${this.baseUrl}/profile/${username}`, { headers: this.getHeaders() })
+      .pipe(
+        map(res => this.normalizeProfile(res)),
+        catchError(err => {
+          console.error('[LeaderboardService] getPlayerProfile error:', err);
+          return of({ success: false, data: null });
         })
       );
   }
