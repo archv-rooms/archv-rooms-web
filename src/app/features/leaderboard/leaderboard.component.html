@@ -110,58 +110,57 @@
           <div *ngIf="!isLoadingRanking() && ranking().length > 0">
 
             <!-- PÓDIO -->
-<div class="podium" *ngIf="ranking().length >= 3">
+            <div class="podium" *ngIf="ranking().length >= 3">
+              <div class="podium-grid">
 
-  <div class="podium-grid">
+                <div class="podium-slot c2" (click)="openPlayerProfile(ranking()[1]?.username)">
+                  <div class="block b2">
+                    <div class="corner corner-tl"></div>
+                    <div class="corner corner-tr"></div>
+                    <div class="podium-avatar silver">{{ ranking()[1]?.username?.charAt(0)?.toUpperCase() }}</div>
+                    <span class="podium-name">{{ ranking()[1]?.username }}</span>
+                    <span class="podium-time" [innerHTML]="getAnimatedTime(ranking()[1]?.totalSeconds, 1)"></span>
+                  </div>
+                </div>
 
-    <div class="podium-slot c2" (click)="navigateToProfile(ranking()[1]?.username)">
-      <div class="block b2">
-        <div class="corner corner-tl"></div>
-        <div class="corner corner-tr"></div>
-        <div class="podium-avatar silver">{{ ranking()[1]?.username?.charAt(0)?.toUpperCase() }}</div>
-        <span class="podium-name">{{ ranking()[1]?.username }}</span>
-        <span class="podium-time" [innerHTML]="getAnimatedTime(ranking()[1]?.totalSeconds, 1)"></span>
-      </div>
-    </div>
+                <div class="podium-slot c1" (click)="openPlayerProfile(ranking()[0]?.username)">
+                  <div class="block b1">
+                    <div class="corner corner-tl"></div>
+                    <div class="corner corner-tr"></div>
+                    <div class="podium-avatar gold">{{ ranking()[0]?.username?.charAt(0)?.toUpperCase() }}</div>
+                    <span class="podium-name">{{ ranking()[0]?.username }}</span>
+                    <span class="podium-time" [innerHTML]="getAnimatedTime(ranking()[0]?.totalSeconds, 0)"></span>
+                  </div>
+                </div>
 
-    <div class="podium-slot c1" (click)="navigateToProfile(ranking()[0]?.username)">
-      <div class="block b1">
-        <div class="corner corner-tl"></div>
-        <div class="corner corner-tr"></div>
-        <div class="podium-avatar gold">{{ ranking()[0]?.username?.charAt(0)?.toUpperCase() }}</div>
-        <span class="podium-name">{{ ranking()[0]?.username }}</span>
-        <span class="podium-time" [innerHTML]="getAnimatedTime(ranking()[0]?.totalSeconds, 0)"></span>
-      </div>
-    </div>
+                <div class="podium-slot c3" (click)="openPlayerProfile(ranking()[2]?.username)">
+                  <div class="block b3">
+                    <div class="corner corner-tl"></div>
+                    <div class="corner corner-tr"></div>
+                    <div class="podium-avatar bronze">{{ ranking()[2]?.username?.charAt(0)?.toUpperCase() }}</div>
+                    <span class="podium-name">{{ ranking()[2]?.username }}</span>
+                    <span class="podium-time" [innerHTML]="getAnimatedTime(ranking()[2]?.totalSeconds, 2)"></span>
+                  </div>
+                </div>
 
-    <div class="podium-slot c3" (click)="navigateToProfile(ranking()[2]?.username)">
-      <div class="block b3">
-        <div class="corner corner-tl"></div>
-        <div class="corner corner-tr"></div>
-        <div class="podium-avatar bronze">{{ ranking()[2]?.username?.charAt(0)?.toUpperCase() }}</div>
-        <span class="podium-name">{{ ranking()[2]?.username }}</span>
-        <span class="podium-time" [innerHTML]="getAnimatedTime(ranking()[2]?.totalSeconds, 2)"></span>
-      </div>
-    </div>
+              </div>
 
-  </div>
+              <div class="podium-floor"></div>
 
-  <div class="podium-floor"></div>
-
-  <div class="podium-base-row">
-    <div class="podium-base"><span class="medal silver">02</span><span class="medal-label">silver</span></div>
-    <div class="podium-base"><span class="medal gold">01</span><span class="medal-label">gold</span></div>
-    <div class="podium-base"><span class="medal bronze">03</span><span class="medal-label">bronze</span></div>
-  </div>
-
-</div>
+              <div class="podium-base-row">
+                <div class="podium-base"><span class="medal silver">02</span><span class="medal-label">silver</span></div>
+                <div class="podium-base"><span class="medal gold">01</span><span class="medal-label">gold</span></div>
+                <div class="podium-base"><span class="medal bronze">03</span><span class="medal-label">bronze</span></div>
+              </div>
+            </div>
 
             <!-- TABELA -->
             <div class="ranking-table">
               <div class="ranking-row"
                 *ngFor="let entry of ranking(); let i = index"
                 [class.highlight]="isCurrentUser(entry.userId)"
-                [class.top3]="i < 3">
+                [class.top3]="i < 3"
+                (click)="openPlayerProfile(entry.username)">
                 <span class="rank-position">{{ getRankLabel(i) }}</span>
                 <div class="rank-avatar">{{ entry.username?.charAt(0)?.toUpperCase() }}</div>
                 <div class="rank-info">
@@ -194,7 +193,7 @@
                 <span class="history-time">{{ formatTime(match.durationSeconds) }}</span>
               </div>
               <div class="history-footer">
-                <span class="history-user" (click)="navigateToProfile(match.username, $event)">
+                <span class="history-user" (click)="openPlayerProfile(match.username, $event)">
                   {{ match.username }}
                 </span>
                 <div class="history-footer-right">
@@ -216,6 +215,100 @@
 
   <div class="jumpscare-overlay" *ngIf="jumpscareActive" (click)="dismissJumpscare()">
     <video class="jumpscare-video" [src]="jumpscareVideoUrl" autoplay playsinline></video>
+  </div>
+
+  <!-- PLAYER PROFILE MODAL -->
+  <div class="modal-backdrop" *ngIf="showProfileModal()" (click)="closeProfileModal()">
+    <div class="profile-modal" (click)="$event.stopPropagation()">
+
+      <div class="modal-topbar">
+        <div class="modal-topbar-dots">
+          <span class="dot r"></span>
+          <span class="dot y"></span>
+          <span class="dot g"></span>
+          <span class="modal-topbar-title">ARCHV.ROOMS — PERFIL DO JOGADOR</span>
+        </div>
+        <button class="modal-close" (click)="closeProfileModal()">✕ fechar</button>
+      </div>
+
+      <div class="modal-loading" *ngIf="isLoadingProfile()">
+        carregando perfil...
+      </div>
+
+      <ng-container *ngIf="!isLoadingProfile() && playerProfile()">
+
+        <div class="mp-header">
+          <div class="mp-rank-badge"># {{ playerProfile().rank < 10 ? '0' + playerProfile().rank : playerProfile().rank }} GLOBAL</div>
+          <div class="mp-avatar-wrap">
+            <div class="mp-avatar">{{ playerProfile().username?.charAt(0)?.toUpperCase() }}</div>
+            <div class="mp-avatar-rank">{{ playerProfile().rank }}</div>
+          </div>
+          <div class="mp-info">
+            <div class="mp-name">{{ playerProfile().username }}</div>
+            <div class="mp-meta">
+              favorito: <span>{{ playerProfile().favoriteGame || '—' }}</span>
+              · membro desde {{ playerProfile().memberSince | date:'MMM yyyy' }}
+            </div>
+          </div>
+        </div>
+
+        <div class="mp-section">
+          <div class="mp-section-header">estatísticas gerais</div>
+          <div class="mp-stats-grid">
+            <div class="mp-stat">
+              <div class="mp-stat-num">{{ formatTime(playerProfile().bestTime) }}</div>
+              <div class="mp-stat-lbl">melhor tempo</div>
+            </div>
+            <div class="mp-stat">
+              <div class="mp-stat-num">{{ playerProfile().totalMatches }}</div>
+              <div class="mp-stat-lbl">partidas</div>
+            </div>
+            <div class="mp-stat">
+              <div class="mp-stat-num">{{ playerProfile().totalGames }}</div>
+              <div class="mp-stat-lbl">jogos</div>
+            </div>
+            <div class="mp-stat">
+              <div class="mp-stat-num">#{{ playerProfile().rank }}</div>
+              <div class="mp-stat-lbl">ranking</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mp-section">
+          <div class="mp-section-header">histórico de jogos</div>
+          <div class="mp-games">
+            <div class="mp-game-row" *ngFor="let g of playerProfile().recentMatches; let i = index">
+              <span class="mp-game-pos">{{ (i + 1) < 10 ? '0' + (i + 1) : (i + 1) }}</span>
+              <span class="mp-game-name">{{ g.gameName }}</span>
+              <span class="mp-game-fav" *ngIf="g.gameName === playerProfile().favoriteGame">favorito</span>
+              <span class="mp-game-time">{{ formatTime(g.durationSeconds) }}</span>
+              <span class="mp-game-date">{{ g.playedAt | date:'dd/MM/yy' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mp-section" *ngIf="isLoggedIn && !isCurrentUser(playerProfile().userId)">
+          <div class="mp-section-header">comparar com você</div>
+          <div class="mp-compare-row" *ngFor="let g of playerProfile().commonGames">
+            <div class="mp-compare-side">
+              <div class="mp-compare-game">{{ g.gameName }}</div>
+              <div class="mp-compare-time" [class.win]="g.yourTime <= g.theirTime" [class.lose]="g.yourTime > g.theirTime">
+                {{ formatTime(g.yourTime) }}
+              </div>
+            </div>
+            <div class="mp-compare-vs">VS</div>
+            <div class="mp-compare-side right">
+              <div class="mp-compare-game">{{ playerProfile().username }}</div>
+              <div class="mp-compare-time" [class.win]="g.theirTime <= g.yourTime" [class.lose]="g.theirTime > g.yourTime">
+                {{ formatTime(g.theirTime) }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </ng-container>
+
+    </div>
   </div>
 
 </div>
