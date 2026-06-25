@@ -27,7 +27,7 @@ export class LeaderboardService {
       const arr = Array.isArray(raw) ? raw : [];
       const data = arr.map((entry: any) => ({
         userId:       entry.user?.id       ?? entry.userId,
-        username:     entry.user?.name     ?? entry.username ?? entry.user?.username ?? '—',
+        username:     entry.user?.username ?? entry.username ?? entry.user?.name ?? '—',
         avatar:       entry.user?.avatar   ?? entry.avatar,
         gameName:     entry.game?.title    ?? entry.gameName,
         totalSeconds: entry.totalDuration  ?? entry.totalSeconds ?? 0,
@@ -45,7 +45,7 @@ export class LeaderboardService {
       const arr = Array.isArray(raw) ? raw : [];
       const data = arr.map((entry: any) => ({
         userId:          entry.user?.id       ?? entry.userId,
-        username:        entry.user?.name     ?? entry.username ?? '—',
+        username:        entry.user?.username ?? entry.username ?? entry.user?.name ?? '—',
         avatar:          entry.user?.avatar   ?? entry.avatar,
         gameName:        entry.game?.title    ?? entry.gameName ?? 'jogo desconhecido',
         gameId:          entry.game?.id       ?? entry.gameId,
