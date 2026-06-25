@@ -290,6 +290,7 @@
               <span class="mp-game-fav" *ngIf="g.gameName === playerProfile().favoriteGame">favorito</span>
               <span class="mp-game-time">{{ formatTime(g.durationSeconds) }}</span>
               <span class="mp-game-date">{{ g.playedAt | date:'dd/MM/yy' }}</span>
+              <span class="mp-game-arrow">▶</span>
             </div>
           </div>
         </div>
