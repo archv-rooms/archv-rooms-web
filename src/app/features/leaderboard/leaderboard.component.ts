@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -37,10 +37,14 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
   isLoadingHistory = signal(false);
   isLoadingGames = signal(false);
 
-  // Controla se o contador já animou por posição
   private animatedPositions = new Set<number>();
 
   currentUser: any = this.parseCurrentUser();
+
+  // ── Player Profile Modal ──
+  playerProfile = signal<any>(null);
+  isLoadingProfile = signal(false);
+  showProfileModal = signal(false);
 
   private parseCurrentUser(): any {
     try {
@@ -168,16 +172,12 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
     return [h, m, s].map(v => String(v).padStart(2, '0')).join(':');
   }
 
-  // Retorna HTML com cada dígito em <span> para animação CSS
-  // A animação só dispara uma vez por posição (evita re-trigger no change detection)
   getAnimatedTime(seconds: number, position: number): string {
     const formatted = this.formatTime(seconds);
     const alreadyAnimated = this.animatedPositions.has(position);
-
     if (!alreadyAnimated) {
       this.animatedPositions.add(position);
     }
-
     return formatted
       .split('')
       .map((char, i) => {
@@ -196,12 +196,35 @@ export class LeaderboardComponent implements OnInit, OnDestroy {
     return !!(this.currentUser?.id && this.currentUser.id === userId);
   }
 
-  navigateToProfile(username: string, event?: Event): void {
-    if (event) event.stopPropagation();
-    if (username) this.router.navigate(['/profile', username]);
-  }
-
   navigateToGame(gameId: number): void {
     if (gameId) this.router.navigate(['/rooms', gameId]);
+  }
+
+  // ── Player Profile Modal ──
+  openPlayerProfile(username: string, event?: Event): void {
+    if (event) event.stopPropagation();
+    if (!username) return;
+    this.showProfileModal.set(true);
+    this.isLoadingProfile.set(true);
+    this.playerProfile.set(null);
+    this.leaderboardService.getPlayerProfile(username).subscribe({
+      next: (res) => {
+        this.playerProfile.set(res.success ? res.data : null);
+        this.isLoadingProfile.set(false);
+      },
+      error: () => {
+        this.isLoadingProfile.set(false);
+      }
+    });
+  }
+
+  closeProfileModal(): void {
+    this.showProfileModal.set(false);
+    this.playerProfile.set(null);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscPress(): void {
+    if (this.showProfileModal()) this.closeProfileModal();
   }
 }
