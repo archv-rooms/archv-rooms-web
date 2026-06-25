@@ -6,11 +6,12 @@ import { Subscription } from 'rxjs';
 import { FriendService } from '../../core/services/friend.service';
 import { ChatService, ChatMessage } from '../../core/services/chat.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { FriendProfileModalComponent } from './friend-profile-modal/friend-profile-modal.component';
 
 @Component({
   selector: 'app-friends',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FriendProfileModalComponent],
   templateUrl: './friends.component.html',
   styleUrls: ['./friends.component.scss']
 })
@@ -48,6 +49,9 @@ export class FriendsComponent implements OnInit, OnDestroy {
 
   currentUser = JSON.parse(localStorage.getItem('@archv:user') || '{}');
 
+  // ── MODAL ──
+  selectedFriend: any = null;
+
   // ── CHAT ──
   chatOpen = false;
   activeFriend: any = null;
@@ -70,7 +74,7 @@ export class FriendsComponent implements OnInit, OnDestroy {
 
     this.activityPollInterval = setInterval(() => {
       this.loadFriendsActivity();
-    }, 30000); // atualiza a cada 30s
+    }, 30000);
   }
 
   ngOnDestroy(): void {
@@ -162,9 +166,7 @@ export class FriendsComponent implements OnInit, OnDestroy {
         this.friendsActivity.set(Array.isArray(res) ? res : (res.data || []));
         this.isLoadingActivity.set(false);
       },
-      error: () => {
-        this.isLoadingActivity.set(false);
-      }
+      error: () => this.isLoadingActivity.set(false)
     });
   }
 
@@ -231,6 +233,7 @@ export class FriendsComponent implements OnInit, OnDestroy {
         if (res.success) {
           this.showFeedback('Amigo removido.', 'success');
           this.friends.update(list => list.filter(f => f.friendshipId !== friendshipId));
+          this.selectedFriend = null;
         }
       },
       error: () => this.showFeedback('Erro ao remover amigo.', 'error')
@@ -243,27 +246,34 @@ export class FriendsComponent implements OnInit, OnDestroy {
     setTimeout(() => this.feedbackMessage.set(''), 3000);
   }
 
-  // ── ACTIVITY HELPERS ──────────────────────────────
+  // ── MODAL ────────────────────────────────────────
+  openProfile(user: any): void {
+    if (!user) return;
+    this.selectedFriend = user;
+  }
+
+  // ── ACTIVITY HELPERS ─────────────────────────────
   timeSince(dateStr: string | null): string {
     if (!dateStr) return '';
     const diffMs = Date.now() - new Date(dateStr).getTime();
     const minutes = Math.floor(diffMs / 60000);
     if (minutes < 60) return `${minutes}min`;
-
     const hours = Math.floor(diffMs / 3600000);
     if (hours < 24) return `${hours}h`;
-
     const days = Math.floor(hours / 24);
     if (days < 7) return `${days}d`;
-
     const weeks = Math.floor(days / 7);
     if (weeks < 4) return `${weeks}sem`;
-
     const months = Math.floor(days / 30);
     return `${months}mês${months > 1 ? 'es' : ''}`;
   }
 
-  // ── CHAT ──────────────────────────────────────────
+  getFriendStatus(friendId: number): string {
+    const activity = this.friendsActivity().find(a => a.user?.id === friendId);
+    return activity?.status ?? 'inactive';
+  }
+
+  // ── CHAT ─────────────────────────────────────────
   openChat(friend: any): void {
     this.activeFriend = friend;
     this.chatOpen = true;
@@ -314,9 +324,7 @@ export class FriendsComponent implements OnInit, OnDestroy {
   sendMessage(): void {
     const content = this.newMessage.trim();
     if (!content || !this.activeConversationId) return;
-
     this.newMessage = '';
-
     this.chatService.sendMessage(this.activeConversationId, content).subscribe({
       error: () => this.showFeedback('Erro ao enviar mensagem.', 'error')
     });
@@ -327,10 +335,5 @@ export class FriendsComponent implements OnInit, OnDestroy {
       const el = this.chatMessagesEl?.nativeElement;
       if (el) el.scrollTop = el.scrollHeight;
     }, 50);
-  }
-
-  getFriendStatus(friendId: number): string {
-  const activity = this.friendsActivity().find(a => a.user?.id === friendId);
-  return activity?.status ?? 'inactive';
   }
 }
