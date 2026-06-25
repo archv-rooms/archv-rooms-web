@@ -138,9 +138,9 @@
                   *ngFor="let user of searchResults(); let i = index"
                   [style.animation-delay]="(i * 0.05) + 's'">
                   <div class="rank-avatar">
-  <img *ngIf="user.avatar" [src]="user.avatar" [alt]="user.username" class="avatar-img" />
-  <span *ngIf="!user.avatar">{{ user.username?.charAt(0)?.toUpperCase() }}</span>
-</div>
+                    <img *ngIf="user.avatar" [src]="user.avatar" [alt]="user.username" class="avatar-img" />
+                    <span *ngIf="!user.avatar">{{ user.username?.charAt(0)?.toUpperCase() }}</span>
+                  </div>
                   <div class="rank-info">
                     <span class="rank-username">{{ user.username }}</span>
                     <span class="rank-game">{{ user.email }}</span>
@@ -186,7 +186,8 @@
                   <div class="rank-info">
                     <span class="rank-username" style="display:flex;align-items:center;gap:8px;">
                       <span class="rank-avatar" style="width:22px;height:22px;font-size:10px;flex-shrink:0;">
-                        {{ item.user?.username?.charAt(0)?.toUpperCase() }}
+                        <img *ngIf="item.user?.avatar" [src]="item.user.avatar" [alt]="item.user.username" class="avatar-img" />
+                        <span *ngIf="!item.user?.avatar">{{ item.user?.username?.charAt(0)?.toUpperCase() }}</span>
                       </span>
                       {{ item.user?.username }}
                       <span class="live-tag" *ngIf="item.status === 'playing'">ao vivo</span>
@@ -232,9 +233,9 @@
                 *ngFor="let request of pendingRequests(); let i = index"
                 [style.animation-delay]="(i * 0.05) + 's'">
                 <div class="rank-avatar">
-  <img *ngIf="request.sender?.avatar" [src]="request.sender.avatar" [alt]="request.sender.username" class="avatar-img" />
-  <span *ngIf="!request.sender?.avatar">{{ request.sender?.username?.charAt(0)?.toUpperCase() }}</span>
-</div>
+                  <img *ngIf="request.sender?.avatar" [src]="request.sender.avatar" [alt]="request.sender.username" class="avatar-img" />
+                  <span *ngIf="!request.sender?.avatar">{{ request.sender?.username?.charAt(0)?.toUpperCase() }}</span>
+                </div>
                 <div class="rank-info">
                   <span class="rank-username">{{ request.sender?.username }}</span>
                   <span class="rank-game">▸ quer ser seu amigo</span>
@@ -267,9 +268,8 @@
                   [class.bronze-row]="i === 2">
                   <span class="rank-position">{{ '#' + (i + 1) }}</span>
                   <div class="rank-avatar" [class.gold-av]="i===0" [class.silver-av]="i===1" [class.bronze-av]="i===2">
-  <img *ngIf="friend.avatar" [src]="friend.avatar" [alt]="friend.username" class="avatar-img" />
-  <span *ngIf="!friend.avatar">{{ friend.username?.charAt(0)?.toUpperCase() }}</span>
-</div>
+                    <img *ngIf="friend.avatar" [src]="friend.avatar" [alt]="friend.username" class="avatar-img" />
+                    <span *ngIf="!friend.avatar">{{ friend.username?.charAt(0)?.toUpperCase() }}</span>
                   </div>
                   <div class="rank-info">
                     <span class="rank-username">{{ friend.username }}</span>
@@ -296,7 +296,10 @@
       <div class="chat-panel" [class.open]="chatOpen">
         <div class="chat-header">
           <div class="chat-header-info">
-            <div class="chat-avatar">{{ activeFriend?.username?.charAt(0)?.toUpperCase() }}</div>
+            <div class="chat-avatar" style="overflow:hidden;">
+              <img *ngIf="activeFriend?.avatar" [src]="activeFriend.avatar" [alt]="activeFriend.username" class="avatar-img" />
+              <span *ngIf="!activeFriend?.avatar">{{ activeFriend?.username?.charAt(0)?.toUpperCase() }}</span>
+            </div>
             <div>
               <div class="chat-friend-name">{{ activeFriend?.username }}</div>
               <div class="chat-status">
