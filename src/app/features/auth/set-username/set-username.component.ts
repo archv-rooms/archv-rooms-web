@@ -11,169 +11,253 @@ import { environment } from '../../../../environments/environments';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="wrapper">
-
-      <div class="bg-grid"></div>
-      <div class="bg-vignette"></div>
+    <div class="page">
+      <div class="grid"></div>
+      <div class="glow-l"></div>
+      <div class="glow-r"></div>
       <div class="scanlines"></div>
+      <div class="vignette"></div>
 
       <div class="card">
-        <div class="card-top">
-          <span class="logo"><span class="bracket">[</span>ARCHV<span class="bracket">]</span></span>
-          <span class="card-tag">SETUP_01</span>
+        <div class="card-top-bar">
+          <span class="card-top-logo"><span class="bracket">[</span>ARCHV<span class="bracket">]</span></span>
+          <div class="card-top-dots">
+            <div class="dot dot-r"></div>
+            <div class="dot dot-y"></div>
+            <div class="dot dot-g"></div>
+          </div>
         </div>
 
-        <div class="card-title-wrap">
-          <div class="card-accent"></div>
-          <h1 class="card-title">ESCOLHA SEU<br/>USERNAME</h1>
+        <div class="card-body">
+          <div class="step-row">
+            <span class="step-done">✓ CONTA CRIADA</span>
+            <div class="step-line"></div>
+            <span class="step-active">► SETUP_01</span>
+            <div class="step-line step-line--dim"></div>
+            <span class="step-todo">ONBOARDING</span>
+          </div>
+
+          <div class="title-block">
+            <div class="title-pre">// IDENTIFICAÇÃO DO JOGADOR</div>
+            <h1 class="title">ESCOLHA<br/>SEU <span class="title-accent">_USERNAME</span></h1>
+          </div>
+
+          <div class="hint">
+            Mínimo 3 caracteres · apenas letras, números e _ · este será seu nome público na plataforma
+          </div>
+
+          <div class="inp-label">USERNAME_INPUT</div>
+          <div class="inp-wrap" [class.has-error]="errorMsg">
+            <span class="inp-prompt">&gt;</span>
+            <input
+              class="inp"
+              type="text"
+              [(ngModel)]="username"
+              placeholder="seu_username_aqui"
+              maxlength="20"
+              (input)="errorMsg = ''"/>
+            <span class="inp-count">{{ username.length }}/20</span>
+          </div>
+
+          <p class="error-msg" *ngIf="errorMsg">⚠ {{ errorMsg }}</p>
+
+          <button class="btn" (click)="submit()" [disabled]="loading || !username">
+            <span *ngIf="!loading">CONFIRMAR_USERNAME <span class="btn-arrow">→</span></span>
+            <span *ngIf="loading">// SALVANDO...</span>
+          </button>
         </div>
 
-        <p class="card-hint">// Identificador único · mín. 3 caracteres · apenas letras, números e _</p>
-
-        <div class="input-wrap" [class.has-error]="errorMsg">
-          <span class="prompt">&gt;</span>
-          <input
-            class="input"
-            type="text"
-            [(ngModel)]="username"
-            placeholder="seu_username"
-            maxlength="20"
-            (input)="errorMsg = ''"/>
-          <span class="input-count">{{ username.length }}/20</span>
+        <div class="card-bottom">
+          <span class="cb-text">ARCHV_OS v2.4</span>
+          <span class="cb-text">SETUP 1 DE 2</span>
         </div>
-
-        <p class="error-msg" *ngIf="errorMsg">⚠ {{ errorMsg }}</p>
-
-        <button class="btn" (click)="submit()" [disabled]="loading || !username">
-          <span *ngIf="!loading">CONFIRMAR_USERNAME →</span>
-          <span *ngIf="loading">// SALVANDO...</span>
-        </button>
-
-        <p class="card-footer">Este nome aparecerá no seu perfil público e não poderá ser alterado facilmente.</p>
       </div>
     </div>
   `,
   styles: [`
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
 
-    .wrapper {
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .page {
+      font-family: 'Share Tech Mono', monospace;
+      background: #0b0d14;
+      min-height: 100vh;
       display: flex; align-items: center; justify-content: center;
-      height: 100vh; font-family: 'Share Tech Mono', monospace;
-      background: #11131a; position: relative; overflow: hidden;
+      position: relative; overflow: hidden;
     }
 
-    .bg-grid {
+    .grid {
       position: absolute; inset: 0; pointer-events: none;
       background-image:
-        linear-gradient(rgba(139,92,246,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(139,92,246,0.04) 1px, transparent 1px);
-      background-size: 48px 48px;
+        linear-gradient(rgba(139,92,246,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139,92,246,0.06) 1px, transparent 1px);
+      background-size: 52px 52px;
+    }
+
+    .glow-l {
+      position: absolute; left: -120px; top: 50%; transform: translateY(-50%);
+      width: 400px; height: 400px; border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
+    }
+
+    .glow-r {
+      position: absolute; right: -80px; bottom: -80px;
+      width: 300px; height: 300px; border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(109,78,216,0.08) 0%, transparent 70%);
     }
 
     .scanlines {
       position: absolute; inset: 0; pointer-events: none;
       background: repeating-linear-gradient(
         0deg, transparent, transparent 3px,
-        rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px
+        rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 4px
       );
     }
 
-    .bg-vignette {
+    .vignette {
       position: absolute; inset: 0; pointer-events: none;
-      background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.75) 100%);
+      background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.8) 100%);
     }
 
     .card {
-      position: relative; z-index: 1;
-      background: rgba(24,27,36,0.92);
-      border: 1px solid rgba(109,78,216,0.35);
-      border-radius: 8px; padding: 36px 40px;
-      width: 460px; max-width: 95vw;
-      display: flex; flex-direction: column; gap: 20px;
-      box-shadow: 0 0 60px rgba(139,92,246,0.08), 0 0 0 1px rgba(139,92,246,0.05);
-      backdrop-filter: blur(8px);
+      position: relative; z-index: 2;
+      background: rgba(18,21,32,0.92);
+      border: 1px solid rgba(139,92,246,0.3);
+      border-radius: 2px;
+      width: 480px; max-width: 95vw;
+      overflow: hidden;
     }
 
-    .card-top {
+    .card-top-bar {
+      background: rgba(139,92,246,0.08);
+      border-bottom: 1px solid rgba(139,92,246,0.2);
+      padding: 10px 24px;
       display: flex; align-items: center; justify-content: space-between;
     }
 
-    .logo {
-      font-size: 12px; color: #555d7a; letter-spacing: 4px;
-    }
+    .card-top-logo { font-size: 11px; color: #6d4ed8; letter-spacing: 4px; }
     .bracket { color: #8b5cf6; }
 
-    .card-tag {
-      font-size: 9px; color: #555d7a; letter-spacing: 3px;
-      border: 1px solid #2a2e3f; padding: 3px 10px; border-radius: 3px;
-    }
+    .card-top-dots { display: flex; gap: 6px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot-r { background: #fb7185; opacity: 0.6; }
+    .dot-y { background: #fbbf24; opacity: 0.6; }
+    .dot-g { background: #4ade80; opacity: 0.6; }
 
-    .card-title-wrap {
-      display: flex; align-items: flex-start; gap: 14px;
-    }
+    .card-body { padding: 32px 36px 36px; display: flex; flex-direction: column; gap: 0; }
 
-    .card-accent {
-      width: 3px; border-radius: 2px; background: #8b5cf6;
-      align-self: stretch; flex-shrink: 0;
-      box-shadow: 0 0 10px rgba(139,92,246,0.5);
-    }
-
-    .card-title {
-      font-family: 'VT323', monospace; font-size: 36px;
-      color: #f2f4ff; letter-spacing: 3px; line-height: 1.1; margin: 0;
-    }
-
-    .card-hint {
-      font-size: 10px; color: #555d7a; letter-spacing: 1px;
-      line-height: 1.6; margin: 0;
-      border-left: 2px solid #2a2e3f; padding-left: 10px;
-    }
-
-    .input-wrap {
+    .step-row {
       display: flex; align-items: center; gap: 8px;
-      background: #141720; border: 1px solid #2a2e3f;
-      border-radius: 4px; padding: 0 14px;
+      margin-bottom: 28px;
+    }
+
+    .step-done {
+      font-size: 9px; color: #4ade80; letter-spacing: 2px;
+      border: 1px solid rgba(74,222,128,0.3); padding: 3px 8px; border-radius: 2px;
+      white-space: nowrap;
+    }
+
+    .step-active {
+      font-size: 9px; color: #8b5cf6; letter-spacing: 2px;
+      border: 1px solid rgba(139,92,246,0.4); padding: 3px 8px; border-radius: 2px;
+      white-space: nowrap;
+    }
+
+    .step-todo {
+      font-size: 9px; color: #2a2e3f; letter-spacing: 2px;
+      border: 1px solid #1a1d28; padding: 3px 8px; border-radius: 2px;
+      white-space: nowrap;
+    }
+
+    .step-line {
+      flex: 1; height: 1px;
+      background: linear-gradient(90deg, rgba(74,222,128,0.3), transparent);
+    }
+
+    .step-line--dim {
+      background: linear-gradient(90deg, rgba(109,78,216,0.3), transparent);
+    }
+
+    .title-block { margin-bottom: 20px; }
+
+    .title-pre {
+      font-size: 10px; color: #555d7a; letter-spacing: 3px; margin-bottom: 10px;
+    }
+
+    .title {
+      font-family: 'VT323', monospace; font-size: 48px; color: #f2f4ff;
+      letter-spacing: 2px; line-height: 1;
+      text-shadow: 0 0 30px rgba(139,92,246,0.25);
+    }
+
+    .title-accent { color: #8b5cf6; }
+
+    .hint {
+      font-size: 10px; color: #555d7a; letter-spacing: 1px; line-height: 1.7;
+      margin-bottom: 22px; padding: 10px 14px;
+      border-left: 2px solid rgba(139,92,246,0.4);
+      background: rgba(139,92,246,0.04);
+    }
+
+    .inp-label {
+      font-size: 9px; color: #8b5cf6; letter-spacing: 3px; margin-bottom: 8px;
+    }
+
+    .inp-wrap {
+      display: flex; align-items: center; gap: 10px;
+      background: #090b12; border: 1px solid rgba(109,78,216,0.4);
+      border-radius: 2px; padding: 0 16px; margin-bottom: 20px;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .input-wrap:focus-within {
-      border-color: #6d4ed8;
-      box-shadow: 0 0 0 1px rgba(109,78,216,0.2);
+
+    .inp-wrap:focus-within {
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 1px rgba(139,92,246,0.2);
     }
-    .input-wrap.has-error { border-color: #fb7185; }
 
-    .prompt { color: #8b5cf6; font-size: 15px; flex-shrink: 0; }
+    .inp-wrap.has-error { border-color: #fb7185; }
 
-    .input {
+    .inp-prompt { color: #8b5cf6; font-size: 16px; flex-shrink: 0; }
+
+    .inp {
       flex: 1; background: transparent; border: none; outline: none;
       color: #f2f4ff; font-family: 'Share Tech Mono', monospace;
-      font-size: 14px; padding: 13px 0; letter-spacing: 2px;
+      font-size: 15px; padding: 14px 0; letter-spacing: 2px;
     }
-    .input::placeholder { color: #454a62; }
 
-    .input-count { font-size: 10px; color: #555d7a; flex-shrink: 0; }
+    .inp::placeholder { color: #2a2e3f; }
+    .inp-count { font-size: 10px; color: #2a2e3f; flex-shrink: 0; }
 
     .error-msg {
-      font-size: 11px; color: #fb7185; letter-spacing: 1px; margin: 0;
+      font-size: 11px; color: #fb7185; letter-spacing: 1px;
+      margin-bottom: 16px; margin-top: -12px;
     }
 
     .btn {
-      background: transparent; border: 1px solid rgba(242,244,255,0.6);
-      color: #f2f4ff; font-family: 'Share Tech Mono', monospace;
-      font-size: 12px; letter-spacing: 2px; padding: 13px;
-      border-radius: 4px; cursor: pointer; transition: all 0.2s;
-      text-transform: uppercase;
+      width: 100%; background: transparent;
+      border: 1px solid rgba(242,244,255,0.5); color: #f2f4ff;
+      font-family: 'Share Tech Mono', monospace; font-size: 12px;
+      letter-spacing: 3px; padding: 15px; border-radius: 2px;
+      cursor: pointer; transition: all 0.2s; text-transform: uppercase;
     }
+
     .btn:hover:not(:disabled) {
       background: rgba(139,92,246,0.12);
       border-color: #8b5cf6;
-      box-shadow: 0 0 16px rgba(139,92,246,0.25);
+      box-shadow: 0 0 20px rgba(139,92,246,0.2);
     }
-    .btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    .card-footer {
-      font-size: 10px; color: #454a62; letter-spacing: 0.5px;
-      line-height: 1.6; margin: 0; text-align: center;
+    .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .btn-arrow { color: #8b5cf6; }
+
+    .card-bottom {
+      border-top: 1px solid rgba(139,92,246,0.15);
+      padding: 10px 24px;
+      display: flex; align-items: center; justify-content: space-between;
     }
+
+    .cb-text { font-size: 9px; color: #2a2e3f; letter-spacing: 2px; }
   `]
 })
 export class SetUsernameComponent {
