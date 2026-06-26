@@ -1,11 +1,11 @@
-// ── TOKENS (alinhados com o site principal) ───────────────────────
+// ── TOKENS ───────────────────────────────────────────────────────
 $bg:             #11131a;
 $bg-panel:       #181b24;
 $bg-card:        #202433;
 $bg-card-hover:  #252a3a;
 $bg-input:       #141720;
 
-$border:         #34384a;
+$border:         #2a2e3f;
 $border-glow:    #6d4ed8;
 
 $purple:         #8b5cf6;
@@ -20,19 +20,19 @@ $green:          #4ade80;
 $text-bright:    #f2f4ff;
 $text-base:      #bcc3e0;
 $text-muted:     #9aa3c7;
-$text-dim:       #727896;
+$text-dim:       #555d7a;
 
 $font-mono:      'Share Tech Mono', monospace;
 $font-display:   'VT323', monospace;
 
-$sidebar-w:      84px;
-$topbar-h:       52px;
+$sidebar-w:      64px;
+$topbar-h:       48px;
 $radius:         4px;
 
-// ── RESET ─────────────────────────────────────────────────────────
+// ── RESET ────────────────────────────────────────────────────────
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar       { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: $bg; }
 ::-webkit-scrollbar-thumb { background: $border-glow; border-radius: 4px; }
 
@@ -47,37 +47,13 @@ html, body {
   overflow-x: hidden;
 }
 
-// ── CRT / SCANLINES (igual ao site) ───────────────────────────────
-.crt-overlay {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.55) 100%);
-  pointer-events: none;
-  z-index: 100;
-}
-
-.scanlines {
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 3px,
-    rgba(0,0,0,0.03) 3px,
-    rgba(0,0,0,0.03) 4px
-  );
-  pointer-events: none;
-  z-index: 99;
-}
-
-// ── LAYOUT ────────────────────────────────────────────────────────
+// ── LAYOUT ───────────────────────────────────────────────────────
 .admin-wrapper {
   display: flex;
   width: 100%;
   height: 100vh;
   overflow: hidden;
   background: $bg;
-  position: relative;
 }
 
 .main-content {
@@ -88,31 +64,28 @@ html, body {
   min-width: 0;
 }
 
-// ── SIDEBAR ───────────────────────────────────────────────────────
+// ── SIDEBAR ──────────────────────────────────────────────────────
 .sidebar {
   width: $sidebar-w;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 18px 0;
-  gap: 10px;
+  padding: 16px 0;
+  gap: 6px;
   flex-shrink: 0;
-  z-index: 10;
-  background: linear-gradient(180deg, rgba($bg-panel, 1) 0%, rgba(#1d2130, 1) 100%);
-  border-right: 1px solid rgba($border-glow, 0.25);
-  box-shadow: inset -1px 0 0 rgba(255,255,255,0.03), 0 0 25px rgba($purple, 0.08);
+  background: $bg-panel;
+  border-right: 1px solid rgba($border-glow, 0.3);
 }
 
 .sidebar-logo {
   font-family: $font-display;
-  font-size: 13px;
-  color: $text-dim;
-  letter-spacing: 3px;
-  text-transform: uppercase;
+  font-size: 11px;
+  color: $purple-dim;
+  letter-spacing: 2px;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 
   .logo-bracket { color: $purple; }
 }
@@ -121,47 +94,42 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
 }
 
 .nav-btn {
-  width: 52px;
-  height: 52px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
   border: 1px solid transparent;
   border-radius: 6px;
-  color: $text-muted;
+  color: $text-dim;
   cursor: pointer;
   transition: all 0.2s ease;
 
-  svg { width: 22px; height: 22px; }
+  svg { width: 20px; height: 20px; }
 
   &:hover {
-    border-color: $border-glow;
-    color: $text-bright;
-    background: rgba($purple, 0.1);
+    border-color: rgba($border-glow, 0.4);
+    color: $text-base;
+    background: rgba($purple, 0.06);
   }
 
   &.active {
     background: rgba($purple, 0.2);
     border-color: $purple-dim;
     color: $text-bright;
-    box-shadow: 0 0 8px rgba($purple, 0.3);
+    box-shadow: 0 0 12px rgba($purple, 0.25);
   }
 }
 
 .nav-btn--exit {
   margin-top: 8px;
-
-  &:hover {
-    border-color: $red-dim;
-    color: $red;
-    background: rgba($red, 0.1);
-  }
+  &:hover { border-color: $red-dim; color: $red; background: rgba($red, 0.08); }
 }
 
 .sidebar-footer {
@@ -170,7 +138,6 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
 }
 
 .signal-dot {
@@ -184,87 +151,67 @@ html, body {
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0.4; }
+  50%       { opacity: 0.3; }
 }
 
-// ── TOPBAR ────────────────────────────────────────────────────────
+// ── TOPBAR ───────────────────────────────────────────────────────
 .topbar {
   height: $topbar-h;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  background: rgba($bg-panel, 0.92);
+  background: rgba($bg-panel, 0.95);
   border-bottom: 1px solid $border;
   flex-shrink: 0;
 }
 
 .topbar-brand {
-  font-size: 14px;
+  font-family: $font-display;
+  font-size: 18px;
   letter-spacing: 3px;
   color: $text-muted;
-  text-transform: uppercase;
 }
 
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.topbar-user {
-  font-size: 12px;
-  letter-spacing: 1px;
-  color: $text-bright;
-  padding: 4px 12px;
-  border: 1px solid $purple-dim;
-  border-radius: 4px;
-  transition: 0.2s;
-
-  &:hover { background: rgba($purple, 0.15); }
-}
+.topbar-right { display: flex; align-items: center; gap: 10px; }
 
 .topbar-section {
-  font-size: 11px;
+  font-size: 10px;
   color: $text-dim;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  letter-spacing: 3px;
+  border: 1px solid $border;
+  padding: 3px 10px;
+  border-radius: 3px;
 }
 
-// ── SCROLL BODY ───────────────────────────────────────────────────
+// ── SCROLL BODY ──────────────────────────────────────────────────
 .scroll-body {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 24px;
-
-  &::-webkit-scrollbar       { width: 5px; }
-  &::-webkit-scrollbar-track { background: $bg; }
-  &::-webkit-scrollbar-thumb { background: $border-glow; border-radius: 4px; }
+  padding: 20px;
 }
 
-// ── SECTION ───────────────────────────────────────────────────────
-.section {
-  &.hidden { display: none !important; }
-}
+// ── SECTION ──────────────────────────────────────────────────────
+.section { &.hidden { display: none !important; } }
 
 .section-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   font-family: $font-display;
-  font-size: 20px;
+  font-size: 22px;
   color: $text-bright;
   letter-spacing: 3px;
-  border-left: 2px solid $purple;
+  border-left: 3px solid $purple;
   padding-left: 12px;
 
-  .section-tag { color: $purple; font-size: 16px; }
+  .section-tag { color: $purple; font-size: 18px; }
   .btn { margin-left: auto; }
 }
 
-// ── BUTTONS ───────────────────────────────────────────────────────
+// ── BUTTONS ──────────────────────────────────────────────────────
 .btn {
   font-family: $font-mono;
   font-size: 11px;
@@ -280,23 +227,20 @@ html, body {
     background: transparent;
     border-color: $text-bright;
     color: $text-bright;
-    box-shadow: 0 0 8px rgba($purple, 0.3), inset 0 0 8px rgba($purple, 0.05);
 
     &:hover {
       background: rgba($purple, 0.15);
-      box-shadow: 0 0 16px rgba($purple, 0.5);
+      border-color: $purple;
+      box-shadow: 0 0 14px rgba($purple, 0.3);
     }
   }
 
   &--ghost {
     background: transparent;
-    border-color: $border-glow;
-    color: $text-muted;
+    border-color: $border;
+    color: $text-dim;
 
-    &:hover {
-      border-color: $text-muted;
-      color: $text-bright;
-    }
+    &:hover { border-color: $border-glow; color: $text-bright; background: rgba($purple, 0.06); }
   }
 
   &--danger {
@@ -304,119 +248,66 @@ html, body {
     border-color: $red;
     color: $red;
 
-    &:hover {
-      background: rgba($red, 0.12);
-      box-shadow: 0 0 10px rgba($red, 0.3);
-    }
+    &:hover { background: rgba($red, 0.1); box-shadow: 0 0 10px rgba($red, 0.2); }
   }
 
-  &--icon { padding: 4px 8px; font-size: 13px; min-width: 30px; }
-  &--sm   { font-size: 11px; padding: 6px 14px; }
+  &--icon { padding: 5px 8px; font-size: 13px; min-width: 30px; line-height: 1; }
+  &--sm   { font-size: 10px; padding: 5px 12px; }
 
-  &:disabled { opacity: 0.35; cursor: not-allowed; }
+  &:disabled { opacity: 0.3; cursor: not-allowed; }
 }
 
-// Botão de promover usuário a admin
 .btn--promote {
   color: $yellow;
-  border-color: rgba($yellow-dim, 0.5);
-
-  &:hover {
-    border-color: $yellow;
-    background: rgba($yellow, 0.08);
-    box-shadow: 0 0 8px rgba($yellow, 0.25);
-  }
+  border-color: rgba($yellow-dim, 0.4);
+  &:hover { border-color: $yellow; background: rgba($yellow, 0.08); }
 }
 
-// Botão de revogar cargo de admin
 .btn--demote {
-  color: $text-muted;
-  border-color: rgba($border-glow, 0.4);
-
-  &:hover {
-    color: $red;
-    border-color: $red-dim;
-    background: rgba($red, 0.06);
-  }
+  color: $text-dim;
+  border-color: $border;
+  &:hover { color: $red; border-color: $red-dim; background: rgba($red, 0.06); }
 }
 
-// Botão de assinatura — verde se ativo, cinza se sem plano
 .btn--has-plan {
   color: $green;
-  border-color: rgba($green, 0.4);
-
-  &:hover {
-    border-color: $green;
-    background: rgba($green, 0.06);
-  }
+  border-color: rgba($green, 0.35);
+  &:hover { border-color: $green; background: rgba($green, 0.06); }
 }
 
-// Botão ban
 .btn--game-over {
   background: transparent;
-  border: 1px solid $red-dim;
+  border: 1px solid rgba($red-dim, 0.4);
   color: $red;
   font-family: $font-mono;
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 2px;
-  padding: 4px 10px;
+  padding: 5px 10px;
   border-radius: $radius;
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
-  position: relative;
-  overflow: hidden;
 
-  // Texto fantasma com efeito de glitch no hover
-  &::before {
-    content: 'GAME OVER';
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $red;
-    opacity: 0;
-    transform: translateX(-2px);
-    transition: opacity 0.1s;
-    text-shadow: 1px 0 $yellow;
+  &:hover {
+    border-color: $red;
+    background: rgba($red, 0.08);
+    box-shadow: 0 0 10px rgba($red, 0.15);
   }
 
-&:hover {
-  background: rgba($red, 0.1);
-  border-color: $red;
-  box-shadow: 0 0 10px rgba($red, 0.3), inset 0 0 8px rgba($red, 0.05);
-
-  &::before { opacity: 0.4; }
-}
-
-  // Variante maior usada dentro do modal de confirmação
   &--lg {
     font-size: 12px;
     padding: 9px 20px;
     letter-spacing: 3px;
-
-    &:hover {
-      box-shadow: 0 0 20px rgba($red, 0.5), inset 0 0 12px rgba($red, 0.08);
-    }
   }
 
-  &:disabled { opacity: 0.3; cursor: not-allowed; animation: none; }
+  &:disabled { opacity: 0.3; cursor: not-allowed; }
 }
 
-@keyframes glitch-flicker {
-  0%   { clip-path: inset(0 0 95% 0); }
-  25%  { clip-path: inset(40% 0 50% 0); }
-  50%  { clip-path: none; }
-  75%  { clip-path: inset(80% 0 5% 0); }
-  100% { clip-path: none; }
-}
-
-// ── FILTER BAR ────────────────────────────────────────────────────
+// ── FILTER BAR ───────────────────────────────────────────────────
 .filter-bar {
   display: flex;
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   align-items: center;
 
   &__input-wrap {
@@ -427,13 +318,16 @@ html, body {
     background: $bg-input;
     border: 1px solid $border;
     border-radius: $radius;
-    padding: 0 12px;
-    transition: border-color 0.2s;
+    padding: 0 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
 
-    &:focus-within { border-color: $border-glow; }
+    &:focus-within {
+      border-color: $border-glow;
+      box-shadow: 0 0 0 1px rgba($border-glow, 0.2);
+    }
   }
 
-  &__prompt { color: $purple; font-size: 14px; flex-shrink: 0; }
+  &__prompt { color: $purple; font-size: 15px; flex-shrink: 0; }
 
   &__input {
     flex: 1;
@@ -443,10 +337,10 @@ html, body {
     color: $text-bright;
     font-family: $font-mono;
     font-size: 12px;
-    padding: 9px 0;
+    padding: 11px 0;
     letter-spacing: 1px;
 
-    &::placeholder { color: $text-dim; }
+    &::placeholder { color: #454a62; }
   }
 
   &__select {
@@ -467,11 +361,11 @@ html, body {
   }
 }
 
-// ── DATA TABLE ────────────────────────────────────────────────────
+// ── DATA TABLE ───────────────────────────────────────────────────
 .data-table-wrap {
   background: $bg-panel;
   border: 1px solid $border;
-  border-radius: $radius;
+  border-radius: 6px;
   overflow: auto;
   max-height: calc(100vh - 320px);
 }
@@ -484,12 +378,12 @@ html, body {
   thead { position: sticky; top: 0; z-index: 2; }
 
   th {
-    background: $bg-card;
+    background: #1e2235;
     color: $text-dim;
-    font-size: 10px;
-    letter-spacing: 2px;
+    font-size: 9px;
+    letter-spacing: 2.5px;
     text-align: left;
-    padding: 10px 14px;
+    padding: 12px 16px;
     border-bottom: 1px solid $border;
     white-space: nowrap;
     font-weight: normal;
@@ -497,8 +391,8 @@ html, body {
   }
 
   td {
-    padding: 10px 14px;
-    border-bottom: 1px solid $border;
+    padding: 13px 16px;
+    border-bottom: 1px solid rgba($border, 0.5);
     color: $text-base;
     vertical-align: middle;
     white-space: nowrap;
@@ -507,13 +401,20 @@ html, body {
   tbody tr {
     transition: background 0.15s;
 
-    &:hover          { background: $bg-card-hover; }
-    &:last-child td  { border-bottom: none; }
+    &:hover         { background: rgba($purple, 0.05); }
+    &:last-child td { border-bottom: none; }
   }
+
+  // Estilos específicos por coluna
+  .col-id    { color: $text-dim; font-size: 11px; }
+  .col-name  { color: $text-bright; font-size: 13px; }
+  .col-user  { color: $purple; font-size: 12px; }
+  .col-email { color: $text-muted; font-size: 11px; }
+  .col-date  { color: $text-dim; font-size: 11px; }
 }
 
 .table-empty {
-  padding: 40px;
+  padding: 48px;
   text-align: center;
   color: $text-dim;
   font-size: 12px;
@@ -524,34 +425,43 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 10px;
-  font-size: 11px;
+  margin-top: 12px;
+  padding: 0 2px;
+  font-size: 10px;
   color: $text-dim;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
 }
 
 .text-muted   { color: $text-dim; }
-.actions-cell { display: flex; gap: 4px; }
+.actions-cell { display: flex; gap: 5px; align-items: center; }
 
-// ── BADGES ────────────────────────────────────────────────────────
+// ── BADGES ───────────────────────────────────────────────────────
 .badge {
-  display: inline-block;
-  padding: 2px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
   border-radius: $radius;
-  font-size: 10px;
-  letter-spacing: 1px;
+  font-size: 9px;
+  letter-spacing: 1.5px;
   font-weight: normal;
   border: 1px solid;
   text-transform: uppercase;
 
-  &--active   { color: $green;    border-color: $green;    background: rgba($green, 0.08); }
-  &--inactive { color: $text-dim; border-color: $border;   background: transparent; }
-  &--banned   { color: $red;      border-color: $red-dim;  background: rgba($red, 0.08); }
-  &--sub      { color: $yellow;   border-color: $yellow;   background: rgba($yellow, 0.08); }
-  &--hidden   { color: $text-dim; border-color: $border;   background: rgba(0,0,0,0.25); }
+  &--active {
+    color: $green;
+    border-color: rgba($green, 0.35);
+    background: rgba($green, 0.07);
+
+    &::before { content: '●'; font-size: 6px; }
+  }
+
+  &--inactive { color: $text-dim; border-color: rgba($border, 0.6); background: transparent; }
+  &--banned   { color: $red;   border-color: rgba($red-dim, 0.35); background: rgba($red, 0.07); }
+  &--sub      { color: $yellow; border-color: rgba($yellow, 0.35); background: rgba($yellow, 0.07); }
 }
 
-// ── STAT CARDS ────────────────────────────────────────────────────
+// ── STAT CARDS ───────────────────────────────────────────────────
 .stats-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -561,51 +471,52 @@ html, body {
 
 .stat-card {
   background: $bg-card;
-  border: 1px solid rgba($border-glow, 0.25);
-  border-radius: 6px;
-  padding: 16px;
+  border: 1px solid rgba($border-glow, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   position: relative;
   overflow: hidden;
-  transition: 0.2s;
+  transition: border-color 0.2s;
 
-  &:hover {
-    border-color: $border-glow;
-    box-shadow: 0 0 18px rgba($purple, 0.12);
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, $purple, transparent);
   }
 
+  &:hover { border-color: rgba($border-glow, 0.5); }
+
   &__label {
-    font-size: 10px;
+    font-size: 9px;
     color: $text-dim;
-    letter-spacing: 2px;
+    letter-spacing: 2.5px;
     text-transform: uppercase;
   }
 
   &__value {
     font-family: $font-display;
-    font-size: 36px;
+    font-size: 42px;
     color: $text-bright;
     line-height: 1;
   }
 }
 
-// ── FORM ──────────────────────────────────────────────────────────
+// ── FORM ─────────────────────────────────────────────────────────
 .form-row {
   display: flex;
   flex-direction: column;
   gap: 6px;
 
-  &--half {
-    flex-direction: row;
-    > * { flex: 1; }
-    gap: 12px;
-  }
+  &--half { flex-direction: row; > * { flex: 1; } gap: 12px; }
 }
 
 .form-label {
-  font-size: 10px;
+  font-size: 9px;
   color: $text-dim;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -624,46 +535,38 @@ html, body {
   width: 100%;
   transition: border-color 0.2s;
 
-  &:focus       { border-color: $border-glow; }
-  &::placeholder { color: $text-dim; }
-  option        { background: $bg-card; }
+  &:focus        { border-color: $border-glow; box-shadow: 0 0 0 1px rgba($border-glow, 0.15); }
+  &::placeholder { color: #454a62; }
+  option         { background: $bg-card; }
 }
 
 .form-textarea { resize: vertical; min-height: 72px; }
 
-// ── MODAL ─────────────────────────────────────────────────────────
+// ── MODAL ────────────────────────────────────────────────────────
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(#090c14, 0.85);
+  background: rgba(#090c14, 0.88);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(3px);
-
-  &.hidden { display: none !important; }
+  backdrop-filter: blur(4px);
 }
 
 .modal {
   background: $bg-panel;
-  border: 1px solid rgba($border-glow, 0.6);
-  border-radius: 6px;
+  border: 1px solid rgba($border-glow, 0.5);
+  border-radius: 8px;
   width: 560px;
   max-width: 95vw;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 40px rgba($purple, 0.15), 0 0 80px rgba(0,0,0,0.6);
+  box-shadow: 0 0 40px rgba($purple, 0.12), 0 0 80px rgba(0,0,0,0.5);
 
   &--sm  { width: 380px; }
-
-  // Variante vermelha usada no modal de ban
-  &--ban {
-    width: 460px;
-    border-color: rgba($red-dim, 0.5);
-    box-shadow: 0 0 40px rgba($red, 0.12), 0 0 80px rgba(0,0,0,0.6);
-  }
+  &--ban { width: 460px; border-color: rgba($red-dim, 0.45); box-shadow: 0 0 40px rgba($red, 0.1); }
 
   &__header {
     display: flex;
@@ -678,49 +581,18 @@ html, body {
     text-transform: uppercase;
   }
 
-  // Modificador de header para ações destrutivas (ban)
-  &__header--danger {
-    border-bottom-color: rgba($red-dim, 0.4);
-    color: $red;
-
-    .ban-skull {
-      font-size: 20px;
-      animation: skull-pulse 1.5s ease-in-out infinite;
-      margin-right: 2px;
-    }
+  &__header--danger { border-bottom-color: rgba($red-dim, 0.4); color: $red;
+    .ban-skull { font-size: 20px; animation: skull-pulse 1.5s ease-in-out infinite; margin-right: 2px; }
   }
 
   &__close {
-    background: transparent;
-    border: none;
-    color: $text-dim;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 2px 4px;
-    line-height: 1;
-    transition: 0.2s;
-
+    background: transparent; border: none; color: $text-dim; cursor: pointer;
+    font-size: 14px; padding: 2px 4px; line-height: 1; transition: 0.2s;
     &:hover { color: $red; }
   }
 
-  &__body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  &__footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    padding: 14px 20px;
-    border-top: 1px solid $border;
-  }
-
-  // Modificador de footer para ações destrutivas (ban)
+  &__body { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  &__footer { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid $border; }
   &__footer--danger { border-top-color: rgba($red-dim, 0.3); }
 }
 
@@ -729,259 +601,127 @@ html, body {
   50%       { opacity: 0.6; transform: scale(0.92); }
 }
 
-// ── BAN MODAL: INTERNO ───────────────────────────────────────────
-
-// Card com nome/email do usuário sendo banido
+// ── BAN MODAL ────────────────────────────────────────────────────
 .ban-target-card {
-  background: rgba($red, 0.05);
-  border: 1px solid rgba($red-dim, 0.35);
-  border-radius: $radius;
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+  background: rgba($red, 0.05); border: 1px solid rgba($red-dim, 0.3); border-radius: $radius;
+  padding: 12px 14px; display: flex; flex-direction: column; gap: 3px;
 
   &__label { font-size: 9px; color: $red; letter-spacing: 2px; opacity: 0.7; text-transform: uppercase; }
   &__value { font-family: $font-display; font-size: 20px; color: $text-bright; letter-spacing: 2px; }
   &__email { font-size: 11px; color: $text-dim; letter-spacing: 1px; }
 }
 
-// Seletor visual: Temporário vs Permanente
-.ban-type-selector {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-top: 4px;
-}
+.ban-type-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
 
 .ban-type-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 12px 8px;
-  background: $bg-card;
-  border: 1px solid $border;
-  border-radius: $radius;
-  color: $text-muted;
-  font-family: $font-mono;
-  font-size: 10px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 12px 8px; background: $bg-card; border: 1px solid $border; border-radius: $radius;
+  color: $text-muted; font-family: $font-mono; font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; cursor: pointer; transition: all 0.2s;
 
   &__icon { font-size: 20px; line-height: 1; }
-
   &:hover { border-color: $red-dim; color: $text-base; }
-
-  &.active {
-    background: rgba($red, 0.08);
-    border-color: $red;
-    color: $red;
-    box-shadow: 0 0 10px rgba($red, 0.15);
-  }
+  &.active { background: rgba($red, 0.08); border-color: $red; color: $red; box-shadow: 0 0 10px rgba($red, 0.12); }
 }
 
-// Linha de duração — aparece com animação quando tipo = temporário
 .ban-duration-row { animation: fadeIn 0.2s ease; }
-
-.ban-duration-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 10px;
-}
+.ban-duration-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 
 .ban-duration-preset {
-  background: $bg-card;
-  border: 1px solid $border;
-  border-radius: $radius;
-  color: $text-muted;
-  font-family: $font-mono;
-  font-size: 10px;
-  letter-spacing: 1px;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: all 0.15s;
-  text-transform: uppercase;
+  background: $bg-card; border: 1px solid $border; border-radius: $radius;
+  color: $text-muted; font-family: $font-mono; font-size: 10px; letter-spacing: 1px;
+  padding: 5px 10px; cursor: pointer; transition: all 0.15s; text-transform: uppercase;
 
   &:hover  { border-color: $border-glow; color: $text-base; }
   &.active { background: rgba($red, 0.08); border-color: $red-dim; color: $red; }
 }
 
 .ban-custom-duration {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: $bg-input;
-  border: 1px solid $border;
-  border-radius: $radius;
-  padding: 0 12px;
-  transition: border-color 0.2s;
-
+  display: flex; align-items: center; gap: 8px; background: $bg-input;
+  border: 1px solid $border; border-radius: $radius; padding: 0 12px; transition: border-color 0.2s;
   &:focus-within { border-color: $red-dim; }
-
   .filter-bar__prompt { color: $red; font-size: 13px; flex-shrink: 0; }
 }
 
 .ban-custom-input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  padding: 9px 0;
-  color: $text-bright;
-  font-family: $font-mono;
-  font-size: 12px;
-  outline: none;
-  width: 80px;
-
+  flex: 1; background: transparent; border: none; padding: 9px 0;
+  color: $text-bright; font-family: $font-mono; font-size: 12px; outline: none; width: 80px;
   &::-webkit-inner-spin-button { opacity: 0.3; }
   &::placeholder { color: $text-dim; }
 }
 
-// Tags de motivo rápido (clicáveis)
 .ban-reason-presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
 
 .ban-reason-tag {
-  background: $bg-card;
-  border: 1px solid $border;
-  border-radius: 20px;
-  color: $text-dim;
-  font-family: $font-mono;
-  font-size: 10px;
-  letter-spacing: 1px;
-  padding: 4px 12px;
-  cursor: pointer;
-  transition: all 0.15s;
-
+  background: $bg-card; border: 1px solid $border; border-radius: 20px;
+  color: $text-dim; font-family: $font-mono; font-size: 10px; letter-spacing: 1px;
+  padding: 4px 12px; cursor: pointer; transition: all 0.15s;
   &:hover  { border-color: $border-glow; color: $text-muted; }
   &.active { background: rgba($red, 0.08); border-color: $red-dim; color: $red; }
 }
 
-// ── SUBSCRIPTION MODAL: INTERNOS ──────────────────────────────────
-
-// Card de identificação do usuário no topo do modal
+// ── SUBSCRIPTION MODAL ───────────────────────────────────────────
 .sub-user-card {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 10px 14px;
-  background: $bg-card;
-  border: 1px solid $border;
-  border-radius: $radius;
-
+  display: flex; flex-direction: column; gap: 3px; padding: 10px 14px;
+  background: $bg-card; border: 1px solid $border; border-radius: $radius;
   &__name  { font-family: $font-display; font-size: 20px; color: $text-bright; letter-spacing: 2px; }
   &__email { font-size: 11px; color: $text-dim; letter-spacing: 1px; }
 }
 
-// Bloco de status: exibe se tem plano ativo ou não
 .sub-status-block {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
+  display: flex; flex-direction: column; gap: 8px;
   &__badge {
-    display: inline-flex;
-    align-self: flex-start;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 10px;
-    letter-spacing: 2px;
-    border: 1px solid;
-
+    display: inline-flex; align-self: flex-start; padding: 3px 10px;
+    border-radius: 20px; font-size: 10px; letter-spacing: 2px; border: 1px solid;
     &--active { color: $green;      border-color: rgba($green, 0.4); background: rgba($green, 0.07); }
     &--none   { color: $text-muted; border-color: $border;           background: transparent; }
   }
 }
 
-.sub-hint {
-  font-size: 11px;
-  color: $text-dim;
-  line-height: 1.6;
-  letter-spacing: 0.5px;
-}
+.sub-hint { font-size: 11px; color: $text-dim; line-height: 1.6; letter-spacing: 0.5px; }
 
-// Linhas de detalhe do plano (chave / valor)
 .sub-detail-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px solid rgba($border, 0.5);
-
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; border-bottom: 1px solid rgba($border, 0.5);
   &:last-child { border-bottom: none; }
 }
 
 .sub-detail-label { font-size: 10px; color: $text-dim; letter-spacing: 2px; text-transform: uppercase; }
 .sub-detail-value { font-size: 12px; color: $text-bright; letter-spacing: 1px; }
 
-// Seção de concessão de plano gratuito
 .sub-grant-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 14px;
-  background: rgba($bg-card, 0.6);
-  border: 1px solid rgba($border-glow, 0.2);
-  border-radius: $radius;
+  display: flex; flex-direction: column; gap: 12px; padding: 14px;
+  background: rgba($bg-card, 0.6); border: 1px solid rgba($border-glow, 0.2); border-radius: $radius;
 
   &__header {
-    font-family: $font-display;
-    font-size: 16px;
-    color: $text-muted;
-    letter-spacing: 2px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
+    font-family: $font-display; font-size: 16px; color: $text-muted; letter-spacing: 2px;
+    display: flex; align-items: center; gap: 8px;
     .section-tag { color: $purple; font-size: 13px; }
   }
 }
 
-// ── HELPERS & MISC ────────────────────────────────────────────────
+// ── THEMES ───────────────────────────────────────────────────────
+// (mantém estilos inline existentes, sem alteração)
+
+// ── TOAST ────────────────────────────────────────────────────────
 .toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 9000;
-  background: $bg-card;
-  border: 1px solid rgba($border-glow, 0.6);
-  border-radius: $radius;
-  padding: 12px 18px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 12px;
-  letter-spacing: 1px;
-  color: $text-base;
-  box-shadow: 0 0 20px rgba($purple, 0.2);
+  position: fixed; bottom: 24px; right: 24px; z-index: 9000;
+  background: $bg-card; border: 1px solid rgba($border-glow, 0.5); border-radius: $radius;
+  padding: 12px 18px; display: flex; align-items: center; gap: 10px;
+  font-size: 12px; letter-spacing: 1px; color: $text-base;
+  box-shadow: 0 0 20px rgba($purple, 0.15);
 
   &.hidden { display: none !important; }
-
   &__icon            { color: $purple; }
   &--success &__icon { color: $green; }
   &--error   &__icon { color: $red; }
   &--warn    &__icon { color: $yellow; }
 }
 
-.pagination {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-
-  button {
-    @extend .btn;
-    @extend .btn--ghost;
-    padding: 4px 10px;
-    font-size: 11px;
-
-    &.active { border-color: $purple; color: $purple; }
-  }
-}
-
+// ── HELPERS ──────────────────────────────────────────────────────
 .accent { color: $yellow; }
 .warn   { color: $red; }
+.ok     { color: $green; }
 .hidden { display: none !important; }
 
 @keyframes fadeIn {
