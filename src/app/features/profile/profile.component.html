@@ -1,8 +1,82 @@
 <div class="profile-wrapper">
-  <div class="profile-container">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+
+      <!-- Home -->
+      <button class="nav-btn" title="Home" (click)="navigate('/home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
+      </button>
+
+      <!-- Biblioteca -->
+      <button class="nav-btn" title="Biblioteca" (click)="navigate('/library')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 6h18M3 10h18M3 14h12M3 18h8"/>
+        </svg>
+      </button>
+
+      <!-- Planos -->
+      <button class="nav-btn" title="Planos" (click)="navigate('/pricing')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+
+      <!-- Apoiar -->
+      <button class="nav-btn" [class.donate-active]="isActive('/donate')" title="Apoiar" (click)="navigate('/donate')">
+        <svg class="heart-glow" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
+          <path d="M12 21C12 21 3 14.5 3 8.5a4.5 4.5 0 0 1 9-0.5 4.5 4.5 0 0 1 9 .5c0 6-9 12.5-9 12.5z"/>
+        </svg>
+      </button>
+
+      <!-- Perfil (só quando logado) -->
+      <button class="nav-btn active" title="Perfil" *ngIf="isLoggedIn" (click)="navigate('/profile')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+      </button>
+
+      <button class="nav-btn" [class.active]="isActive('/friends')" title="Amigos" *ngIf="isLoggedIn" (click)="navigate('/friends')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.85"/>
+        </svg>
+      </button>
+
+      <!-- Leaderboard -->
+<button class="nav-btn" [class.active]="isActive('/leaderboard')" title="Leaderboard" *ngIf="isLoggedIn" (click)="navigate('/leaderboard')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+  <path d="M3 20h18M8 20V10m4 10V4m4 16v-6"/>
+</svg>
+</button>
+
+      <button class="nav-btn" title="Histórico" *ngIf="isLoggedIn" (click)="navigate('/history')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
+        </svg>
+      </button>
+
+
+      <!-- Admin -->
+      <button class="nav-btn" title="Admin" *ngIf="isAdmin" (click)="navigate('/admin')">
+        <svg class="star-glow" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none">
+          <path d="M12 2l3 7h7l-6 4.5 2.3 7L12 17l-6.3 3.5L8 13 2 8.5h7z"/>
+        </svg>
+      </button>
+
+    </nav>
+  </aside>
+
+  <main class="main-content">
 
     <header class="topbar">
-      <span class="topbar-brand">▣ ARCHV.ROOMS</span>
+      <span class="topbar-brand">▣ ARCHV.ROOMS // PERFIL DO USUÁRIO</span>
       <div class="topbar-right">
         <span class="topbar-user">{{ user?.name || 'ANON' }}</span>
         <button class="btn btn-ghost btn-sm" (click)="logout()">SAIR</button>
@@ -16,13 +90,13 @@
           <span class="loading-dot"></span>
           <span class="loading-dot"></span>
           <span class="loading-dot"></span>
-          <span class="loading-text">CARREGANDO DADOS...</span>
+          <span class="loading-text">CARREGANDO DADOS DO USUÁRIO...</span>
         </div>
       </div>
 
       <div class="error-fullscreen" *ngIf="errorMessage && !isLoading">
-        <span style="font-size:18px;color:#f87185">⚠</span>
-        <p style="font-size:9px;letter-spacing:2px;color:#f87185">[ERRO] {{ errorMessage }}</p>
+        <span style="font-size:24px;color:#f87185">⚠</span>
+        <p style="font-size:10px;letter-spacing:2px;color:#f87185">[ERRO] {{ errorMessage }}</p>
         <button class="btn btn-outline btn-sm" (click)="loadProfile()">↺ TENTAR_NOVAMENTE</button>
       </div>
 
@@ -54,10 +128,6 @@
               <span class="player-rank">{{ userStats?.signalLevel || 'NVL_00' }}</span>
               <span class="player-rank-lbl">SINAL</span>
             </div>
-
-            <span class="profile-plan-badge-left" [ngClass]="'plan-' + (activeSubscription ? 'basic' : 'free')">
-              {{ getPlanName() | uppercase }}
-            </span>
 
             <div class="profile-actions">
               <button class="btn btn-outline btn-sm" (click)="openEditModal()">EDITAR PERFIL</button>
@@ -117,8 +187,8 @@
                   <span class="panel-dot green"></span>
                 </div>
                 <div class="terminal-lines">
-                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">AUTENTICAÇÃO</span><span class="t-val green">VERIFICADO</span></div>
-                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">PLANO</span><span class="t-val purple">{{ getPlanName() | uppercase }}</span></div>
+                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">STATUS AUTENTICAÇÃO</span><span class="t-val green">VERIFICADO</span></div>
+                  <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">NÍVEL PLANO</span><span class="t-val purple">{{ getPlanName() | uppercase }}</span></div>
                   <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">MEMBRO DESDE</span><span class="t-val">{{ user?.createdAt | date:'dd/MM/yyyy' }}</span></div>
                   <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">SINAL</span><span class="t-val amber">{{ userStats?.signalLevel || 'NVL_00' }}</span></div>
                 </div>
@@ -140,7 +210,6 @@
                 </div>
               </div>
             </div>
-
             <div class="overview-col">
               <div class="panel">
                 <div class="panel-header">
@@ -153,12 +222,12 @@
                   <div class="t-line"><span class="t-prompt">&gt;</span><span class="t-key">EMAIL</span><span class="t-val">{{ user.email }}</span></div>
                   <div class="t-line" *ngIf="activeSubscription">
                     <span class="t-prompt">&gt;</span>
-                    <span class="t-key">ASSINATURA</span>
+                    <span class="t-key">STATUS ASSINATURA</span>
                     <span class="t-val green">[ {{ activeSubscription?.status | uppercase }} ]</span>
                   </div>
                   <div class="t-line" *ngIf="activeSubscription">
                     <span class="t-prompt">&gt;</span>
-                    <span class="t-key">ACESSO</span>
+                    <span class="t-key">NÍVEL ACESSO</span>
                     <span class="t-val amber">NÍVEL {{ activeSubscription?.plan?.accessLevel }}</span>
                   </div>
                   <div class="t-line" *ngIf="activeSubscription">
@@ -212,11 +281,11 @@
                   <textarea class="form-input form-textarea" [(ngModel)]="editForm.bio" placeholder="// Descreva-se..." maxlength="160" rows="3"></textarea>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">AVATAR // ARQUIVO</label>
+                  <label class="form-label">AVATAR // ENVIAR ARQUIVO</label>
                   <input class="form-input-file" type="file" accept="image/*" (change)="onAvatarFileChange($event)" [disabled]="uploadingAvatar" />
                 </div>
                 <div class="form-group">
-                  <label class="form-label">AVATAR // URL</label>
+                  <label class="form-label">AVATAR // URL EXTERNA</label>
                   <div class="input-row">
                     <input class="form-input" type="text" [(ngModel)]="editForm.avatarUrl" placeholder="https://..." />
                     <button class="btn btn-ghost btn-sm" (click)="saveAvatarUrl()" [disabled]="uploadingAvatar || !editForm.avatarUrl">
@@ -229,7 +298,7 @@
                 <button class="btn btn-outline btn-sm" (click)="saveProfile()" [disabled]="savingProfile">
                   {{ savingProfile ? 'SALVANDO...' : 'SALVAR ALTERAÇÕES' }}
                 </button>
-                <span class="save-ok" *ngIf="saveSuccess">▸ DADOS ATUALIZADOS</span>
+                <span class="save-ok" *ngIf="saveSuccess">▸ DADOS ATUALIZADOS COM SUCESSO</span>
               </div>
             </div>
 
@@ -259,7 +328,7 @@
                   <span class="pw-score">{{ getPwLabel() }}</span>
                 </div>
                 <button class="btn btn-ghost btn-sm" (click)="changePassword()">ATUALIZAR SENHA</button>
-                <span class="save-ok"  *ngIf="pwSuccess">▸ SENHA ATUALIZADA</span>
+                <span class="save-ok"  *ngIf="pwSuccess">▸ SENHA ATUALIZADA COM SUCESSO</span>
                 <span class="save-err" *ngIf="pwError">⚠ {{ pwError }}</span>
               </div>
             </div>
@@ -270,7 +339,7 @@
                 <div class="pref-item">
                   <div class="pref-info">
                     <span class="pref-name">NOTIFICAÇÕES EMAIL</span>
-                    <span class="pref-desc">Alertas de novos artefatos</span>
+                    <span class="pref-desc">Receber alertas de novos artefatos</span>
                   </div>
                   <div class="toggle" [class.on]="prefs.emailNotif" (click)="prefs.emailNotif = !prefs.emailNotif">
                     <div class="toggle-thumb"></div>
@@ -279,7 +348,7 @@
                 <div class="pref-item">
                   <div class="pref-info">
                     <span class="pref-name">PERFIL PÚBLICO</span>
-                    <span class="pref-desc">Outros podem ver seu perfil</span>
+                    <span class="pref-desc">Permitir que outros vejam seu perfil</span>
                   </div>
                   <div class="toggle" [class.on]="prefs.publicProfile" (click)="prefs.publicProfile = !prefs.publicProfile">
                     <div class="toggle-thumb"></div>
@@ -330,10 +399,11 @@
                 <span class="panel-dot green"></span>
               </div>
               <div class="terminal-lines">
-                <div class="t-line" style="opacity:0.5;font-size:8px;padding-bottom:6px;">
-                  <span class="t-key" style="width:70px">DATA</span>
-                  <span class="t-key" style="width:100px">PLANO</span>
-                  <span class="t-key" style="width:70px">VALOR</span>
+                <div class="t-line" style="opacity:0.5; font-size:10px; padding-bottom:8px;">
+                  <span class="t-key" style="width:80px">DATA</span>
+                  <span class="t-key" style="width:120px">PLANO</span>
+                  <span class="t-key" style="width:80px">VALOR</span>
+                  <span class="t-key" style="width:80px">MÉTODO</span>
                   <span class="t-key">STATUS</span>
                 </div>
                 <div class="t-line" *ngFor="let p of payments">
@@ -341,6 +411,7 @@
                   <span class="t-key">{{ p.createdAt | date:'dd/MM/yyyy' }}</span>
                   <span class="t-val purple">{{ p.subscription?.plan?.name | uppercase }}</span>
                   <span class="t-val">R$ {{ p.amount | number:'1.2-2' }}</span>
+                  <span class="t-val" style="opacity:0.6">{{ p.method || '—' }}</span>
                   <span class="t-val green">[ {{ p.status | uppercase }} ]</span>
                 </div>
               </div>
@@ -360,7 +431,7 @@
 
       </ng-container>
     </div>
-  </div>
+  </main>
 
   <div class="crt-overlay"></div>
   <div class="scanlines"></div>
