@@ -130,10 +130,10 @@
             </thead>
             <tbody>
               <tr *ngFor="let user of filteredUsers">
-                <td class="text-muted">{{ user.id }}</td>
-                <td>{{ user.name }}</td>
-                <td class="text-muted">{{ user.username || '—' }}</td>
-                <td>{{ user.email }}</td>
+                <td class="col-id">{{ user.id }}</td>
+                <td class="col-name">{{ user.name }}</td>
+                <td class="col-user">{{ user.username || '—' }}</td>
+                <td class="col-email">{{ user.email }}</td>
                 <td>
                   <span class="badge"
                     [ngClass]="{
