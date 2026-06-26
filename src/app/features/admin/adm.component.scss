@@ -25,7 +25,7 @@ $text-dim:       #555d7a;
 $font-mono:      'Share Tech Mono', monospace;
 $font-display:   'VT323', monospace;
 
-$sidebar-w:      64px;
+$sidebar-w:      74px;
 $topbar-h:       48px;
 $radius:         4px;
 
@@ -99,8 +99,8 @@ html, body {
 }
 
 .nav-btn {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -111,7 +111,7 @@ html, body {
   cursor: pointer;
   transition: all 0.2s ease;
 
-  svg { width: 20px; height: 20px; }
+  svg { width: 30px; height: 30px; }
 
   &:hover {
     border-color: rgba($border-glow, 0.4);
