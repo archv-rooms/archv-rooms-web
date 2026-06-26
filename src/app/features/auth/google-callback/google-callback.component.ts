@@ -16,18 +16,24 @@ export class GoogleCallbackComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      const token = params['token'];
-      const name  = params['name'];
-      const role  = params['role'];
+ngOnInit(): void {
+  this.route.queryParams.subscribe(params => {
+    const token         = params['token'];
+    const name          = params['name'];
+    const role          = params['role'];
+    const needsUsername = params['needsUsername'] === 'true';
 
-      if (token) {
-        this.authService.handleGoogleCallback(token, name, role);
-        this.router.navigate(['/onboarding']);
+    if (token) {
+      this.authService.handleGoogleCallback(token, name, role);
+
+      if (needsUsername) {
+        this.router.navigate(['/auth/set-username']);
       } else {
-        this.router.navigate(['/login'], { queryParams: { error: 'google' } });
+        this.router.navigate(['/onboarding']);
       }
-    });
-  }
+    } else {
+      this.router.navigate(['/login'], { queryParams: { error: 'google' } });
+    }
+  });
+}
 }
