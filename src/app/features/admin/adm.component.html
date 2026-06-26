@@ -126,12 +126,13 @@
         <div class="data-table-wrap">
           <table class="data-table">
             <thead>
-              <tr><th>ID</th><th>NOME</th><th>EMAIL</th><th>ROLE</th><th>CRIADO EM</th><th>AÇÕES</th></tr>
+              <tr><th>ID</th><th>NOME</th><th>USERNAME</th><th>EMAIL</th><th>ROLE</th><th>CRIADO EM</th><th>AÇÕES</th></tr>
             </thead>
             <tbody>
               <tr *ngFor="let user of filteredUsers">
                 <td class="text-muted">{{ user.id }}</td>
                 <td>{{ user.name }}</td>
+                <td class="text-muted">{{ user.username || '—' }}</td>
                 <td>{{ user.email }}</td>
                 <td>
                   <span class="badge"
