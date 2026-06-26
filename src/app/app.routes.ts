@@ -106,6 +106,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/google-callback/google-callback.component').then(m => m.GoogleCallbackComponent)
   },
   {
+  path: 'auth/set-username',
+  canActivate: [AuthGuard],
+  loadComponent: () => import('./features/auth/set-username/set-username.component').then(m => m.SetUsernameComponent)
+  },
+  {
     path: 'history',
     canActivate: [AuthGuard],
     loadComponent: () => import('./features/history/history.component').then(m => m.HistoryComponent)
