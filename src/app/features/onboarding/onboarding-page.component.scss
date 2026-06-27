@@ -123,14 +123,14 @@
   &--primary {
     background: #7c55f5;
     color: #fff;
-    flex: 1; 
+    width: 200px;
   }
 
   &--ghost {
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.15);
     color: rgba(255, 255, 255, 0.5);
-    flex: 1; 
+    width: 200px;
   }
 
   &--plans {
