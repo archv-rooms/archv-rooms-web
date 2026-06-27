@@ -39,7 +39,7 @@
     <div class="onboarding-actions">
       <button
         class="onboarding-btn onboarding-btn--ghost"
-        *ngIf="currentStep > 0"
+        [style.visibility]="currentStep > 0 ? 'visible' : 'hidden'"
         (click)="prev()"
       >
         Voltar
