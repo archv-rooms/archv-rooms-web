@@ -90,7 +90,7 @@ export class AuthService {
 
   loginWithGoogle(): void {
     if (this.isBrowser) {
-      window.location.href = `https://archv-rooms.onrender.com/auth/google`;
+      window.location.href = `https://archv-rooms-service.onrender.com/auth/google`;
     }
   }
 

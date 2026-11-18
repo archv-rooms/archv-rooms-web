@@ -11,6 +11,6 @@ import { CommonModule } from '@angular/common';
 })
 export class LandingComponent {
   loginWithGoogle(): void {
-    window.location.href = 'https://archv-rooms.onrender.com/auth/google';
+    window.location.href = 'https://archv-rooms-service.onrender.com/auth/google';
   }
 }
