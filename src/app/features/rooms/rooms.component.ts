@@ -17,6 +17,29 @@ interface Game {
   planId?: number;
 }
 
+// ─── Conversão do estado do emulador (Uint8Array <-> base64) ───
+
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode.apply(
+      null,
+      Array.from(bytes.subarray(i, i + chunk))
+    );
+  }
+  return btoa(binary);
+}
+
+function base64ToBytes(b64: string): Uint8Array {
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
 @Component({
   selector: 'app-rooms',
   standalone: true,
@@ -223,6 +246,8 @@ export class RoomsComponent implements OnInit {
         }
       });
       this.saveSlots.sort((a, b) => a.slot - b.slot);
+    } else {
+      this.saveMessage = 'Sem login: o save fica só neste navegador.';
     }
 
     this.cdr.detectChanges();
@@ -236,13 +261,21 @@ export class RoomsComponent implements OnInit {
   async saveToSlot(slot: number): Promise<void> {
     if (!this.game || this.isSaving) return;
     const ejs = (window as any).EJS_emulator;
-    if (!ejs) { this.saveMessage = 'Emulador não pronto.'; return; }
+    if (!ejs || !ejs.gameManager || typeof ejs.gameManager.getState !== 'function') {
+      this.saveMessage = 'Emulador não pronto.';
+      return;
+    }
 
     this.isSaving = true;
     this.saveMessage = '';
 
     try {
-      const saveData = ejs.saveState ? await ejs.saveState() : { slot, ts: Date.now() };
+      const raw = await ejs.gameManager.getState();
+      if (!raw || !raw.length) throw new Error('estado vazio');
+
+      const bytes: Uint8Array = raw instanceof Uint8Array ? raw : new Uint8Array(raw);
+      const saveData = { state: bytesToBase64(bytes) };
+
       await this.saveService.save(this.game.id, slot, saveData);
 
       const idx = this.saveSlots.findIndex(s => s.slot === slot);
@@ -251,8 +284,11 @@ export class RoomsComponent implements OnInit {
       else this.saveSlots.push(entry);
       this.saveSlots.sort((a, b) => a.slot - b.slot);
 
-      this.saveMessage = `✔ Slot ${slot} salvo!`;
-    } catch {
+      this.saveMessage = this.isLoggedIn
+        ? `✔ Slot ${slot} salvo!`
+        : `✔ Slot ${slot} salvo só neste navegador (sem login).`;
+    } catch (e) {
+      console.warn('[save] erro ao salvar:', e);
       this.saveMessage = '✖ Erro ao salvar.';
     }
 
@@ -263,16 +299,32 @@ export class RoomsComponent implements OnInit {
   async loadFromSlot(slot: number): Promise<void> {
     if (!this.game) return;
     const ejs = (window as any).EJS_emulator;
-    if (!ejs) { this.saveMessage = 'Emulador não pronto.'; return; }
+    if (!ejs || !ejs.gameManager || typeof ejs.gameManager.loadState !== 'function') {
+      this.saveMessage = 'Emulador não pronto.';
+      return;
+    }
 
     const entry = this.saveSlots.find(s => s.slot === slot);
     if (!entry) { this.saveMessage = `Slot ${slot} vazio.`; return; }
 
+    let data: any = entry.saveData;
+    if (typeof data === 'string') {
+      try { data = JSON.parse(data); } catch { data = null; }
+    }
+
+    if (!data || typeof data.state !== 'string') {
+      this.saveMessage = `Slot ${slot} é um save antigo e não pode ser carregado. Salve de novo.`;
+      this.cdr.detectChanges();
+      return;
+    }
+
     try {
-      if (ejs.loadState) await ejs.loadState(entry.saveData);
+      const bytes = base64ToBytes(data.state);
+      ejs.gameManager.loadState(bytes);
       this.saveMessage = `✔ Slot ${slot} carregado!`;
       this.showSavePanel = false;
-    } catch {
+    } catch (e) {
+      console.warn('[save] erro ao carregar:', e);
       this.saveMessage = '✖ Erro ao carregar save.';
     }
 
@@ -321,7 +373,7 @@ export class RoomsComponent implements OnInit {
     return id.toString().padStart(6, '0');
   }
 
-navigate(path: string): void {
+  navigate(path: string): void {
     this.router.navigate([path]);
   }
 
