@@ -45,16 +45,6 @@ export class AdmComponent implements OnInit {
   userSearch = '';
   userStats = { total: 0, online: 0, banned: 0, newLast24h: 0 };
 
-  // SALES
-  sales: any[] = [];
-  salesStats = { total: 0, active: 0, revenue: 0 };
-
-  // PLANS
-  plans: any[] = [];
-  showPlanModal = false;
-  editingPlan = false;
-  planForm: any = { id: null, name: '', description: '', price: 0, accessLevel: 1 };
-
   // CATEGORIES
   categories: any[] = [];
   showCategoryModal = false;
@@ -106,8 +96,6 @@ export class AdmComponent implements OnInit {
   ngOnInit(): void {
     this.loadGames();
     this.loadUsers();
-    this.loadSales();
-    this.loadPlans();
     this.loadCategories();
     this.loadActiveTheme();
   }
@@ -185,9 +173,7 @@ export class AdmComponent implements OnInit {
     this.currentSection = section;
 
     if (section === 'users' && this.users.length === 0) this.loadUsers();
-    if (section === 'sales' && this.sales.length === 0) this.loadSales();
     if (section === 'games' && this.games.length === 0) this.loadGames();
-    if (section === 'plans' && this.plans.length === 0) this.loadPlans();
     if (section === 'themes') this.loadActiveTheme();
 
     this.cdr.detectChanges();
@@ -297,45 +283,6 @@ export class AdmComponent implements OnInit {
     });
   }
 
-  // ── SUBSCRIPTION MODAL ────────────────────────────────────
-  showSubscriptionModal = false;
-  subscriptionTarget: any = null;
-  grantPlanId: number | null = null;
-  grantDurationDays = 30;
-
-  openSubscriptionModal(user: any): void {
-    this.subscriptionTarget = user;
-    this.grantPlanId = null;
-    this.grantDurationDays = 30;
-    this.showSubscriptionModal = true;
-    this.cdr.detectChanges();
-  }
-
-  closeSubscriptionModal(): void {
-    this.showSubscriptionModal = false;
-    this.subscriptionTarget = null;
-    this.cdr.detectChanges();
-  }
-
-  grantPlan(): void {
-    if (!this.grantPlanId || !this.subscriptionTarget) return;
-    const payload = { planId: this.grantPlanId, durationDays: this.grantDurationDays };
-    this.http.post(`${this.api}/admin/users/${this.subscriptionTarget.id}/grant-plan`, payload, { headers: this.authHeaders }).subscribe({
-      next: (res: any) => {
-        const plan = this.plans.find(p => p.id === this.grantPlanId);
-        this.subscriptionTarget.subscription = {
-          plan,
-          status: 'active',
-          createdAt: new Date().toISOString(),
-          ...(res?.data ?? {})
-        };
-        this.cdr.detectChanges();
-        alert(`Plano "${plan?.name}" concedido com sucesso!`);
-      },
-      error: (err) => alert(err.error?.message || 'Erro ao conceder plano')
-    });
-  }
-
   // ── BAN ───────────────────────────────────────────────────
   openBanModal(user: any): void {
     this.banForm = {
@@ -394,84 +341,6 @@ export class AdmComponent implements OnInit {
       });
   }
 
-  // ── SALES ─────────────────────────────────────────────────
-  loadSales(): void {
-    this.http.get<any>(`${this.api}/admin/sales`, { headers: this.authHeaders }).subscribe({
-      next: (res) => {
-        this.sales = res.data;
-        this.salesStats.total   = res.data.length;
-        this.salesStats.active  = res.data.filter((s: any) => s.status === 'active').length;
-        this.salesStats.revenue = res.data
-          .filter((s: any) => s.status === 'active')
-          .reduce((acc: number, s: any) => acc + parseFloat(s.plan?.price ?? 0), 0);
-        this.cdr.detectChanges();
-      },
-      error: () => { this.errorMessage = 'Erro ao carregar vendas'; this.cdr.detectChanges(); }
-    });
-  }
-
-  cancelSale(id: number): void {
-    if (!confirm('Cancelar esta assinatura?')) return;
-    this.http.patch(`${this.api}/admin/sales/${id}/cancel`, {}, { headers: this.authHeaders }).subscribe({
-      next: () => { this.loadSales(); this.cdr.detectChanges(); },
-      error: (err) => alert(err.error?.message || 'Erro ao cancelar assinatura')
-    });
-  }
-
-  // ── PLANS ─────────────────────────────────────────────────
-  loadPlans(): void {
-    this.http.get<any>(`${this.api}/admin/plans`, { headers: this.authHeaders }).subscribe({
-      next: (res) => { this.plans = res.data; this.cdr.detectChanges(); },
-      error: () => { this.errorMessage = 'Erro ao carregar planos'; this.cdr.detectChanges(); }
-    });
-  }
-
-  openPlanModal(plan?: any): void {
-    this.showPlanModal = true;
-    this.editingPlan = !!plan;
-    this.planForm = plan
-      ? { ...plan }
-      : { id: null, name: '', description: '', price: 0, accessLevel: 1 };
-    this.cdr.detectChanges();
-  }
-
-  closePlanModal(): void {
-    this.showPlanModal = false;
-    this.cdr.detectChanges();
-  }
-
-  savePlan(): void {
-    if (this.editingPlan) {
-      this.http.put(`${this.api}/admin/plans/${this.planForm.id}`, {
-        name:        this.planForm.name,
-        price:       Number(this.planForm.price),
-        description: this.planForm.description,
-        accessLevel: Number(this.planForm.accessLevel)
-      }, { headers: this.authHeaders }).subscribe({
-        next: () => { this.loadPlans(); this.closePlanModal(); },
-        error: () => alert('Erro ao salvar plano')
-      });
-    } else {
-      this.http.post(`${this.api}/admin/plans`, {
-        name:        this.planForm.name,
-        price:       Number(this.planForm.price),
-        description: this.planForm.description,
-        accessLevel: Number(this.planForm.accessLevel)
-      }, { headers: this.authHeaders }).subscribe({
-        next: () => { this.loadPlans(); this.closePlanModal(); },
-        error: (err) => alert(err.error?.message || 'Erro ao criar plano')
-      });
-    }
-  }
-
-  deletePlan(id: number): void {
-    if (!confirm('Deletar este plano? Só é possível se não houver assinaturas ativas.')) return;
-    this.http.delete(`${this.api}/admin/plans/${id}`, { headers: this.authHeaders }).subscribe({
-      next: () => { this.loadPlans(); this.cdr.detectChanges(); },
-      error: (err) => alert(err.error?.message || 'Erro ao deletar plano')
-    });
-  }
-
   // ── CATEGORIES ────────────────────────────────────────────
   loadCategories(): void {
     this.http.get<any>(`${this.api}/admin/categories`, { headers: this.authHeaders }).subscribe({
@@ -513,26 +382,26 @@ export class AdmComponent implements OnInit {
     });
   }
 
-// ── THEMES ────────────────────────────────────────────────
-loadActiveTheme(): void {
-  this.http.get<{ themeKey: string }>(`${this.api}/admin/theme`).subscribe({
-    next: (res) => {
-      this.activeThemeName = res.themeKey;
-      this.cdr.detectChanges();
-    },
-    error: () => {
-      this.activeThemeName = this.themeService.getActiveTheme().name;
-      this.cdr.detectChanges();
-    }
-  });
-}
+  // ── THEMES ────────────────────────────────────────────────
+  loadActiveTheme(): void {
+    this.http.get<{ themeKey: string }>(`${this.api}/admin/theme`).subscribe({
+      next: (res) => {
+        this.activeThemeName = res.themeKey;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.activeThemeName = this.themeService.getActiveTheme().name;
+        this.cdr.detectChanges();
+      }
+    });
+  }
 
-setTheme(themeName: string | null): void {
-  this.themeService.setGlobalTheme(themeName).then(() => {
-    this.activeThemeName = themeName ?? 'default';
-    this.cdr.detectChanges();
-  }).catch(() => {
-    alert('Erro ao salvar tema global.');
-  });
-}
+  setTheme(themeName: string | null): void {
+    this.themeService.setGlobalTheme(themeName).then(() => {
+      this.activeThemeName = themeName ?? 'default';
+      this.cdr.detectChanges();
+    }).catch(() => {
+      alert('Erro ao salvar tema global.');
+    });
+  }
 }
