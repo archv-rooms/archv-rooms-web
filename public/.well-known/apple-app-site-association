@@ -1,0 +1,9 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [{
+      "appID": "SEUTEAMID.com.archv.rooms",
+      "paths": ["/verify-email*"]
+    }]
+  }
+}

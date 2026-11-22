@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.archv.rooms",
+    "sha256_cert_fingerprints": [
+      "91:2B:BA:D2:D1:A4:9D:97:EA:79:D9:10:79:A9:A6:0B:5E:03:22:72:05:47:34:B0:6D:C2:08:C9:F1:20:95:2A"
+    ]
+  }
+}]
