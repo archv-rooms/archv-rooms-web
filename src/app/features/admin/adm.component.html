@@ -175,6 +175,15 @@
                       CONTINUE
                     </button>
 
+                    <!-- Deletar usuário: aparece para user e banned, nunca para admin -->
+                    <button
+                      *ngIf="user.role !== 'admin'"
+                      class="btn btn--ghost btn--sm"
+                      (click)="deleteUser(user)"
+                      title="Deletar usuário permanentemente">
+                      DELETAR
+                    </button>
+
                   </div>
                 </td>
               </tr>

@@ -341,6 +341,24 @@ export class AdmComponent implements OnInit {
       });
   }
 
+  deleteUser(user: any): void {
+    if (!confirm(`Deletar "${user.name}" permanentemente?\n\nIsso apaga também pagamentos, assinaturas e mensagens dele. Não dá para desfazer.`)) return;
+    this.http
+      .delete(`${this.api}/admin/users/${user.id}`, { headers: this.authHeaders })
+      .subscribe({
+        next: () => {
+          this.users = this.users.filter(u => u.id !== user.id);
+          this.filterUsers();
+          const h24atras = new Date(Date.now() - 24 * 60 * 60 * 1000);
+          this.userStats.total      = this.users.length;
+          this.userStats.banned     = this.users.filter(u => u.role === 'banned').length;
+          this.userStats.newLast24h = this.users.filter(u => new Date(u.createdAt) >= h24atras).length;
+          this.cdr.detectChanges();
+        },
+        error: (err) => alert(err.error?.message || 'Erro ao deletar usuário')
+      });
+  }
+
   // ── CATEGORIES ────────────────────────────────────────────
   loadCategories(): void {
     this.http.get<any>(`${this.api}/admin/categories`, { headers: this.authHeaders }).subscribe({
